@@ -9,10 +9,11 @@ const SignInPage = () => {
 
     const handleGoogleSignIn = async () => {
         try {
+            console.log('Initiating Google Sign In...');
             await signInWithGoogle();
         } catch (err) {
-            setError('Failed to sign in with Google. Please try again.');
-            console.error(err);
+            console.error('Sign In Error:', err);
+            setError('Failed to sign in with Google. Check console for details.');
         }
     };
 

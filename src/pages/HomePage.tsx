@@ -84,7 +84,7 @@ const HomePage = () => {
                             <h3 className="text-xl text-iq-text font-bold">Instant Settlement</h3>
                         </div>
                         <p className="text-iq-text-secondary leading-relaxed">
-                            Winner selected? Funds move in 300 seconds. No pending periods. Speed is the ultimate respect.
+                            Winner selected? Funds move in 300 seconds. No pending periods. No 14-day clearance. Speed is the ultimate respect.
                         </p>
                     </div>
                 </div>

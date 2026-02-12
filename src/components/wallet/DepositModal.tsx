@@ -73,8 +73,8 @@ const DepositModal = ({ isOpen, onClose }: DepositModalProps) => {
                                 <div className="flex justify-between items-center">
                                     <span className="text-iq-text-secondary text-sm">UPI ID</span>
                                     <div className="flex items-center gap-2">
-                                        <span className="font-mono text-white">iqhunt@hdfcbank</span>
-                                        <button onClick={() => handleCopy('iqhunt@hdfcbank')}><Copy className="w-3 h-3 text-iq-text-secondary hover:text-white" /></button>
+                                        <span className="font-mono text-white">singhomedu69-1@oksbi</span>
+                                        <button onClick={() => handleCopy('singhomedu69-1@oksbi')}><Copy className="w-3 h-3 text-iq-text-secondary hover:text-white" /></button>
                                     </div>
                                 </div>
                             </div>
