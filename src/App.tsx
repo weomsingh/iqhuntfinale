@@ -8,6 +8,7 @@ import HomePage from './pages/HomePage';
 import TermsPage from './pages/TermsPage';
 import SignInPage from './pages/auth/SignInPage';
 import CompleteProfilePage from './pages/auth/CompleteProfilePage';
+import AuthCallbackPage from './pages/auth/AuthCallbackPage';
 import CovenantPage from './pages/CovenantPage';
 
 import HunterDashboard from './pages/hunter/HunterDashboard';
@@ -42,7 +43,9 @@ function App() {
             <Route path="privacy" element={<TermsPage />} />
             <Route path="covenant" element={<CovenantPage />} />
             <Route path="signin" element={<SignInPage />} />
+            <Route path="signup" element={<SignInPage />} />
             <Route path="complete-profile" element={<CompleteProfilePage />} />
+            <Route path="auth/callback" element={<AuthCallbackPage />} />
           </Route>
 
           <Route path="/hunter" element={

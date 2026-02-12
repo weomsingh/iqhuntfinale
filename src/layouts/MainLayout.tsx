@@ -20,7 +20,7 @@ const MainLayout: React.FC = () => {
 
                     <div className="flex items-center gap-4">
                         <Link to="/signin" className="text-sm font-medium hover:text-iq-green transition-colors">Sign In</Link>
-                        <Link to="/enter" className="px-4 py-2 bg-iq-green text-iq-black font-bold text-sm rounded hover:shadow-[0_0_15px_rgba(0,255,157,0.4)] transition-all">
+                        <Link to="/signin" className="px-4 py-2 bg-iq-green text-iq-black font-bold text-sm rounded hover:shadow-[0_0_15px_rgba(0,255,157,0.4)] transition-all">
                             Enter Arena
                         </Link>
                     </div>

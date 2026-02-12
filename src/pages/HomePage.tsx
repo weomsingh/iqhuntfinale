@@ -6,38 +6,39 @@ const HomePage = () => {
     return (
         <div className="bg-iq-black min-h-screen">
             {/* Hero Section */}
-            <section className="relative px-6 py-20 md:py-32 flex flex-col items-center text-center overflow-hidden">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-iq-green/10 via-transparent to-transparent opacity-50 blur-3xl" />
-                <div className="z-10 max-w-4xl mx-auto space-y-8">
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-iq-secondary border border-iq-border animate-fade-in-up">
-                        <span className="w-2 h-2 rounded-full bg-iq-green animate-pulse" />
-                        <span className="text-sm text-iq-text-secondary">Live: 34 Active Bounties</span>
-                    </div>
+            <section className="relative px-6 py-32 md:py-48 flex flex-col items-center text-center overflow-hidden">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-iq-green/5 via-transparent to-transparent opacity-40 blur-3xl" />
 
-                    <h1 className="text-5xl md:text-7xl font-bold tracking-tight bg-gradient-to-br from-white to-gray-400 bg-clip-text text-transparent">
-                        THE TRIANGLE OF TRUST
+                <div className="z-10 max-w-5xl mx-auto space-y-12">
+
+                    {/* Main Title - Massive Typography */}
+                    <h1 className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter leading-[0.9]">
+                        <span className="text-white block">WHERE SKILL</span>
+                        <span className="bg-gradient-to-b from-iq-green to-emerald-600 bg-clip-text text-transparent block mt-2 filter drop-shadow-[0_0_30px_rgba(0,255,157,0.3)]">
+                            HUNTS MONEY.
+                        </span>
                     </h1>
 
-                    <p className="text-xl md:text-2xl text-iq-text-secondary max-w-2xl mx-auto">
-                        Three Pillars. Zero Bullshit. <br />
-                        <span className="text-iq-green">Where skill hunts money.</span>
+                    {/* Subtitle */}
+                    <p className="text-xl md:text-2xl text-iq-text-secondary max-w-2xl mx-auto font-light tracking-wide">
+                        A private competitive arena for skilled individuals. <br className="hidden md:block" />
+                        <span className="text-white font-medium">Deploy capital. Stake your skill. Extract the reward.</span>
                     </p>
 
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center pt-8">
+                    {/* CTA Buttons */}
+                    <div className="flex flex-col sm:flex-row gap-6 justify-center pt-8 w-full max-w-md mx-auto sm:max-w-none">
                         <Link
-                            to="/signup?role=hunter"
-                            className="px-8 py-4 bg-iq-green text-iq-black font-bold rounded-lg hover:shadow-[0_0_20px_rgba(0,255,157,0.4)] transition-all flex items-center justify-center gap-2 group"
+                            to="/signin"
+                            className="px-8 py-5 bg-iq-green text-iq-black font-black text-lg tracking-wider rounded-lg hover:shadow-[0_0_40px_rgba(0,255,157,0.6)] hover:scale-105 transition-all flex items-center justify-center gap-3 group uppercase"
                         >
-                            <Target className="w-5 h-5" />
-                            Stake Your Skill
-                            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                            Enter as Hunter
+                            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                         </Link>
                         <Link
-                            to="/signup?role=payer"
-                            className="px-8 py-4 bg-transparent border border-iq-green text-iq-green font-bold rounded-lg hover:bg-iq-green/10 transition-all flex items-center justify-center gap-2"
+                            to="/signin"
+                            className="px-8 py-5 bg-transparent border-2 border-zinc-800 text-white font-bold text-lg tracking-wider rounded-lg hover:border-iq-green hover:text-iq-green hover:bg-iq-green/5 transition-all flex items-center justify-center gap-3 uppercase"
                         >
-                            <Wallet className="w-5 h-5" />
-                            Deploy Capital
+                            Post a Bounty
                         </Link>
                     </div>
                 </div>
