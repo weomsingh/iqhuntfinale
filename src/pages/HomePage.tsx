@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect } from 'react'; // Re-trigger build
 import { Target, Shield, ArrowRight, Wallet, Clock } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 
