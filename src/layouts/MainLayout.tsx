@@ -14,16 +14,18 @@ const MainLayout: React.FC = () => {
 
                     <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-iq-text-secondary">
                         <Link to="/covenant" className="hover:text-iq-green transition-colors">The Covenant</Link>
-                        <a
-                            href="/#how-it-works"
-                            onClick={(e) => {
-                                e.preventDefault();
-                                document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' });
+                        <button
+                            onClick={() => {
+                                if (window.location.pathname !== '/') {
+                                    window.location.href = '/#how-it-works';
+                                } else {
+                                    document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' });
+                                }
                             }}
-                            className="hover:text-iq-green transition-colors cursor-pointer"
+                            className="hover:text-iq-green transition-colors cursor-pointer bg-transparent border-none p-0 font-medium"
                         >
                             How It Works
-                        </a>
+                        </button>
                     </nav>
 
                     <div className="flex items-center gap-4">
@@ -60,7 +62,7 @@ const MainLayout: React.FC = () => {
                     <div>
                         <h4 className="font-bold mb-4">Platform</h4>
                         <ul className="space-y-2 text-sm text-iq-text-secondary">
-                            <li><Link to="/#pillars" className="hover:text-iq-green">Three Pillars</Link></li>
+                            {/* <li><Link to="/#pillars" className="hover:text-iq-green">Three Pillars</Link></li> */}
                             <li><Link to="/covenant" className="hover:text-iq-green">The Covenant</Link></li>
                             <li><Link to="/#how-it-works" className="hover:text-iq-green">How It Works</Link></li>
                         </ul>

@@ -1,8 +1,21 @@
-
+import { useEffect } from 'react';
 import { Target, Shield, ArrowRight, Wallet, Users, Clock } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 const HomePage = () => {
+    const location = useLocation();
+
+    useEffect(() => {
+        if (location.hash === '#how-it-works') {
+            const element = document.getElementById('how-it-works');
+            if (element) {
+                setTimeout(() => {
+                    element.scrollIntoView({ behavior: 'smooth' });
+                }, 100);
+            }
+        }
+    }, [location]);
+
     return (
         <div className="bg-iq-black min-h-screen">
             {/* Hero Section */}
