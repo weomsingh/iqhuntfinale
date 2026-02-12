@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Target, Shield, ArrowRight, Wallet, Users, Clock } from 'lucide-react';
+import { Target, Shield, ArrowRight, Wallet, Clock } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 
 const HomePage = () => {
