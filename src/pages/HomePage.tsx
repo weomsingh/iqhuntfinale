@@ -46,55 +46,75 @@ const HomePage = () => {
                 </div>
             </section>
 
-            {/* Three Pillars Section */}
-            <section className="px-6 py-20 border-t border-iq-border bg-iq-secondary/30">
-                <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-8">
-                    {/* Pillar 1 */}
-                    <div className="p-8 rounded-2xl bg-iq-black/50 border border-iq-border hover:border-iq-green/50 transition-colors group">
-                        <div className="w-12 h-12 bg-iq-green/10 rounded-xl flex items-center justify-center text-iq-green mb-6 group-hover:scale-110 transition-transform">
-                            <Shield className="w-6 h-6" />
-                        </div>
-                        <div className="flex items-baseline gap-2 mb-4">
-                            <span className="text-sm font-mono text-iq-green">01</span>
-                            <h3 className="text-xl text-iq-text font-bold">Locked Vault</h3>
-                        </div>
-                        <p className="text-iq-text-secondary leading-relaxed">
-                            Every bounty is backed by 105% pre-funded capital. Hunters know the money exists before they even start.
+            {/* Three Pillars Section - Redesigned */}
+            <section className="px-6 py-32 bg-iq-black border-t border-iq-border relative overflow-hidden">
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-iq-green/5 via-transparent to-transparent opacity-20" />
+
+                <div className="max-w-7xl mx-auto relative z-10">
+                    <div className="text-center mb-20 space-y-4">
+                        <span className="text-xs font-bold tracking-[0.2em] text-iq-text-secondary uppercase">
+                            The Triangle of Trust
+                        </span>
+                        <h2 className="text-4xl md:text-6xl font-black tracking-tight text-white">
+                            Three Pillars. <span className="text-iq-green">Zero Bullshit.</span>
+                        </h2>
+                        <p className="text-iq-text-secondary max-w-2xl mx-auto text-lg pt-4">
+                            Every hunt is backed by locked capital, filtered by stakes, <br className="hidden md:block" />
+                            and settled at lightning speed.
                         </p>
                     </div>
 
-                    {/* Pillar 2 */}
-                    <div className="p-8 rounded-2xl bg-iq-black/50 border border-iq-border hover:border-iq-green/50 transition-colors group">
-                        <div className="w-12 h-12 bg-iq-green/10 rounded-xl flex items-center justify-center text-iq-green mb-6 group-hover:scale-110 transition-transform">
-                            <Users className="w-6 h-6" />
+                    <div className="grid md:grid-cols-3 gap-8">
+                        {/* Pillar 1 */}
+                        <div className="p-10 rounded-3xl bg-zinc-900/50 border border-zinc-800 hover:border-iq-green/50 transition-all duration-300 group hover:-translate-y-2">
+                            <div className="w-14 h-14 rounded-2xl bg-zinc-800/50 flex items-center justify-center text-iq-green mb-8 group-hover:scale-110 transition-transform border border-zinc-700/50 group-hover:border-iq-green/30">
+                                <Shield className="w-6 h-6" />
+                            </div>
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-2xl text-white font-bold">Locked Vault</h3>
+                                <span className="text-4xl font-black text-zinc-800 group-hover:text-iq-green/10 transition-colors">01</span>
+                            </div>
+                            <h4 className="text-xs font-bold text-iq-text-secondary tracking-widest uppercase mb-4">Capital Security</h4>
+                            <p className="text-zinc-400 leading-relaxed text-sm">
+                                Every bounty is backed by 105% pre-funded capital. Hunters know the money exists before they even commit.
+                            </p>
                         </div>
-                        <div className="flex items-baseline gap-2 mb-4">
-                            <span className="text-sm font-mono text-iq-green">02</span>
-                            <h3 className="text-xl text-iq-text font-bold">The Stake</h3>
-                        </div>
-                        <p className="text-iq-text-secondary leading-relaxed">
-                            Hunters pay a small stake to enter. This kills spam, bots, and amateurs. Only serious operators compete.
-                        </p>
-                    </div>
 
-                    {/* Pillar 3 */}
-                    <div className="p-8 rounded-2xl bg-iq-black/50 border border-iq-border hover:border-iq-green/50 transition-colors group">
-                        <div className="w-12 h-12 bg-iq-green/10 rounded-xl flex items-center justify-center text-iq-green mb-6 group-hover:scale-110 transition-transform">
-                            <Clock className="w-6 h-6" />
+                        {/* Pillar 2 */}
+                        <div className="p-10 rounded-3xl bg-zinc-900/50 border border-zinc-800 hover:border-iq-green/50 transition-all duration-300 group hover:-translate-y-2">
+                            <div className="w-14 h-14 rounded-2xl bg-zinc-800/50 flex items-center justify-center text-iq-green mb-8 group-hover:scale-110 transition-transform border border-zinc-700/50 group-hover:border-iq-green/30">
+                                <Target className="w-6 h-6" />
+                            </div>
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-2xl text-white font-bold">The Stake</h3>
+                                <span className="text-4xl font-black text-zinc-800 group-hover:text-iq-green/10 transition-colors">02</span>
+                            </div>
+                            <h4 className="text-xs font-bold text-iq-text-secondary tracking-widest uppercase mb-4">Quality Filter</h4>
+                            <p className="text-zinc-400 leading-relaxed text-sm">
+                                Hunters pay a small stake to enter. This kills spam, bots, and amateurs. Only serious operators compete.
+                            </p>
                         </div>
-                        <div className="flex items-baseline gap-2 mb-4">
-                            <span className="text-sm font-mono text-iq-green">03</span>
-                            <h3 className="text-xl text-iq-text font-bold">Instant Settlement</h3>
+
+                        {/* Pillar 3 */}
+                        <div className="p-10 rounded-3xl bg-zinc-900/50 border border-zinc-800 hover:border-iq-green/50 transition-all duration-300 group hover:-translate-y-2">
+                            <div className="w-14 h-14 rounded-2xl bg-zinc-800/50 flex items-center justify-center text-iq-green mb-8 group-hover:scale-110 transition-transform border border-zinc-700/50 group-hover:border-iq-green/30">
+                                <Clock className="w-6 h-6" />
+                            </div>
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-2xl text-white font-bold">Instant Settlement</h3>
+                                <span className="text-4xl font-black text-zinc-800 group-hover:text-iq-green/10 transition-colors">03</span>
+                            </div>
+                            <h4 className="text-xs font-bold text-iq-text-secondary tracking-widest uppercase mb-4">Speed Protocol</h4>
+                            <p className="text-zinc-400 leading-relaxed text-sm">
+                                Winner selected? Funds move in 300 seconds. No pending periods. No 14-day clearance delays.
+                            </p>
                         </div>
-                        <p className="text-iq-text-secondary leading-relaxed">
-                            Winner selected? Funds move in 300 seconds. No pending periods. No 14-day clearance. Speed is the ultimate respect.
-                        </p>
                     </div>
                 </div>
             </section>
 
             {/* How It Works Grid */}
-            <section className="px-6 py-20 relative">
+            <section id="how-it-works" className="px-6 py-20 relative pt-32">
                 <div className="max-w-7xl mx-auto">
                     <div className="text-center mb-16">
                         <h2 className="text-3xl md:text-5xl font-bold mb-4">How It Works</h2>

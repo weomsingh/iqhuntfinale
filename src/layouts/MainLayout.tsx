@@ -13,9 +13,17 @@ const MainLayout: React.FC = () => {
                     </Link>
 
                     <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-iq-text-secondary">
-                        <Link to="/#pillars" className="hover:text-iq-green transition-colors">Three Pillars</Link>
                         <Link to="/covenant" className="hover:text-iq-green transition-colors">The Covenant</Link>
-                        <Link to="/#how-it-works" className="hover:text-iq-green transition-colors">How It Works</Link>
+                        <a
+                            href="/#how-it-works"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' });
+                            }}
+                            className="hover:text-iq-green transition-colors cursor-pointer"
+                        >
+                            How It Works
+                        </a>
                     </nav>
 
                     <div className="flex items-center gap-4">
