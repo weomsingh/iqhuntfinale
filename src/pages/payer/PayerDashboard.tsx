@@ -6,9 +6,9 @@ const PayerDashboard = () => {
     const { profile } = useAuth();
 
     const stats = [
-        { label: 'Active Bounties', value: '3', icon: Briefcase, color: 'text-blue-400' },
-        { label: 'Total Spent', value: '₹45,000', icon: Wallet, color: 'text-green-400' },
-        { label: 'Hunters Hired', value: '12', icon: Users, color: 'text-purple-400' },
+        { label: 'Active Bounties', value: '3', icon: Briefcase, color: 'text-iq-green' },
+        { label: 'Total Spent', value: '₹45,000', icon: Wallet, color: 'text-emerald-400' },
+        { label: 'Hunters Hired', value: '12', icon: Users, color: 'text-green-400' },
     ];
 
     const activeBounties = [
@@ -18,7 +18,7 @@ const PayerDashboard = () => {
     ];
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-5 duration-500">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-3xl font-bold text-white mb-2">Welcome back, {profile?.username || 'Payer'}</h1>
@@ -26,7 +26,7 @@ const PayerDashboard = () => {
                 </div>
                 <Link
                     to="/payer/post-bounty"
-                    className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-xl transition-all shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:shadow-[0_0_25px_rgba(59,130,246,0.5)] transform hover:-translate-y-1"
+                    className="flex items-center gap-2 bg-iq-green hover:bg-emerald-500 text-iq-black font-bold py-3 px-6 rounded-xl transition-all shadow-[0_0_20px_rgba(0,255,157,0.3)] hover:shadow-[0_0_25px_rgba(0,255,157,0.5)] transform hover:-translate-y-1"
                 >
                     <PlusCircle className="w-5 h-5" />
                     Post New Bounty
@@ -36,12 +36,12 @@ const PayerDashboard = () => {
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {stats.map((stat, index) => (
-                    <div key={index} className="bg-iq-secondary/30 border border-iq-border p-6 rounded-xl hover:border-blue-500/30 transition-colors">
+                    <div key={index} className="bg-iq-secondary/30 border border-iq-border p-6 rounded-xl hover:border-iq-green/30 transition-all hover:shadow-[0_0_15px_rgba(0,255,157,0.05)] group">
                         <div className="flex items-center justify-between mb-4">
-                            <div className={`p-3 rounded-lg bg-white/5 ${stat.color}`}>
+                            <div className={`p-3 rounded-lg bg-white/5 ${stat.color} group-hover:bg-iq-green/10 transition-colors`}>
                                 <stat.icon className="w-6 h-6" />
                             </div>
-                            <span className="text-xs font-bold text-iq-text-secondary uppercase tracking-wider bg-white/5 px-2 py-1 rounded">
+                            <span className="text-xs font-bold text-iq-green uppercase tracking-wider bg-iq-green/10 px-2 py-1 rounded">
                                 +12% this week
                             </span>
                         </div>
@@ -55,10 +55,10 @@ const PayerDashboard = () => {
             <div className="bg-iq-secondary/30 border border-iq-border rounded-xl overflow-hidden">
                 <div className="p-6 border-b border-iq-border flex items-center justify-between">
                     <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                        <Briefcase className="w-5 h-5 text-blue-400" />
+                        <Briefcase className="w-5 h-5 text-iq-green" />
                         Active Bounties
                     </h2>
-                    <Link to="/payer/bounties" className="text-sm text-blue-400 hover:text-blue-300 flex items-center gap-1">
+                    <Link to="/payer/bounties" className="text-sm text-iq-green hover:text-emerald-400 flex items-center gap-1 font-medium hover:underline">
                         View All <ArrowUpRight className="w-4 h-4" />
                     </Link>
                 </div>
@@ -87,12 +87,12 @@ const PayerDashboard = () => {
                                     <td className="p-4 text-iq-text-secondary">
                                         <div className="flex -space-x-2">
                                             {[...Array(Math.min(bounty.applicants, 3))].map((_, i) => (
-                                                <div key={i} className="w-8 h-8 rounded-full bg-iq-secondary border border-iq-black flex items-center justify-center text-xs font-bold text-white">
+                                                <div key={i} className="w-8 h-8 rounded-full bg-iq-secondary border border-iq-black flex items-center justify-center text-xs font-bold text-white ring-2 ring-iq-black">
                                                     {String.fromCharCode(65 + i)}
                                                 </div>
                                             ))}
                                             {bounty.applicants > 3 && (
-                                                <div className="w-8 h-8 rounded-full bg-iq-secondary border border-iq-black flex items-center justify-center text-xs font-bold text-iq-text-secondary">
+                                                <div className="w-8 h-8 rounded-full bg-iq-secondary border border-iq-black flex items-center justify-center text-xs font-bold text-iq-text-secondary ring-2 ring-iq-black">
                                                     +{bounty.applicants - 3}
                                                 </div>
                                             )}

@@ -64,7 +64,7 @@ const PostBountyPage = () => {
     };
 
     return (
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-5 duration-500">
             <div className="mb-8">
                 <h1 className="text-3xl font-bold text-white mb-2">Post a New Bounty</h1>
                 <p className="text-iq-text-secondary">Define the mission, set the reward, and recruit the best hunters.</p>
@@ -82,7 +82,7 @@ const PostBountyPage = () => {
                 {/* Section 1: Basic Info */}
                 <div className="bg-iq-secondary/30 border border-iq-border rounded-xl p-6 space-y-6">
                     <h2 className="text-xl font-bold text-white flex items-center gap-2 border-b border-iq-border pb-4">
-                        <Target className="w-5 h-5 text-blue-400" />
+                        <Target className="w-5 h-5 text-iq-green" />
                         Mission Details
                     </h2>
 
@@ -92,7 +92,7 @@ const PostBountyPage = () => {
                             <input
                                 {...register('title')}
                                 placeholder="e.g. Redesign Fintech Mobile App Dashboard"
-                                className="w-full bg-iq-black border border-iq-border rounded-lg px-4 py-3 text-white focus:border-blue-500 outline-none transition-colors"
+                                className="w-full bg-iq-black border border-iq-border rounded-lg px-4 py-3 text-white focus:border-iq-green outline-none transition-colors focus:shadow-[0_0_10px_rgba(0,255,157,0.1)]"
                             />
                             {errors.title && <p className="text-red-400 text-xs">{errors.title.message}</p>}
                         </div>
@@ -101,7 +101,7 @@ const PostBountyPage = () => {
                             <label className="text-sm font-bold text-iq-text-secondary">Category</label>
                             <select
                                 {...register('category')}
-                                className="w-full bg-iq-black border border-iq-border rounded-lg px-4 py-3 text-white focus:border-blue-500 outline-none appearance-none"
+                                className="w-full bg-iq-black border border-iq-border rounded-lg px-4 py-3 text-white focus:border-iq-green outline-none appearance-none focus:shadow-[0_0_10px_rgba(0,255,157,0.1)]"
                             >
                                 <option value="Design">Design</option>
                                 <option value="Development">Development</option>
@@ -118,7 +118,7 @@ const PostBountyPage = () => {
                             <input
                                 type="number"
                                 {...register('slots', { valueAsNumber: true })}
-                                className="w-full bg-iq-black border border-iq-border rounded-lg px-4 py-3 text-white focus:border-blue-500 outline-none"
+                                className="w-full bg-iq-black border border-iq-border rounded-lg px-4 py-3 text-white focus:border-iq-green outline-none focus:shadow-[0_0_10px_rgba(0,255,157,0.1)]"
                             />
                             {errors.slots && <p className="text-red-400 text-xs">{errors.slots.message}</p>}
                         </div>
@@ -129,7 +129,7 @@ const PostBountyPage = () => {
                                 {...register('description')}
                                 rows={5}
                                 placeholder="Describe the task in detail. What are the goals? What is the expected outcome?"
-                                className="w-full bg-iq-black border border-iq-border rounded-lg px-4 py-3 text-white focus:border-blue-500 outline-none resize-none"
+                                className="w-full bg-iq-black border border-iq-border rounded-lg px-4 py-3 text-white focus:border-iq-green outline-none resize-none focus:shadow-[0_0_10px_rgba(0,255,157,0.1)]"
                             />
                             {errors.description && <p className="text-red-400 text-xs">{errors.description.message}</p>}
                         </div>
@@ -139,7 +139,7 @@ const PostBountyPage = () => {
                 {/* Section 2: Requirements */}
                 <div className="bg-iq-secondary/30 border border-iq-border rounded-xl p-6 space-y-6">
                     <h2 className="text-xl font-bold text-white flex items-center gap-2 border-b border-iq-border pb-4">
-                        <Target className="w-5 h-5 text-blue-400" />
+                        <Target className="w-5 h-5 text-iq-green" />
                         Requirements & Deliverables
                     </h2>
 
@@ -150,7 +150,7 @@ const PostBountyPage = () => {
                                     <input
                                         {...register(`requirements.${index}.value` as const)}
                                         placeholder={`Requirement #${index + 1}`}
-                                        className="w-full bg-iq-black border border-iq-border rounded-lg px-4 py-3 text-white focus:border-blue-500 outline-none"
+                                        className="w-full bg-iq-black border border-iq-border rounded-lg px-4 py-3 text-white focus:border-iq-green outline-none focus:shadow-[0_0_10px_rgba(0,255,157,0.1)]"
                                     />
                                     {errors.requirements?.[index]?.value && (
                                         <p className="text-red-400 text-xs mt-1">{errors.requirements[index]?.value?.message}</p>
@@ -169,7 +169,7 @@ const PostBountyPage = () => {
                         <button
                             type="button"
                             onClick={() => append({ value: '' })}
-                            className="text-sm font-bold text-blue-400 hover:text-blue-300 flex items-center gap-2 mt-2"
+                            className="text-sm font-bold text-iq-green hover:text-emerald-400 flex items-center gap-2 mt-2"
                         >
                             <Plus className="w-4 h-4" /> Add Requirement
                         </button>
@@ -192,7 +192,7 @@ const PostBountyPage = () => {
                                 <input
                                     type="number"
                                     {...register('reward', { valueAsNumber: true })}
-                                    className="w-full bg-iq-black border border-iq-border rounded-lg pl-8 pr-4 py-3 text-white focus:border-green-400 outline-none font-mono text-lg"
+                                    className="w-full bg-iq-black border border-iq-border rounded-lg pl-8 pr-4 py-3 text-white focus:border-iq-green outline-none font-mono text-lg focus:shadow-[0_0_10px_rgba(0,255,157,0.1)]"
                                 />
                             </div>
                             {errors.reward && <p className="text-red-400 text-xs">{errors.reward.message}</p>}
@@ -205,7 +205,7 @@ const PostBountyPage = () => {
                                 <input
                                     type="datetime-local"
                                     {...register('deadline')}
-                                    className="w-full bg-iq-black border border-iq-border rounded-lg pl-12 pr-4 py-3 text-white focus:border-blue-500 outline-none"
+                                    className="w-full bg-iq-black border border-iq-border rounded-lg pl-12 pr-4 py-3 text-white focus:border-iq-green outline-none focus:shadow-[0_0_10px_rgba(0,255,157,0.1)]"
                                 />
                             </div>
                             {errors.deadline && <p className="text-red-400 text-xs">{errors.deadline.message}</p>}
@@ -225,7 +225,7 @@ const PostBountyPage = () => {
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className="flex-grow px-8 py-4 rounded-xl font-bold text-white bg-blue-600 hover:bg-blue-500 hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="flex-grow px-8 py-4 rounded-xl font-bold text-iq-black bg-iq-green hover:bg-emerald-500 hover:shadow-[0_0_20px_rgba(0,255,157,0.4)] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Post Bounty & Fund'}
                     </button>
