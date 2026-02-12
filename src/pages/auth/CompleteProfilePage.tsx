@@ -8,7 +8,10 @@ const CompleteProfilePage = () => {
     const { user, refreshProfile } = useAuth();
     const navigate = useNavigate();
     const [username, setUsername] = useState('');
-    const [role, setRole] = useState<'hunter' | 'payer'>('hunter');
+    const [role, setRole] = useState<'hunter' | 'payer'>(() => {
+        const savedRole = sessionStorage.getItem('iqhunt_role');
+        return (savedRole === 'hunter' || savedRole === 'payer') ? savedRole : 'hunter';
+    });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -31,7 +34,21 @@ const CompleteProfilePage = () => {
             if (updateError) throw updateError;
 
             await refreshProfile();
-            navigate(role === 'hunter' ? '/hunter/dashboard' : '/payer/dashboard');
+
+            // Double check if profile is updated before navigating
+            // This prevents the infinite loop where RequireAuth sends us back
+            const { data: refreshedProfile } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', user.id)
+                .single();
+
+            if (refreshedProfile && refreshedProfile.username) {
+                navigate(role === 'hunter' ? '/hunter/dashboard' : '/payer/dashboard');
+            } else {
+                throw new Error("Profile verification failed. Please try again.");
+            }
+
         } catch (err: any) {
             console.error('Profile Update Error:', err);
             setError(err.message || 'Failed to update profile.');
@@ -75,8 +92,8 @@ const CompleteProfilePage = () => {
                             type="button"
                             onClick={() => setRole('hunter')}
                             className={`p-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${role === 'hunter'
-                                    ? 'bg-iq-green/10 border-iq-green text-iq-green shadow-[0_0_15px_rgba(0,255,157,0.2)]'
-                                    : 'bg-white/5 border-white/10 text-iq-text-secondary hover:bg-white/10'
+                                ? 'bg-iq-green/10 border-iq-green text-iq-green shadow-[0_0_15px_rgba(0,255,157,0.2)]'
+                                : 'bg-white/5 border-white/10 text-iq-text-secondary hover:bg-white/10'
                                 }`}
                         >
                             <User className="w-6 h-6" />
@@ -87,8 +104,8 @@ const CompleteProfilePage = () => {
                             type="button"
                             onClick={() => setRole('payer')}
                             className={`p-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${role === 'payer'
-                                    ? 'bg-blue-500/10 border-blue-500 text-blue-400 shadow-[0_0_15px_rgba(96,165,250,0.2)]'
-                                    : 'bg-white/5 border-white/10 text-iq-text-secondary hover:bg-white/10'
+                                ? 'bg-blue-500/10 border-blue-500 text-blue-400 shadow-[0_0_15px_rgba(96,165,250,0.2)]'
+                                : 'bg-white/5 border-white/10 text-iq-text-secondary hover:bg-white/10'
                                 }`}
                         >
                             <Wallet className="w-6 h-6" />

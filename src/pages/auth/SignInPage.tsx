@@ -6,14 +6,18 @@ import { Link } from 'react-router-dom';
 const SignInPage = () => {
     const { signInWithGoogle } = useAuth();
     const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState(false);
 
     const handleGoogleSignIn = async () => {
         try {
+            setLoading(true);
+            setError(null);
             console.log('Initiating Google Sign In...');
             await signInWithGoogle();
         } catch (err) {
             console.error('Sign In Error:', err);
             setError('Failed to sign in with Google. Check console for details.');
+            setLoading(false);
         }
     };
 
@@ -39,11 +43,17 @@ const SignInPage = () => {
                 )}
 
                 <button
+                    type="button"
                     onClick={handleGoogleSignIn}
-                    className="w-full py-4 bg-white text-black font-bold rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-center gap-3 mb-6"
+                    disabled={loading}
+                    className="w-full py-4 bg-white text-black font-bold rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-center gap-3 mb-6 disabled:opacity-70 disabled:cursor-not-allowed"
                 >
-                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-6 h-6" />
-                    Continue with Google
+                    {loading ? (
+                        <div className="w-6 h-6 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-6 h-6" />
+                    )}
+                    {loading ? 'Connecting...' : 'Continue with Google'}
                 </button>
 
                 <div className="text-center text-sm text-iq-text-secondary">
