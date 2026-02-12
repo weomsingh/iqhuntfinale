@@ -24,12 +24,13 @@ const CompleteProfilePage = () => {
         try {
             const { error: updateError } = await supabase
                 .from('profiles')
-                .update({
+                .upsert({
+                    id: user.id,
                     username,
                     role,
+                    email: user.email,
                     updated_at: new Date().toISOString(),
-                })
-                .eq('id', user.id);
+                });
 
             if (updateError) throw updateError;
 
