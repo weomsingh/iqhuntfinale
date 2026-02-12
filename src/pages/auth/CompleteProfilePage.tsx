@@ -88,31 +88,54 @@ const CompleteProfilePage = () => {
                         />
                     </div>
 
+                    {/* Role Selection - Simplified if pre-selected */}
                     <div className="grid grid-cols-2 gap-4">
+                        {/* Hunter Button */}
                         <button
                             type="button"
                             onClick={() => setRole('hunter')}
                             className={`p-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${role === 'hunter'
                                 ? 'bg-iq-green/10 border-iq-green text-iq-green shadow-[0_0_15px_rgba(0,255,157,0.2)]'
                                 : 'bg-white/5 border-white/10 text-iq-text-secondary hover:bg-white/10'
-                                }`}
+                                } ${sessionStorage.getItem('iqhunt_role') === 'payer' ? 'opacity-50 grayscale cursor-not-allowed hidden' : ''}`}
+                            disabled={sessionStorage.getItem('iqhunt_role') === 'payer'}
                         >
                             <User className="w-6 h-6" />
                             <span className="font-bold">Hunter</span>
                         </button>
 
+                        {/* Payer Button */}
                         <button
                             type="button"
                             onClick={() => setRole('payer')}
                             className={`p-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${role === 'payer'
                                 ? 'bg-blue-500/10 border-blue-500 text-blue-400 shadow-[0_0_15px_rgba(96,165,250,0.2)]'
                                 : 'bg-white/5 border-white/10 text-iq-text-secondary hover:bg-white/10'
-                                }`}
+                                } ${sessionStorage.getItem('iqhunt_role') === 'hunter' ? 'opacity-50 grayscale cursor-not-allowed hidden' : ''}`}
+                            disabled={sessionStorage.getItem('iqhunt_role') === 'hunter'}
                         >
                             <Wallet className="w-6 h-6" />
                             <span className="font-bold">Payer</span>
                         </button>
                     </div>
+
+                    {/* Change Role Link if pre-selected */}
+                    {sessionStorage.getItem('iqhunt_role') && (
+                        <div className="text-center">
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    sessionStorage.removeItem('iqhunt_role');
+                                    // Force re-render/reset is handled by React state, but we need to unlock UI
+                                    // A simple reload is easiest to clear state, or just clearing storage and updating state
+                                    window.location.reload();
+                                }}
+                                className="text-xs text-iq-text-secondary hover:text-white underline"
+                            >
+                                Not a {role === 'hunter' ? 'Hunter' : 'Payer'}? Switch Role
+                            </button>
+                        </div>
+                    )}
 
                     <button
                         type="submit"
