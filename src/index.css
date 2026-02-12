@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+@theme {
+  --color-iq-black: #0a0a0a;
+  --color-iq-secondary: #111111;
+  --color-iq-green: #00ff9d;
+  --color-iq-text: #ffffff;
+  --color-iq-text-secondary: #888888;
+  --color-iq-border: rgba(0, 255, 157, 0.2);
+
+  --font-sans: Inter, sans-serif;
+  --font-display: "Space Grotesk", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+}
+
+@layer base {
+  :root {
+    @apply bg-iq-black text-iq-text font-sans;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-display font-bold;
+  }
+}
