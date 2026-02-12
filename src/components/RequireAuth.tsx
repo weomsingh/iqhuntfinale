@@ -32,8 +32,9 @@ const RequireAuth = ({ children, allowedRole }: RequireAuthProps) => {
 
     // If user exists but no profile (incomplete onboarding), redirect to role selection
     // EXCEPT if they are already on onboarding pages (handled by App routing structure)
+    // If user exists but no profile (incomplete onboarding), redirect to role selection
     if (!profile) {
-        return <Navigate to="/onboarding/role" replace />;
+        return <Navigate to="/complete-profile" replace />;
     }
 
     return children;
