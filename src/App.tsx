@@ -6,6 +6,8 @@ import AdminLayout from './layouts/AdminLayout';
 
 import HomePage from './pages/HomePage';
 import TermsPage from './pages/TermsPage';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import ContactPage from './pages/ContactPage';
 import SignInPage from './pages/auth/SignInPage';
 import CompleteProfilePage from './pages/auth/CompleteProfilePage';
 import AuthCallbackPage from './pages/auth/AuthCallbackPage';
@@ -45,7 +47,8 @@ function App() {
           <Route path="/" element={<MainLayout />}>
             <Route index element={<HomePage />} />
             <Route path="terms" element={<TermsPage />} />
-            <Route path="privacy" element={<TermsPage />} />
+            <Route path="privacy" element={<PrivacyPolicy />} />
+            <Route path="contact" element={<ContactPage />} />
             <Route path="covenant" element={<CovenantPage />} />
             <Route path="signin" element={<SignInPage />} />
             <Route path="signup" element={<SignInPage />} />
