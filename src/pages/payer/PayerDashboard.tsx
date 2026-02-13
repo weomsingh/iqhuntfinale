@@ -1,15 +1,14 @@
+```
 import { Link } from 'react-router-dom';
 import {
     PlusCircle,
     Wallet,
-    Briefcase,
     Users,
     ArrowRight,
     Zap,
     TrendingUp,
     CheckCircle,
     ArrowUpRight,
-    Clock,
     MessageSquare
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
@@ -26,7 +25,7 @@ const PayerDashboard = () => {
     const stats = [
         {
             label: 'Wallet Balance',
-            value: `₹${profile?.wallet_balance?.toLocaleString('en-IN') || '45,230.00'}`,
+            value: `₹${ profile?.wallet_balance?.toLocaleString('en-IN') || '45,230.00' } `,
             subtext: '↑ ₹5,000 this week',
             subtextColor: 'text-iq-green',
             icon: Wallet,
@@ -106,7 +105,7 @@ const PayerDashboard = () => {
                         </div>
                         <p className="text-sm font-medium text-[#888]">{stat.label}</p>
                         <h3 className="text-3xl font-black text-white mt-2 mb-1">{stat.value}</h3>
-                        <p className={`text-xs font-bold ${stat.subtextColor} flex items-center gap-1`}>
+                        <p className={`text - xs font - bold ${ stat.subtextColor } flex items - center gap - 1`}>
                             {stat.subtext}
                         </p>
                         <Link to={stat.ctaLink} className="inline-block mt-4 text-sm font-bold text-iq-green hover:underline">
@@ -175,8 +174,9 @@ const PayerDashboard = () => {
                         <div key={bounty.id} className="bg-[#ffffff05] border border-[#ffffff1a] rounded-2xl p-6 hover:border-iq-green/50 transition-all group">
                             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
                                 <div className="flex items-center gap-4">
-                                    <span className={`px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider ${bounty.status === 'ACTIVE' ? 'bg-iq-green/20 text-iq-green' : 'bg-yellow-500/20 text-yellow-500'
-                                        }`}>
+                                    <span className={`px - 3 py - 1 rounded - full text - xs font - black uppercase tracking - wider ${
+    bounty.status === 'ACTIVE' ? 'bg-iq-green/20 text-iq-green' : 'bg-yellow-500/20 text-yellow-500'
+} `}>
                                         {bounty.status}
                                     </span>
                                     <h3 className="text-xl font-bold text-white group-hover:text-iq-green transition-colors">{bounty.title}</h3>
