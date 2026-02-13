@@ -12,6 +12,7 @@ import HunterLayout from './pages/hunter/HunterLayout';
 import HunterArena from './pages/hunter/Arena';
 import HunterDashboard from './pages/hunter/Dashboard';
 import HunterVault from './pages/hunter/Vault';
+import BountyDetails from './pages/hunter/BountyDetails';
 
 // Payer pages
 import PayerLayout from './pages/payer/PayerLayout';
@@ -55,6 +56,7 @@ function App() {
                         <Route path="arena" element={<HunterArena />} />
                         <Route path="dashboard" element={<HunterDashboard />} />
                         <Route path="vault" element={<HunterVault />} />
+                        <Route path="bounty/:id" element={<BountyDetails />} />
                     </Route>
 
                     {/* Payer routes - PROTECTED */}

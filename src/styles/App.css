@@ -1863,6 +1863,272 @@
     line-height: 1.5;
 }
 
+/* Bounty Details Page */
+.bounty-details-page {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.back-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #888888;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.back-link:hover {
+    color: #00ff9d;
+}
+
+.status-badges {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.status-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.status-badge.live {
+    background: rgba(0, 255, 157, 0.2);
+    color: #00ff9d;
+    border: 1px solid rgba(0, 255, 157, 0.3);
+}
+
+.status-badge.expired {
+    background: rgba(255, 82, 82, 0.2);
+    color: #ff5252;
+    border: 1px solid rgba(255, 82, 82, 0.3);
+}
+
+.status-badge.staked {
+    background: rgba(0, 157, 255, 0.2);
+    color: #009dff;
+    border: 1px solid rgba(0, 157, 255, 0.3);
+}
+
+.bounty-title-section {
+    margin-bottom: 3rem;
+}
+
+.bounty-title-section h1 {
+    font-size: 3rem;
+    font-weight: 900;
+    color: #ffffff;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+
+.bounty-description {
+    font-size: 1.25rem;
+    color: #888888;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.bounty-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.stat-box {
+    background: #111111;
+    border: 1px solid rgba(0, 255, 157, 0.2);
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.stat-box .stat-icon {
+    width: 56px;
+    height: 56px;
+    background: rgba(0, 255, 157, 0.1);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #00ff9d;
+}
+
+.stat-box .stat-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.stat-box .stat-label {
+    color: #666666;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.stat-box .stat-value {
+    color: #ffffff;
+    font-size: 1.75rem;
+    font-weight: 900;
+}
+
+.mission-section {
+    background: #111111;
+    border: 2px solid rgba(0, 255, 157, 0.3);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 3rem;
+}
+
+.mission-section h2 {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #ffffff;
+    margin-bottom: 2rem;
+}
+
+.mission-access,
+.mission-locked {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 3rem 2rem;
+    text-align: center;
+}
+
+.mission-access h3,
+.mission-locked h3 {
+    color: #ffffff;
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.mission-access p,
+.mission-locked p {
+    color: #888888;
+    max-width: 600px;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.mission-locked svg {
+    color: #666666;
+}
+
+.btn-stake {
+    font-size: 1.125rem;
+    padding: 1rem 2rem;
+}
+
+.cannot-stake {
+    color: #ff5252;
+    font-weight: 600;
+}
+
+.hunter-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.hunter-actions .action-card {
+    background: #111111;
+    border: 1px solid rgba(0, 255, 157, 0.2);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.hunter-actions .action-card svg {
+    color: #00ff9d;
+}
+
+.hunter-actions .action-card h3 {
+    color: #ffffff;
+    margin: 0;
+}
+
+.hunter-actions .action-card p {
+    color: #888888;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.bounty-info-section {
+    background: rgba(0, 255, 157, 0.05);
+    border: 1px solid rgba(0, 255, 157, 0.2);
+    border-radius: 12px;
+    padding: 2rem;
+}
+
+.bounty-info-section h3 {
+    color: #00ff9d;
+    margin-bottom: 1rem;
+}
+
+.bounty-info-section ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.bounty-info-section li {
+    color: #cccccc;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    line-height: 1.6;
+}
+
+.bounty-info-section li:last-child {
+    border-bottom: none;
+}
+
+.error-state,
+.loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    padding: 4rem 2rem;
+    text-align: center;
+}
+
+.error-state svg {
+    color: #ff5252;
+}
+
+.error-state h2 {
+    color: #ffffff;
+    margin: 0;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .dashboard-layout {
