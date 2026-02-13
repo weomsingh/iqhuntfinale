@@ -19,28 +19,32 @@ const CompleteProfilePage = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!user) return;
         setLoading(true);
         setError(null);
 
         const upsertProfile = async (retryCount = 0) => {
             try {
+                // Get fresh user to ensure token is valid
+                const { data: { user: freshUser }, error: userError } = await supabase.auth.getUser();
+                if (userError || !freshUser) throw new Error("Session expired. Please sign in again.");
+
                 const { error: updateError } = await supabase
                     .from('profiles')
                     .upsert({
-                        id: user.id,
+                        id: freshUser.id,
                         username,
                         role,
-                        email: user.email,
+                        email: freshUser.email,
                         nationality,
                         currency: nationality === 'india' ? 'INR' : 'USD',
                         updated_at: new Date().toISOString(),
-                    });
+                    }, { onConflict: 'id' });
 
                 if (updateError) throw updateError;
                 return true;
             } catch (err) {
-                if (retryCount < 2) { // 3 attempts total
+                if (retryCount < 2) {
+                    // Exponential backoff: 1s, then 2s
                     await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, retryCount)));
                     return upsertProfile(retryCount + 1);
                 }
