@@ -8,17 +8,17 @@ import AuthCallback from './pages/AuthCallback';
 import OnboardingPage from './pages/OnboardingPage';
 
 // Hunter pages
-import HunterLayout from './pages/Hunter/HunterLayout';
-import HunterArena from './pages/Hunter/Arena';
-import HunterDashboard from './pages/Hunter/Dashboard';
-import HunterVault from './pages/Hunter/Vault';
+import HunterLayout from './pages/hunter/HunterLayout';
+import HunterArena from './pages/hunter/Arena';
+import HunterDashboard from './pages/hunter/Dashboard';
+import HunterVault from './pages/hunter/Vault';
 
 // Payer pages
-import PayerLayout from './pages/Payer/PayerLayout';
-import PayerDashboard from './pages/Payer/Dashboard';
-import PayerLiveBounties from './pages/Payer/LiveBounties';
-import PayerHistory from './pages/Payer/History';
-import PayerVault from './pages/Payer/Vault';
+import PayerLayout from './pages/payer/PayerLayout';
+import PayerDashboard from './pages/payer/Dashboard';
+import PayerLiveBounties from './pages/payer/LiveBounties';
+import PayerHistory from './pages/payer/History';
+import PayerVault from './pages/payer/Vault';
 
 // Static pages
 import Terms from './pages/static/Terms';
