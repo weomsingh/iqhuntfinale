@@ -12,6 +12,7 @@ import HunterLayout from './pages/hunter/HunterLayout';
 import HunterArena from './pages/hunter/Arena';
 import HunterDashboard from './pages/hunter/Dashboard';
 import HunterVault from './pages/hunter/Vault';
+import HunterWarRoom from './pages/hunter/WarRoom';
 import BountyDetails from './pages/hunter/BountyDetails';
 
 // Payer pages
@@ -20,6 +21,7 @@ import PayerDashboard from './pages/payer/Dashboard';
 import PayerLiveBounties from './pages/payer/LiveBounties';
 import PayerHistory from './pages/payer/History';
 import PayerVault from './pages/payer/Vault';
+import PayerWarRoom from './pages/payer/WarRoom';
 import PostBounty from './pages/payer/PostBounty';
 import PayerBountyDetails from './pages/payer/BountyDetails';
 
@@ -62,6 +64,7 @@ function App() {
                         <Route path="arena" element={<HunterArena />} />
                         <Route path="dashboard" element={<HunterDashboard />} />
                         <Route path="vault" element={<HunterVault />} />
+                        <Route path="war-room" element={<HunterWarRoom />} />
                         <Route path="bounty/:id" element={<BountyDetails />} />
                     </Route>
 
@@ -81,6 +84,7 @@ function App() {
                         <Route path="live-bounties" element={<PayerLiveBounties />} />
                         <Route path="history" element={<PayerHistory />} />
                         <Route path="vault" element={<PayerVault />} />
+                        <Route path="war-room" element={<PayerWarRoom />} />
                     </Route>
 
                     {/* Admin routes - PROTECTED */}

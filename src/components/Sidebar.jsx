@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Home, Target, Wallet, LogOut, Zap, History as HistoryIcon, Shield } from 'lucide-react';
+import { Home, Target, Wallet, LogOut, Zap, History as HistoryIcon, Shield, MessageSquare } from 'lucide-react';
 
 export default function Sidebar({ role }) {
     const location = useLocation();
@@ -9,12 +9,14 @@ export default function Sidebar({ role }) {
     const hunterLinks = [
         { path: '/hunter/dashboard', label: 'Dashboard', icon: Home },
         { path: '/hunter/arena', label: 'Arena', icon: Target },
+        { path: '/hunter/war-room', label: 'War Room', icon: MessageSquare },
         { path: '/hunter/vault', label: 'Vault', icon: Wallet },
     ];
 
     const payerLinks = [
         { path: '/payer/dashboard', label: 'Dashboard', icon: Home },
         { path: '/payer/live-bounties', label: 'Live Bounties', icon: Zap },
+        { path: '/payer/war-room', label: 'War Room', icon: MessageSquare },
         { path: '/payer/history', label: 'History', icon: HistoryIcon },
         { path: '/payer/vault', label: 'Vault', icon: Wallet },
     ];

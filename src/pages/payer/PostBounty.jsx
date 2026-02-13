@@ -12,7 +12,6 @@ export default function PostBounty() {
         title: '',
         description: '',
         reward: '',
-        entry_fee: '',
         submission_deadline: '',
         mission_pdf_url: ''
     });
@@ -22,6 +21,27 @@ export default function PostBounty() {
     const [errors, setErrors] = useState({});
 
     const currency = currentUser?.currency === 'INR' ? '₹' : '$';
+
+    // Calculate stake price based on reward (for INR only)
+    function calculateStakePrice(reward) {
+        if (currentUser?.currency !== 'INR') {
+            return { stake: 0, maxHunters: 10 }; // For USD, set manually
+        }
+
+        const amount = parseFloat(reward);
+
+        if (amount < 1500) {
+            return { stake: 15, maxHunters: 4 };
+        } else if (amount < 3000) {
+            return { stake: 25, maxHunters: 6 };
+        } else if (amount < 4500) {
+            return { stake: 40, maxHunters: 8 };
+        } else {
+            return { stake: Math.ceil(amount * 0.025), maxHunters: 10 };
+        }
+    }
+
+    const stakeInfo = formData.reward ? calculateStakePrice(formData.reward) : { stake: 0, maxHunters: 0 };
 
     function handleChange(e) {
         const { name, value } = e.target;
@@ -55,9 +75,6 @@ export default function PostBounty() {
         if (!formData.description.trim()) newErrors.description = 'Description is required';
         if (!formData.reward || parseFloat(formData.reward) <= 0) {
             newErrors.reward = 'Reward must be greater than 0';
-        }
-        if (!formData.entry_fee || parseFloat(formData.entry_fee) <= 0) {
-            newErrors.entry_fee = 'Entry fee must be greater than 0';
         }
         if (!formData.submission_deadline) {
             newErrors.submission_deadline = 'Deadline is required';
@@ -127,7 +144,7 @@ export default function PostBounty() {
                 throw new Error('Failed to upload mission PDF');
             }
 
-            // Create bounty
+            // Create bounty (entry_fee calculated automatically by platform)
             const { data: bountyData, error: bountyError } = await supabase
                 .from('bounties')
                 .insert({
@@ -135,11 +152,12 @@ export default function PostBounty() {
                     title: formData.title,
                     description: formData.description,
                     reward: parseFloat(formData.reward),
-                    entry_fee: parseFloat(formData.entry_fee),
+                    entry_fee: stakeInfo.stake,
+                    max_hunters: stakeInfo.maxHunters,
                     currency: currentUser.currency,
                     submission_deadline: formData.submission_deadline,
                     mission_pdf_url: pdfUrl,
-                    status: 'live', // Auto-approve for now (will add admin approval later)
+                    status: 'live',
                     vault_locked: parseFloat(formData.reward) * 1.05
                 })
                 .select()
@@ -234,45 +252,50 @@ export default function PostBounty() {
                     <small>{formData.description.length}/500</small>
                 </div>
 
-                {/* Reward & Entry Fee */}
-                <div className="form-row">
-                    <div className="form-group">
-                        <label htmlFor="reward">
-                            <DollarSign size={18} />
-                            Winner Reward ({currency}) *
-                        </label>
-                        <input
-                            type="number"
-                            id="reward"
-                            name="reward"
-                            value={formData.reward}
-                            onChange={handleChange}
-                            placeholder="10000"
-                            min="1"
-                            step="0.01"
-                            className={errors.reward ? 'error' : ''}
-                        />
-                        {errors.reward && <span className="error-text">{errors.reward}</span>}
-                    </div>
+                {/* Reward */}
+                <div className="form-group">
+                    <label htmlFor="reward">
+                        <DollarSign size={18} />
+                        Winner Reward ({currency}) *
+                    </label>
+                    <input
+                        type="number"
+                        id="reward"
+                        name="reward"
+                        value={formData.reward}
+                        onChange={handleChange}
+                        placeholder="10000"
+                        min="1"
+                        step="0.01"
+                        className={errors.reward ? 'error' : ''}
+                    />
+                    {errors.reward && <span className="error-text">{errors.reward}</span>}
 
-                    <div className="form-group">
-                        <label htmlFor="entry_fee">
-                            <Target size={18} />
-                            Hunter Entry Fee ({currency}) *
-                        </label>
-                        <input
-                            type="number"
-                            id="entry_fee"
-                            name="entry_fee"
-                            value={formData.entry_fee}
-                            onChange={handleChange}
-                            placeholder="500"
-                            min="1"
-                            step="0.01"
-                            className={errors.entry_fee ? 'error' : ''}
-                        />
-                        {errors.entry_fee && <span className="error-text">{errors.entry_fee}</span>}
-                    </div>
+                    {/* Stake Calculator Info */}
+                    {formData.reward && stakeInfo.stake > 0 && (
+                        <div className="stake-info-box" style={{
+                            marginTop: '1rem',
+                            padding: '1rem',
+                            background: 'rgba(0, 255, 157, 0.05)',
+                            border: '1px solid rgba(0, 255, 157, 0.2)',
+                            borderRadius: '8px'
+                        }}>
+                            <strong style={{ color: '#00ff9d', display: 'block', marginBottom: '0.5rem' }}>
+                                🎯 Platform Calculated Stakes:
+                            </strong>
+                            <div style={{ color: '#cccccc', fontSize: '0.9rem' }}>
+                                <p style={{ margin: '0.25rem 0' }}>
+                                    • Hunter Entry Fee: <strong>{currency}{stakeInfo.stake}</strong>
+                                </p>
+                                <p style={{ margin: '0.25rem 0' }}>
+                                    • Max Hunters: <strong>{stakeInfo.maxHunters}</strong>
+                                </p>
+                                <p style={{ margin: '0.5rem 0 0', fontSize: '0.8rem', color: '#888' }}>
+                                    Stakes are automatically calculated based on your reward amount
+                                </p>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* Deadline */}
