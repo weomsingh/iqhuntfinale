@@ -51,7 +51,7 @@ function App() {
                             </ProtectedRoute>
                         }
                     >
-                        <Route index element={<Navigate to="/hunter/arena" replace />} />
+                        <Route index element={<Navigate to="/hunter/dashboard" replace />} />
                         <Route path="arena" element={<HunterArena />} />
                         <Route path="dashboard" element={<HunterDashboard />} />
                         <Route path="vault" element={<HunterVault />} />

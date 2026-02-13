@@ -100,7 +100,7 @@ export default function OnboardingPage() {
 
             // Navigate to dashboard
             if (formData.role === 'hunter') {
-                navigate('/hunter/arena', { replace: true });
+                navigate('/hunter/dashboard', { replace: true });
             } else {
                 navigate('/payer/dashboard', { replace: true });
             }

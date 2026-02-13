@@ -63,7 +63,7 @@ export default function AuthCallback() {
                 // All good - go to dashboard
                 localStorage.removeItem('intended_role');
                 if (existingProfile.role === 'hunter') {
-                    navigate('/hunter/arena', { replace: true });
+                    navigate('/hunter/dashboard', { replace: true });
                 } else {
                     navigate('/payer/dashboard', { replace: true });
                 }
