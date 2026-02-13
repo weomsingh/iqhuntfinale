@@ -12,7 +12,7 @@ import AuthCallbackPage from './pages/auth/AuthCallbackPage';
 import CovenantPage from './pages/CovenantPage';
 
 import HunterDashboard from './pages/hunter/HunterDashboard';
-import ArenaPage from './pages/hunter/ArenaPage'; // Corrected import
+import ArenaPage from './pages/hunter/ArenaPage';
 import BountyDetailsPage from './pages/hunter/BountyDetailsPage';
 import WarRoomPage from './pages/hunter/WarRoomPage';
 import HunterVaultPage from './pages/hunter/HunterVaultPage';
@@ -23,6 +23,11 @@ import MyBountiesPage from './pages/payer/MyBountiesPage';
 import BountyManagementPage from './pages/payer/BountyManagementPage';
 import PayerWalletPage from './pages/payer/PayerWalletPage';
 import PayerSettingsPage from './pages/payer/PayerSettingsPage';
+import PayerLiveBountiesPage from './pages/payer/PayerLiveBountiesPage';
+import PayerHistoryPage from './pages/payer/PayerHistoryPage';
+import PayerVaultPage from './pages/payer/PayerVaultPage';
+import PayerAnalyticsPage from './pages/payer/PayerAnalyticsPage';
+import PayerHelpPage from './pages/payer/PayerHelpPage';
 
 import AdminDashboard from './pages/admin/AdminDashboard';
 import VerifyFundsPage from './pages/admin/VerifyFundsPage';
@@ -67,10 +72,15 @@ function App() {
           }>
             <Route path="dashboard" element={<PayerDashboard />} />
             <Route path="post-bounty" element={<PostBountyPage />} />
+            <Route path="live-bounties" element={<PayerLiveBountiesPage />} />
             <Route path="bounties" element={<MyBountiesPage />} />
             <Route path="bounty/:id" element={<BountyManagementPage />} />
             <Route path="wallet" element={<PayerWalletPage />} />
+            <Route path="vault" element={<PayerVaultPage />} />
+            <Route path="history" element={<PayerHistoryPage />} />
+            <Route path="analytics" element={<PayerAnalyticsPage />} />
             <Route path="settings" element={<PayerSettingsPage />} />
+            <Route path="help" element={<PayerHelpPage />} />
           </Route>
 
           <Route path="/admin" element={
