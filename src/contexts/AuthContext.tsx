@@ -53,17 +53,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     useEffect(() => {
         // Check active session
         const initAuth = async () => {
-            const { data: { session } } = await supabase.auth.getSession();
-            setSession(session);
-            setUser(session?.user ?? null);
+            try {
+                const { data: { session }, error } = await supabase.auth.getSession();
+                if (error) console.error("Error getting session:", error);
 
-            if (session?.user) {
-                await fetchProfile(session.user.id);
+                setSession(session);
+                setUser(session?.user ?? null);
+
+                if (session?.user) {
+                    await fetchProfile(session.user.id);
+                }
+            } catch (err) {
+                console.error("Unexpected error during auth initialization:", err);
+            } finally {
+                setLoading(false);
             }
-            setLoading(false);
         };
 
-        initAuth();
+        // Fallback timeout to prevent infinite loading
+        const timeoutId = setTimeout(() => {
+            setLoading(false);
+            console.warn("Auth initialization timed out, forcing loading to false");
+        }, 5000);
+
+        initAuth().then(() => clearTimeout(timeoutId));
 
         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
             setSession(session);
