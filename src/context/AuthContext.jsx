@@ -8,8 +8,16 @@ export function AuthProvider({ children }) {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        // CRITICAL: Always set loading to false after max 3 seconds
+        const loadingTimeout = setTimeout(() => {
+            console.log('⚠️ Loading timeout - forcing loading=false');
+            setLoading(false);
+        }, 3000);
+
         // Check for existing session on mount
-        checkSession();
+        checkSession().finally(() => {
+            clearTimeout(loadingTimeout);
+        });
 
         // Listen for auth changes
         const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -26,32 +34,58 @@ export function AuthProvider({ children }) {
             }
         );
 
-        return () => subscription.unsubscribe();
+        return () => {
+            subscription.unsubscribe();
+            clearTimeout(loadingTimeout);
+        };
     }, []);
 
     async function checkSession() {
         try {
-            const { data: { session } } = await supabase.auth.getSession();
+            console.log('🔍 Checking session...');
+            const { data: { session }, error } = await supabase.auth.getSession();
+
+            if (error) {
+                console.error('Session error:', error);
+                setLoading(false);
+                return;
+            }
 
             if (session?.user) {
+                console.log('✅ Session found, fetching profile...');
                 await fetchProfile(session.user.id);
+            } else {
+                console.log('ℹ️ No active session');
             }
         } catch (error) {
             console.error('Session check error:', error);
         } finally {
+            console.log('✅ Session check complete, setting loading=false');
             setLoading(false);
         }
     }
 
     async function fetchProfile(userId) {
         try {
+            console.log('Fetching profile for:', userId);
             const { data, error } = await supabase
                 .from('profiles')
                 .select('*')
                 .eq('id', userId)
                 .single();
 
-            if (error) throw error;
+            if (error) {
+                console.error('Profile fetch error:', error);
+                // If profile doesn't exist, that's okay - user needs to onboard
+                if (error.code === 'PGRST116') {
+                    console.log('No profile found - user needs onboarding');
+                    setCurrentUser(null);
+                    return;
+                }
+                throw error;
+            }
+
+            console.log('✅ Profile loaded:', data.username);
             setCurrentUser(data);
         } catch (error) {
             console.error('Profile fetch error:', error);
@@ -91,6 +125,26 @@ export function AuthProvider({ children }) {
         refetchProfile: () => currentUser && fetchProfile(currentUser.id),
         refreshUser: () => currentUser && fetchProfile(currentUser.id), // Alias
     };
+
+    // Show loading screen only for first 3 seconds max
+    if (loading) {
+        return (
+            <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minHeight: '100vh',
+                background: '#0a0a0a',
+                color: '#00ff9d',
+                fontSize: '1.5rem',
+                flexDirection: 'column',
+                gap: '1rem'
+            }}>
+                <div className="spinner"></div>
+                <div>Loading...</div>
+            </div>
+        );
+    }
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
