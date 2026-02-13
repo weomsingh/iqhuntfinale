@@ -268,7 +268,7 @@ export default function PayerVault() {
                                 <div>
                                     <strong>Payment Instructions:</strong>
                                     <ol style={{ margin: '0.5rem 0 0', paddingLeft: '1.25rem' }}>
-                                        <li>Send money to our UPI ID: <strong>iqhuntarena@upi</strong></li>
+                                        <li>Send money to our UPI ID: <strong>singhomedu69-1@oksbi</strong></li>
                                         <li>Copy the UTR/Reference number from your transaction</li>
                                         <li>Enter the details below</li>
                                         <li>Admin will verify and credit within 24 hours</li>

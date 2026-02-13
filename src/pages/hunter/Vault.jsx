@@ -451,7 +451,7 @@ export default function HunterVault() {
                                         <li>Admin will verify and credit your wallet within 24 hours</li>
                                     </ol>
                                     <p style={{ marginTop: '0.75rem', fontSize: '0.875rem', color: '#888' }}>
-                                        <strong>UPI ID:</strong> iqhunt@paytm<br />
+                                        <strong>UPI ID:</strong> singhomedu69-1@oksbi<br />
                                         <strong>Account:</strong> Contact support for details
                                     </p>
                                 </div>
