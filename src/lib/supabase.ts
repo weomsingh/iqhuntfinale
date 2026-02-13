@@ -12,4 +12,31 @@ if (!supabaseUrl || !supabaseKey) {
 const url = supabaseUrl || 'https://placeholder.supabase.co';
 const key = supabaseKey || 'placeholder-key';
 
-export const supabase = createClient(url, key);
+// Create client with custom configuration for better reliability
+export const supabase = createClient(url, key, {
+    auth: {
+        persistSession: true, // Explicitly enable session persistence
+        storage: window.localStorage, // Use localStorage
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+    },
+    global: {
+        // Add custom fetch with longer timeout (30s) to fix "Request timed out" issues
+        fetch: async (url, options = {}) => {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 seconds
+
+            try {
+                const response = await fetch(url, {
+                    ...options,
+                    signal: controller.signal,
+                });
+                clearTimeout(timeoutId);
+                return response;
+            } catch (error) {
+                clearTimeout(timeoutId);
+                throw error;
+            }
+        },
+    },
+});
