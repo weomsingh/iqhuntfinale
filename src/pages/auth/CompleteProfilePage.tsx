@@ -12,6 +12,8 @@ const CompleteProfilePage = () => {
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [nationality, setNationality] = useState<'india' | 'global'>('india');
+    const [agreedToCovenant, setAgreedToCovenant] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -38,8 +40,8 @@ const CompleteProfilePage = () => {
                             username,
                             role,
                             email: user.email,
-                            nationality: 'global', // Defaulting to global for now
-                            currency: 'USD',       // Defaulting to USD for now
+                            nationality,
+                            currency: nationality === 'india' ? 'INR' : 'USD',
                             updated_at: new Date().toISOString(),
                         });
 
@@ -121,6 +123,7 @@ const CompleteProfilePage = () => {
                             className="w-full bg-iq-black border border-iq-border rounded-lg px-4 py-3 text-white focus:border-iq-green outline-none font-mono"
                             placeholder="e.g. GhostHunter01"
                         />
+                        <p className="text-xs text-iq-text-secondary mt-1">This will be your public handle in the arena.</p>
                     </div>
 
                     {/* Role Selection - Simplified if pre-selected */}
@@ -154,6 +157,55 @@ const CompleteProfilePage = () => {
                         </button>
                     </div>
 
+                    {/* Location & Currency Selection */}
+                    <div>
+                        <label className="block text-sm font-bold text-iq-text-secondary mb-3">Region & Currency</label>
+                        <div className="grid grid-cols-2 gap-4">
+                            <button
+                                type="button"
+                                onClick={() => setNationality('india')}
+                                className={`px-4 py-3 rounded-lg border text-sm font-bold flex items-center justify-center gap-2 transition-all ${nationality === 'india'
+                                    ? 'bg-white/10 border-white text-white'
+                                    : 'bg-iq-black border-iq-border text-iq-text-secondary hover:border-white/50'
+                                    }`}
+                            >
+                                🇮🇳 India (INR)
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setNationality('global')}
+                                className={`px-4 py-3 rounded-lg border text-sm font-bold flex items-center justify-center gap-2 transition-all ${nationality === 'global'
+                                    ? 'bg-white/10 border-white text-white'
+                                    : 'bg-iq-black border-iq-border text-iq-text-secondary hover:border-white/50'
+                                    }`}
+                            >
+                                🌍 Global (USD)
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Covenant Agreement */}
+                    <div className="flex items-start gap-3 p-4 bg-iq-secondary/30 rounded-lg border border-iq-border">
+                        <div className="flex h-6 items-center">
+                            <input
+                                id="covenant"
+                                type="checkbox"
+                                required
+                                checked={agreedToCovenant}
+                                onChange={(e) => setAgreedToCovenant(e.target.checked)}
+                                className="h-5 w-5 rounded border-iq-border bg-iq-black text-iq-green focus:ring-iq-green focus:ring-offset-iq-black"
+                            />
+                        </div>
+                        <div className="text-sm">
+                            <label htmlFor="covenant" className="font-medium text-white">
+                                I agree to the <a href="/covenant" target="_blank" className="text-iq-green hover:underline">Code of Conduct</a>
+                            </label>
+                            <p className="text-iq-text-secondary mt-1 text-xs">
+                                By joining, I accept the risks. I understand that capital is locked and settlement is final.
+                            </p>
+                        </div>
+                    </div>
+
                     {/* Change Role Link if pre-selected */}
                     {sessionStorage.getItem('iqhunt_role') && (
                         <div className="text-center">
@@ -172,8 +224,8 @@ const CompleteProfilePage = () => {
 
                     <button
                         type="submit"
-                        disabled={loading}
-                        className="w-full py-4 bg-iq-green text-iq-black font-bold text-lg rounded-lg hover:shadow-[0_0_20px_rgba(0,255,157,0.4)] transition-all flex items-center justify-center gap-2"
+                        disabled={loading || !agreedToCovenant || !username}
+                        className="w-full py-4 bg-iq-green text-iq-black font-bold text-lg rounded-lg hover:shadow-[0_0_20px_rgba(0,255,157,0.4)] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none"
                     >
                         {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Enter the Arena'}
                     </button>
