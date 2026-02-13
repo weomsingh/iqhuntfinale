@@ -55,9 +55,30 @@ const CompleteProfilePage = () => {
         }
     };
 
+    const handleSignOut = async () => {
+        await supabase.auth.signOut();
+        window.location.href = '/signin';
+    };
+
     return (
         <div className="min-h-screen bg-iq-black flex flex-col items-center justify-center p-6 relative overflow-hidden">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-iq-green/5 via-transparent to-transparent opacity-50 blur-3xl" />
+
+            {/* Navigation Controls */}
+            <div className="absolute top-6 right-6 flex items-center gap-4 z-20">
+                <button
+                    onClick={() => window.location.href = '/'}
+                    className="text-sm font-bold text-iq-text-secondary hover:text-white transition-colors"
+                >
+                    Back to Home
+                </button>
+                <button
+                    onClick={handleSignOut}
+                    className="px-4 py-2 text-sm font-bold text-red-500 bg-red-500/10 border border-red-500/20 rounded-lg hover:bg-red-500/20 transition-all"
+                >
+                    Sign Out
+                </button>
+            </div>
 
             <div className="w-full max-w-md bg-iq-secondary/50 backdrop-blur-md border border-iq-border rounded-2xl p-8 shadow-2xl z-10 animate-in fade-in zoom-in duration-300">
                 <div className="text-center mb-8">
@@ -123,8 +144,6 @@ const CompleteProfilePage = () => {
                                 type="button"
                                 onClick={() => {
                                     sessionStorage.removeItem('iqhunt_role');
-                                    // Force re-render/reset is handled by React state, but we need to unlock UI
-                                    // A simple reload is easiest to clear state, or just clearing storage and updating state
                                     window.location.reload();
                                 }}
                                 className="text-xs text-iq-text-secondary hover:text-white underline"
