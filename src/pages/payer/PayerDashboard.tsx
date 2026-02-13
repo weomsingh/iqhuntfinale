@@ -1,118 +1,245 @@
 import { Link } from 'react-router-dom';
-import { PlusCircle, Wallet, Briefcase, Users, ArrowUpRight, Clock } from 'lucide-react';
+import {
+    PlusCircle,
+    Wallet,
+    Briefcase,
+    Users,
+    ArrowRight,
+    Zap,
+    TrendingUp,
+    CheckCircle,
+    ArrowUpRight,
+    Clock,
+    MessageSquare
+} from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
 const PayerDashboard = () => {
     const { profile } = useAuth();
+    const currentDate = new Date().toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
 
     const stats = [
-        { label: 'Active Bounties', value: '3', icon: Briefcase, color: 'text-iq-green' },
-        { label: 'Total Spent', value: '₹45,000', icon: Wallet, color: 'text-emerald-400' },
-        { label: 'Hunters Hired', value: '12', icon: Users, color: 'text-green-400' },
+        {
+            label: 'Wallet Balance',
+            value: `₹${profile?.wallet_balance?.toLocaleString('en-IN') || '45,230.00'}`,
+            subtext: '↑ ₹5,000 this week',
+            subtextColor: 'text-iq-green',
+            icon: Wallet,
+            cta: 'Lock Capital →',
+            ctaLink: '/payer/vault'
+        },
+        {
+            label: 'Active Bounties',
+            value: '7',
+            subtext: '3 awaiting submissions',
+            subtextColor: 'text-[#888]',
+            icon: Zap,
+            cta: 'View All →',
+            ctaLink: '/payer/live-bounties'
+        },
+        {
+            label: 'Total Spent',
+            value: '₹2,34,500',
+            subtext: 'All-time',
+            subtextColor: 'text-[#888]',
+            icon: TrendingUp,
+            cta: 'View History →',
+            ctaLink: '/payer/history'
+        },
+        {
+            label: 'Completion Rate',
+            value: '94%',
+            subtext: '32/34 bounties completed',
+            subtextColor: 'text-iq-green',
+            icon: CheckCircle,
+            cta: 'View Stats →',
+            ctaLink: '/payer/analytics'
+        },
     ];
 
     const activeBounties = [
-        { id: 1, title: 'Fintech Dashboard UI', budget: '₹15,000', deadline: '2 days left', applicants: 5, status: 'Active' },
-        { id: 2, title: 'React Component Library', budget: '₹8,000', deadline: '5 hours left', applicants: 11, status: 'Urgent' },
-        { id: 3, title: 'SEO Content Strategy', budget: '₹5,000', deadline: '7 days left', applicants: 2, status: 'Active' },
+        {
+            id: 1,
+            title: 'Design Modern Landing Page for SaaS Startup',
+            reward: '₹25,000',
+            status: 'ACTIVE',
+            joined: 8,
+            totalSlots: 12,
+            submissions: 3,
+            deadline: '2 days left',
+            urgent: false
+        },
+        {
+            id: 2,
+            title: 'React Native App Performance Optimization',
+            reward: '₹50,000',
+            status: 'IN REVIEW',
+            joined: 12,
+            totalSlots: 12,
+            submissions: 8,
+            deadline: '12 hrs ago',
+            urgent: true
+        }
     ];
 
     return (
-        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-5 duration-500">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-3xl font-bold text-white mb-2">Welcome back, {profile?.username || 'Payer'}</h1>
-                    <p className="text-iq-text-secondary">Manage your bounties and track your investments.</p>
-                </div>
-                <Link
-                    to="/payer/post-bounty"
-                    className="flex items-center gap-2 bg-iq-green hover:bg-emerald-500 text-iq-black font-bold py-3 px-6 rounded-xl transition-all shadow-[0_0_20px_rgba(0,255,157,0.3)] hover:shadow-[0_0_25px_rgba(0,255,157,0.5)] transform hover:-translate-y-1"
-                >
-                    <PlusCircle className="w-5 h-5" />
-                    Post New Bounty
-                </Link>
+        <div className="space-y-10 animate-fade-in pb-12">
+            {/* Page Title */}
+            <div>
+                <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
+                    Good morning, <span className="text-iq-green">{profile?.username || 'Hunter'}</span> 👋
+                </h1>
+                <p className="text-iq-text-secondary font-medium">{currentDate}</p>
             </div>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {stats.map((stat, index) => (
-                    <div key={index} className="bg-iq-secondary/30 border border-iq-border p-6 rounded-xl hover:border-iq-green/30 transition-all hover:shadow-[0_0_15px_rgba(0,255,157,0.05)] group">
-                        <div className="flex items-center justify-between mb-4">
-                            <div className={`p-3 rounded-lg bg-white/5 ${stat.color} group-hover:bg-iq-green/10 transition-colors`}>
-                                <stat.icon className="w-6 h-6" />
-                            </div>
-                            <span className="text-xs font-bold text-iq-green uppercase tracking-wider bg-iq-green/10 px-2 py-1 rounded">
-                                +12% this week
-                            </span>
+                    <div key={index} className="group bg-[#ffffff05] border border-iq-green/20 rounded-2xl p-6 backdrop-blur-xl hover:-translate-y-1 hover:border-iq-green/50 hover:shadow-[0_12px_32px_rgba(0,255,157,0.1)] transition-all duration-300">
+                        <div className="w-12 h-12 rounded-xl bg-iq-green/10 flex items-center justify-center text-iq-green mb-4 group-hover:scale-110 transition-transform">
+                            <stat.icon className="w-6 h-6" />
                         </div>
-                        <h3 className="text-3xl font-bold text-white mb-1">{stat.value}</h3>
-                        <p className="text-iq-text-secondary text-sm">{stat.label}</p>
+                        <p className="text-sm font-medium text-[#888]">{stat.label}</p>
+                        <h3 className="text-3xl font-black text-white mt-2 mb-1">{stat.value}</h3>
+                        <p className={`text-xs font-bold ${stat.subtextColor} flex items-center gap-1`}>
+                            {stat.subtext}
+                        </p>
+                        <Link to={stat.ctaLink} className="inline-block mt-4 text-sm font-bold text-iq-green hover:underline">
+                            {stat.cta}
+                        </Link>
                     </div>
                 ))}
             </div>
 
-            {/* Active Bounties Table */}
-            <div className="bg-iq-secondary/30 border border-iq-border rounded-xl overflow-hidden">
-                <div className="p-6 border-b border-iq-border flex items-center justify-between">
-                    <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                        <Briefcase className="w-5 h-5 text-iq-green" />
-                        Active Bounties
-                    </h2>
-                    <Link to="/payer/bounties" className="text-sm text-iq-green hover:text-emerald-400 flex items-center gap-1 font-medium hover:underline">
+            {/* Quick Actions */}
+            <div>
+                <h2 className="text-2xl font-bold text-white mb-6">Quick Actions</h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <Link to="/payer/post-bounty" className="group h-[140px] bg-[#ffffff05] border border-[#ffffff1a] rounded-xl p-6 hover:bg-iq-green/5 hover:border-iq-green transition-all relative overflow-hidden">
+                        <div className="flex justify-between items-start">
+                            <div>
+                                <div className="flex items-center gap-2 mb-2">
+                                    <PlusCircle className="w-5 h-5 text-iq-green" />
+                                    <h3 className="text-lg font-bold text-white">Post Bounty</h3>
+                                </div>
+                                <p className="text-sm text-[#888]">Launch a new mission instantly</p>
+                            </div>
+                            <ArrowRight className="w-5 h-5 text-[#444] group-hover:text-iq-green group-hover:translate-x-1 transition-all" />
+                        </div>
+                    </Link>
+
+                    <Link to="/payer/vault" className="group h-[140px] bg-[#ffffff05] border border-[#ffffff1a] rounded-xl p-6 hover:bg-iq-green/5 hover:border-iq-green transition-all relative overflow-hidden">
+                        <div className="flex justify-between items-start">
+                            <div>
+                                <div className="flex items-center gap-2 mb-2">
+                                    <Wallet className="w-5 h-5 text-iq-green" />
+                                    <h3 className="text-lg font-bold text-white">Lock Capital</h3>
+                                </div>
+                                <p className="text-sm text-[#888]">Add funds to your wallet</p>
+                            </div>
+                            <ArrowRight className="w-5 h-5 text-[#444] group-hover:text-iq-green group-hover:translate-x-1 transition-all" />
+                        </div>
+                    </Link>
+
+                    <Link to="/payer/analytics" className="group h-[140px] bg-[#ffffff05] border border-[#ffffff1a] rounded-xl p-6 hover:bg-iq-green/5 hover:border-iq-green transition-all relative overflow-hidden">
+                        <div className="flex justify-between items-start">
+                            <div>
+                                <div className="flex items-center gap-2 mb-2">
+                                    <Users className="w-5 h-5 text-iq-green" />
+                                    <h3 className="text-lg font-bold text-white">View Report</h3>
+                                </div>
+                                <p className="text-sm text-[#888]">Download activity summary</p>
+                            </div>
+                            <ArrowRight className="w-5 h-5 text-[#444] group-hover:text-iq-green group-hover:translate-x-1 transition-all" />
+                        </div>
+                    </Link>
+                </div>
+            </div>
+
+            {/* Active Bounties Feed */}
+            <div>
+                <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-2xl font-bold text-white">Active Bounties (2)</h2>
+                    <Link to="/payer/live-bounties" className="text-iq-green font-bold hover:underline flex items-center gap-1">
                         View All <ArrowUpRight className="w-4 h-4" />
                     </Link>
                 </div>
 
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
-                        <thead>
-                            <tr className="bg-white/5 text-iq-text-secondary text-xs uppercase tracking-wider border-b border-iq-border">
-                                <th className="p-4 font-medium">Bounty Title</th>
-                                <th className="p-4 font-medium">Budget</th>
-                                <th className="p-4 font-medium">Deadline</th>
-                                <th className="p-4 font-medium">Applicants</th>
-                                <th className="p-4 font-medium">Status</th>
-                                <th className="p-4 font-medium text-right">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-iq-border">
-                            {activeBounties.map((bounty) => (
-                                <tr key={bounty.id} className="hover:bg-white/5 transition-colors group">
-                                    <td className="p-4 font-bold text-white max-w-xs truncate">{bounty.title}</td>
-                                    <td className="p-4 text-iq-text-secondary font-mono">{bounty.budget}</td>
-                                    <td className="p-4 text-iq-text-secondary flex items-center gap-2">
-                                        <Clock className="w-4 h-4" />
-                                        {bounty.deadline}
-                                    </td>
-                                    <td className="p-4 text-iq-text-secondary">
-                                        <div className="flex -space-x-2">
-                                            {[...Array(Math.min(bounty.applicants, 3))].map((_, i) => (
-                                                <div key={i} className="w-8 h-8 rounded-full bg-iq-secondary border border-iq-black flex items-center justify-center text-xs font-bold text-white ring-2 ring-iq-black">
-                                                    {String.fromCharCode(65 + i)}
-                                                </div>
-                                            ))}
-                                            {bounty.applicants > 3 && (
-                                                <div className="w-8 h-8 rounded-full bg-iq-secondary border border-iq-black flex items-center justify-center text-xs font-bold text-iq-text-secondary ring-2 ring-iq-black">
-                                                    +{bounty.applicants - 3}
-                                                </div>
-                                            )}
-                                        </div>
-                                    </td>
-                                    <td className="p-4">
-                                        <span className={`px-2 py-1 rounded text-xs font-bold uppercase ${bounty.status === 'Urgent' ? 'bg-red-500/10 text-red-500' : 'bg-green-500/10 text-green-500'
-                                            }`}>
-                                            {bounty.status}
-                                        </span>
-                                    </td>
-                                    <td className="p-4 text-right">
-                                        <button className="text-sm font-bold text-iq-text-secondary hover:text-white transition-colors">
-                                            Manage
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                <div className="space-y-4">
+                    {activeBounties.map((bounty) => (
+                        <div key={bounty.id} className="bg-[#ffffff05] border border-[#ffffff1a] rounded-2xl p-6 hover:border-iq-green/50 transition-all group">
+                            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                                <div className="flex items-center gap-4">
+                                    <span className={`px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider ${bounty.status === 'ACTIVE' ? 'bg-iq-green/20 text-iq-green' : 'bg-yellow-500/20 text-yellow-500'
+                                        }`}>
+                                        {bounty.status}
+                                    </span>
+                                    <h3 className="text-xl font-bold text-white group-hover:text-iq-green transition-colors">{bounty.title}</h3>
+                                </div>
+                                <div className="text-2xl font-black text-iq-green font-mono">{bounty.reward}</div>
+                            </div>
+
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                                <div className="bg-[#ffffff05] rounded-lg p-3 text-center">
+                                    <div className="text-lg font-bold text-white mb-1">{bounty.joined}/{bounty.totalSlots}</div>
+                                    <div className="text-xs text-[#666] uppercase">Joined</div>
+                                </div>
+                                <div className="bg-[#ffffff05] rounded-lg p-3 text-center">
+                                    <div className="text-lg font-bold text-white mb-1">{bounty.submissions}</div>
+                                    <div className="text-xs text-[#666] uppercase">Submissions</div>
+                                </div>
+                                <div className="bg-[#ffffff05] rounded-lg p-3 text-center">
+                                    <div className="text-lg font-bold text-white mb-1">{bounty.deadline}</div>
+                                    <div className="text-xs text-[#666] uppercase">Time Left</div>
+                                </div>
+                                <div className="bg-[#ffffff05] rounded-lg p-3 text-center flex items-center justify-center">
+                                    <div className="flex flex-col items-center">
+                                        <div className="text-lg font-bold text-white mb-1">23</div>
+                                        <div className="text-xs text-[#666] uppercase">Messages</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-3 gap-4">
+                                <button className="py-3 rounded-lg bg-[#ffffff05] border border-[#ffffff1a] text-white font-bold hover:bg-white/10 transition-all">
+                                    View Participants
+                                </button>
+                                <button className="py-3 rounded-lg border border-iq-green text-iq-green font-bold hover:bg-iq-green/10 transition-all relative">
+                                    Review Submissions
+                                    {bounty.submissions > 0 && (
+                                        <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse" />
+                                    )}
+                                </button>
+                                <button className="py-3 rounded-lg bg-[#ffffff05] border border-[#ffffff1a] text-white font-bold hover:bg-white/10 transition-all flex items-center justify-center gap-2">
+                                    <MessageSquare className="w-4 h-4" /> War Room
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Recent Activity */}
+            <div>
+                <h2 className="text-2xl font-bold text-white mb-6">Recent Activity</h2>
+                <div className="space-y-0 pl-2">
+                    {[
+                        { text: 'Hunter @pixelninja joined "Design Modern Landing Page"', time: '2 hours ago' },
+                        { text: 'New submission received on "React Native App"', time: '5 hours ago' },
+                        { text: 'Bounty "SEO Content Strategy" funded successfully', time: 'Yesterday at 3:45 PM' },
+                        { text: '@shadowcoder won "React Development"', time: '2 days ago' }
+                    ].map((item, i) => (
+                        <div key={i} className="relative pl-8 pb-8 last:pb-0 border-l border-iq-green/20">
+                            <span className="absolute left-[-5px] top-1 w-[11px] h-[11px] rounded-full bg-[#0a0a0a] border-2 border-iq-green" />
+                            <p className="text-white mb-1 hover:text-iq-green transition-colors cursor-pointer">{item.text}</p>
+                            <p className="text-xs text-[#666]">{item.time}</p>
+                        </div>
+                    ))}
                 </div>
             </div>
         </div>

@@ -1,11 +1,28 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Target, LayoutDashboard, PlusCircle, Briefcase, Wallet, Settings, LogOut, Bell } from 'lucide-react';
+import {
+    Target,
+    LayoutDashboard,
+    Zap,
+    PlusCircle,
+    FileText,
+    Shield,
+    BarChart2,
+    Settings,
+    HelpCircle,
+    LogOut,
+    Search,
+    Bell,
+    ChevronDown,
+    Wallet
+} from 'lucide-react';
+import { useState } from 'react';
 
 const PayerLayout = () => {
     const { profile, signOut } = useAuth();
     const location = useLocation();
     const navigate = useNavigate();
+    const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
     const handleSignOut = async () => {
         await signOut();
@@ -14,111 +31,144 @@ const PayerLayout = () => {
 
     const isActive = (path: string) => location.pathname === path;
 
+    const NavItem = ({ to, icon: Icon, label }: { to: string; icon: any; label: string }) => (
+        <Link
+            to={to}
+            className={`flex items-center gap-3 px-6 py-3 transition-all duration-200 group relative ${isActive(to)
+                    ? 'bg-iq-green/10 text-iq-green'
+                    : 'text-[#888] hover:bg-white/5 hover:text-white'
+                }`}
+        >
+            {isActive(to) && (
+                <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-iq-green rounded-r-full" />
+            )}
+            <Icon className={`w-5 h-5 ${isActive(to) ? 'text-iq-green' : 'group-hover:text-white'} transition-colors`} strokeWidth={2} />
+            <span className={`font-medium ${isActive(to) ? 'font-semibold' : ''}`}>{label}</span>
+        </Link>
+    );
+
     return (
-        <div className="min-h-screen bg-iq-black flex">
-            {/* Sidebar */}
-            <aside className="fixed left-0 top-0 bottom-0 w-64 bg-iq-secondary/30 border-r border-iq-border p-6 flex flex-col z-20">
-                <Link to="/" className="flex items-center gap-2 mb-10 group">
-                    <Target className="w-8 h-8 text-iq-green group-hover:rotate-180 transition-transform duration-500" />
-                    <span className="font-display font-bold text-2xl tracking-tight text-white">IQHUNT</span>
-                </Link>
-
-                <nav className="space-y-2 flex-grow">
-                    <Link
-                        to="/payer/dashboard"
-                        className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 group ${isActive('/payer/dashboard')
-                            ? 'bg-iq-green/10 text-iq-green border border-iq-green/20 shadow-[0_0_15px_rgba(0,255,157,0.1)]'
-                            : 'text-iq-text-secondary hover:text-white hover:bg-white/5'
-                            }`}
-                    >
-                        <LayoutDashboard className={`w-5 h-5 ${isActive('/payer/dashboard') ? 'animate-pulse' : 'group-hover:text-iq-green'}`} />
-                        <span className="font-medium">Dashboard</span>
+        <div className="min-h-screen bg-[#0a0a0a] flex font-sans text-iq-text selection:bg-iq-green selection:text-iq-black">
+            {/* Header - Fixed Top */}
+            <header className="fixed top-0 left-0 right-0 h-20 bg-[#0a0a0a]/95 backdrop-blur-xl border-b border-iq-green/15 z-50 flex items-center justify-between px-0">
+                {/* Logo Section - Matches Sidebar Width */}
+                <div className="w-[240px] h-full flex items-center px-6 border-r border-[#ffffff0d] shrink-0">
+                    <Link to="/" className="flex items-center gap-3 group">
+                        <Target className="w-6 h-6 text-iq-green group-hover:rotate-180 transition-transform duration-500" />
+                        <span className="font-display font-bold text-xl tracking-tight text-white group-hover:text-iq-green transition-colors">IQHUNT</span>
                     </Link>
+                </div>
 
-                    <Link
-                        to="/payer/post-bounty"
-                        className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 group ${isActive('/payer/post-bounty')
-                            ? 'bg-iq-green/10 text-iq-green border border-iq-green/20 shadow-[0_0_15px_rgba(0,255,157,0.1)]'
-                            : 'text-iq-text-secondary hover:text-white hover:bg-white/5'
-                            }`}
-                    >
-                        <PlusCircle className={`w-5 h-5 ${isActive('/payer/post-bounty') ? 'animate-pulse' : 'group-hover:text-iq-green'}`} />
-                        <span className="font-medium">Post Bounty</span>
-                    </Link>
+                {/* Header Content */}
+                <div className="flex-1 flex items-center justify-between px-8">
+                    {/* Search Bar */}
+                    <div className="relative w-[400px] hidden md:block">
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-[#666]" />
+                        <input
+                            type="text"
+                            placeholder="Search bounties, hunters..."
+                            className="w-full bg-[#ffffff0d] border border-[#ffffff1a] rounded-lg pl-12 pr-4 py-3 text-sm text-white placeholder-[#666] focus:outline-none focus:border-iq-green/50 focus:shadow-[0_0_15px_rgba(0,255,157,0.1)] transition-all"
+                        />
+                    </div>
 
-                    <Link
-                        to="/payer/bounties"
-                        className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 group ${isActive('/payer/bounties')
-                            ? 'bg-iq-green/10 text-iq-green border border-iq-green/20 shadow-[0_0_15px_rgba(0,255,157,0.1)]'
-                            : 'text-iq-text-secondary hover:text-white hover:bg-white/5'
-                            }`}
-                    >
-                        <Briefcase className={`w-5 h-5 ${isActive('/payer/bounties') ? 'animate-pulse' : 'group-hover:text-iq-green'}`} />
-                        <span className="font-medium">Your Bounties</span>
-                    </Link>
+                    {/* Right Section */}
+                    <div className="flex items-center gap-6">
+                        {/* Quick Actions */}
+                        <div className="flex items-center gap-3 mr-4">
+                            <Link
+                                to="/payer/post-bounty"
+                                className="hidden lg:flex items-center gap-2 bg-iq-green text-[#0a0a0a] px-6 py-3 rounded-lg font-semibold text-sm hover:scale-105 hover:shadow-[0_0_20px_rgba(0,255,157,0.4)] transition-all"
+                            >
+                                <PlusCircle className="w-4 h-4" />
+                                Post Bounty
+                            </Link>
+                            <Link
+                                to="/payer/vault"
+                                className="hidden lg:flex items-center gap-2 bg-transparent border border-iq-green/30 text-iq-green px-6 py-3 rounded-lg font-semibold text-sm hover:bg-iq-green/10 transition-all"
+                            >
+                                <Wallet className="w-4 h-4" />
+                                Lock Capital
+                            </Link>
+                        </div>
 
-                    <Link
-                        to="/payer/wallet"
-                        className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 group ${isActive('/payer/wallet')
-                            ? 'bg-iq-green/10 text-iq-green border border-iq-green/20 shadow-[0_0_15px_rgba(0,255,157,0.1)]'
-                            : 'text-iq-text-secondary hover:text-white hover:bg-white/5'
-                            }`}
-                    >
-                        <Wallet className={`w-5 h-5 ${isActive('/payer/wallet') ? 'animate-pulse' : 'group-hover:text-iq-green'}`} />
-                        <span className="font-medium">Wallet</span>
-                    </Link>
+                        {/* Notifications */}
+                        <button className="relative p-2 text-[#888] hover:text-white transition-colors group">
+                            <Bell className="w-5 h-5 group-hover:text-iq-green transition-colors" />
+                            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-[#0a0a0a]" />
+                        </button>
 
-                    <Link
-                        to="/payer/settings"
-                        className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 group ${isActive('/payer/settings')
-                            ? 'bg-iq-green/10 text-iq-green border border-iq-green/20 shadow-[0_0_15px_rgba(0,255,157,0.1)]'
-                            : 'text-iq-text-secondary hover:text-white hover:bg-white/5'
-                            }`}
-                    >
-                        <Settings className={`w-5 h-5 ${isActive('/payer/settings') ? 'animate-pulse' : 'group-hover:text-iq-green'}`} />
-                        <span className="font-medium">Settings</span>
-                    </Link>
+                        {/* Wallet Balance */}
+                        <div className="hidden md:flex items-center gap-2">
+                            <Wallet className="w-5 h-5 text-iq-green" />
+                            <span className="font-bold text-lg text-white">₹{profile?.wallet_balance?.toLocaleString('en-IN') || '0.00'}</span>
+                        </div>
+
+                        {/* User Profile */}
+                        <div className="relative">
+                            <button
+                                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                                className="flex items-center gap-3 pl-4 border-l border-[#ffffff1a] hover:bg-white/5 py-2 px-3 rounded-r-lg transition-colors"
+                            >
+                                <div className="w-9 h-9 rounded-full bg-iq-secondary border border-iq-border flex items-center justify-center text-iq-green font-bold shadow-[0_0_10px_rgba(0,255,157,0.1)]">
+                                    {profile?.username?.charAt(0).toUpperCase()}
+                                </div>
+                                <div className="hidden xl:block text-left">
+                                    <p className="text-sm font-bold text-white leading-none mb-1">@{profile?.username}</p>
+                                    <ChevronDown className="w-3 h-3 text-[#666] mx-auto" />
+                                </div>
+                            </button>
+
+                            {/* Dropdown Menu */}
+                            {isUserMenuOpen && (
+                                <div className="absolute right-0 top-full mt-2 w-48 bg-[#0f0f0f] border border-[#ffffff1a] rounded-xl shadow-2xl py-2 z-50">
+                                    <Link to="/payer/settings" className="block px-4 py-2 text-sm text-[#888] hover:text-white hover:bg-white/5 transition-colors">Settings</Link>
+                                    <div className="h-px bg-[#ffffff1a] my-2" />
+                                    <button
+                                        onClick={handleSignOut}
+                                        className="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-500/10 transition-colors"
+                                    >
+                                        Sign Out
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            {/* Main Sidebar - Fixed Left */}
+            <aside className="fixed left-0 top-20 bottom-0 w-[240px] bg-[#0f0f0f]/80 backdrop-blur-md border-r border-[#ffffff0d] flex flex-col z-40 pt-6">
+                <nav className="flex-1 space-y-1">
+                    <NavItem to="/payer/dashboard" icon={LayoutDashboard} label="Dashboard" />
+                    <NavItem to="/payer/live-bounties" icon={Zap} label="Live Bounties" />
+                    <NavItem to="/payer/post-bounty" icon={PlusCircle} label="Post Bounty" />
+                    <NavItem to="/payer/history" icon={FileText} label="History" />
+                    <NavItem to="/payer/vault" icon={Shield} label="Vault" />
+
+                    <div className="my-6 mx-6 h-px bg-[#ffffff0d]" />
+
+                    <div className="px-6 mb-2">
+                        <span className="text-xs font-bold text-[#444] uppercase tracking-wider">Support</span>
+                    </div>
+                    <NavItem to="/payer/analytics" icon={BarChart2} label="Analytics" />
+                    <NavItem to="/payer/settings" icon={Settings} label="Settings" />
+                    <NavItem to="/payer/help" icon={HelpCircle} label="Help" />
                 </nav>
 
-                <div className="pt-6 border-t border-iq-border space-y-2">
+                <div className="p-6">
                     <button
                         onClick={handleSignOut}
-                        className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-red-400 hover:bg-red-500/10 transition-colors text-left"
+                        className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-red-500 hover:bg-red-500/10 transition-colors text-left font-medium"
                     >
                         <LogOut className="w-5 h-5" />
-                        <span className="font-medium">Sign Out</span>
+                        Sign Out
                     </button>
                 </div>
             </aside>
 
-            {/* Main Content */}
-            <main className="flex-grow ml-64 min-h-screen flex flex-col">
-                {/* Top Header */}
-                <header className="h-20 border-b border-iq-border bg-iq-black/50 backdrop-blur-sm sticky top-0 z-10 px-8 flex items-center justify-end gap-6">
-                    <div className="flex items-center gap-2 bg-iq-green/10 px-4 py-2 rounded-full border border-iq-green/20 shadow-[0_0_10px_rgba(0,255,157,0.1)]">
-                        <Wallet className="w-4 h-4 text-iq-green" />
-                        <span className="font-mono font-bold text-iq-green">₹{profile?.wallet_balance?.toLocaleString('en-IN') || '0.00'}</span>
-                    </div>
-
-                    <button className="relative text-iq-text-secondary hover:text-white transition-colors">
-                        <Bell className="w-6 h-6 hover:text-iq-green transition-colors" />
-                        {/* <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span> */}
-                    </button>
-
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-iq-secondary border border-iq-border flex items-center justify-center text-iq-green font-bold text-xl shadow-[0_0_10px_rgba(0,255,157,0.2)]">
-                            {profile?.username?.charAt(0).toUpperCase()}
-                        </div>
-                        <div className="hidden md:block">
-                            <p className="text-sm font-bold text-white">{profile?.username}</p>
-                            <p className="text-xs text-iq-text-secondary capitalize">{profile?.role}</p>
-                        </div>
-                    </div>
-                </header>
-
-                <div className="p-8">
-                    <Outlet />
-                </div>
+            {/* Content Area */}
+            <main className="flex-1 ml-[240px] mt-20 p-8 min-h-[calc(100vh-80px)] overflow-y-auto custom-scrollbar">
+                <Outlet />
             </main>
         </div>
     );
