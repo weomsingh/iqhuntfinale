@@ -37,6 +37,7 @@ import Covenant from './pages/static/Covenant';
 
 import './styles/App.css';
 import './styles/WarRoom.css';
+import './styles/VisualPolish.css';
 
 function App() {
     return (
