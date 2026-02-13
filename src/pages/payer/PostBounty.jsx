@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../supabaseClient';
-import { Upload, AlertCircle, DollarSign, Clock, Target, FileText, Calendar } from 'lucide-react';
+import { Upload, AlertCircle, DollarSign, Clock, Target, FileText, Calendar, Info } from 'lucide-react';
 
 export default function PostBounty() {
     const { currentUser, refreshUser } = useAuth();
@@ -293,6 +293,33 @@ export default function PostBounty() {
                                 <p style={{ margin: '0.5rem 0 0', fontSize: '0.8rem', color: '#888' }}>
                                     Stakes are automatically calculated based on your reward amount
                                 </p>
+                                <button
+                                    type="button"
+                                    onClick={() => window.open('/pricing', '_blank')}
+                                    style={{
+                                        marginTop: '0.75rem',
+                                        padding: '0.5rem 1rem',
+                                        background: 'rgba(0, 255, 157, 0.1)',
+                                        border: '1px solid rgba(0, 255, 157, 0.3)',
+                                        borderRadius: '6px',
+                                        color: '#00ff9d',
+                                        cursor: 'pointer',
+                                        fontSize: '0.875rem',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '0.5rem',
+                                        transition: 'all 0.2s'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.target.style.background = 'rgba(0, 255, 157, 0.2)';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.target.style.background = 'rgba(0, 255, 157, 0.1)';
+                                    }}
+                                >
+                                    <Info size={16} />
+                                    View Full Pricing Guide
+                                </button>
                             </div>
                         </div>
                     )}

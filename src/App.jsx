@@ -34,10 +34,12 @@ import Terms from './pages/static/Terms';
 import Privacy from './pages/static/Privacy';
 import Contact from './pages/static/Contact';
 import Covenant from './pages/static/Covenant';
+import PricingGuide from './pages/static/PricingGuide';
 
 import './styles/App.css';
 import './styles/WarRoom.css';
 import './styles/VisualPolish.css';
+import './styles/PricingGuide.css';
 
 function App() {
     return (
@@ -52,6 +54,7 @@ function App() {
                     <Route path="/privacy" element={<Privacy />} />
                     <Route path="/contact" element={<Contact />} />
                     <Route path="/covenant" element={<Covenant />} />
+                    <Route path="/pricing" element={<PricingGuide />} />
 
                     {/* Hunter routes - PROTECTED */}
                     <Route
