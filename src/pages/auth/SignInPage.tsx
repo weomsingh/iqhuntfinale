@@ -89,6 +89,14 @@ const SignInPage = () => {
                     {isSignUp ? 'Start your journey as a Hunter or Payer.' : 'Enter the arena where skill hunts money.'}
                 </p>
 
+                {/* Configuration Warning - visible immediately if env var is missing */}
+                {(!import.meta.env.VITE_SUPABASE_URL || import.meta.env.VITE_SUPABASE_URL.includes('placeholder')) && (
+                    <div className="mb-6 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-xl text-yellow-200 text-sm text-center">
+                        <p className="font-bold mb-1">⚠️ Configuration Error</p>
+                        <p>Missing VITE_SUPABASE_URL. Please add your Supabase keys to your Vercel Project Settings.</p>
+                    </div>
+                )}
+
                 {error && (
                     <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg flex items-start gap-3 text-red-400 text-sm">
                         <AlertCircle className="w-5 h-5 shrink-0" />

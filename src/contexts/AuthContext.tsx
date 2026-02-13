@@ -96,6 +96,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
 
     const signInWithGoogle = async () => {
+        // Validate configuration before attempting sign in
+        const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+        if (!supabaseUrl || supabaseUrl.includes('placeholder')) {
+            throw new Error("Configuration Error: Missing VITE_SUPABASE_URL. Please check your deployment settings.");
+        }
+
         const { error } = await supabase.auth.signInWithOAuth({
             provider: 'google',
             options: {
