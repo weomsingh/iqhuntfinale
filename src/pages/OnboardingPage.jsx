@@ -78,16 +78,12 @@ export default function OnboardingPage() {
 
             if (formData.role === 'hunter') {
                 profileData.expertise = formData.expertise;
-                profileData.bio = formData.bio;
+                profileData.bio = formData.bio || null;
                 profileData.date_of_birth = formData.dob;
-                profileData.hunts_completed = 0;
-                profileData.hunts_won = 0;
-                profileData.success_rate = 0;
             } else {
                 profileData.expertise = []; // Empty array for payers
                 profileData.is_organization = formData.is_organization;
                 profileData.company_name = formData.company_name || null;
-                profileData.verified_status = false;
             }
 
             const { error: insertError } = await supabase
