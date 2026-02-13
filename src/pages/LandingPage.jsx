@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Target } from 'lucide-react';
+import Footer from '../components/Footer';
 
 export default function LandingPage() {
     const { currentUser, loading, signInWithGoogle } = useAuth();
@@ -11,7 +12,7 @@ export default function LandingPage() {
         // If user is logged in, redirect to their dashboard
         if (!loading && currentUser) {
             if (currentUser.role === 'hunter') {
-                navigate('/hunter/arena', { replace: true });
+                navigate('/hunter/dashboard', { replace: true });
             } else {
                 navigate('/payer/dashboard', { replace: true });
             }
@@ -75,7 +76,7 @@ export default function LandingPage() {
                 </div>
             </section>
 
-            {/* Add more sections: Three Pillars, How It Works, Footer */}
+            <Footer />
         </div>
     );
 }
