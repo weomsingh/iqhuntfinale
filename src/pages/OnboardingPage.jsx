@@ -6,6 +6,7 @@ import { Target, HelpCircle, AlertCircle } from 'lucide-react';
 const EXPERTISE_TAGS = [
     'UI/UX Design', 'React Development', 'Python', 'Machine Learning',
     'Backend Engineering', '3D Animation', 'Mobile Development', 'DevOps',
+    'Data Science', 'Blockchain', 'Game Development', 'Writing/Content'
 ];
 
 export default function OnboardingPage() {
@@ -20,8 +21,9 @@ export default function OnboardingPage() {
     const [formData, setFormData] = useState({
         role: intendedRole,
         username: '',
-        nationality: '',
-        currency: '',
+        // Hunters auto-set to India/INR
+        nationality: intendedRole === 'hunter' ? 'india' : '',
+        currency: intendedRole === 'hunter' ? 'INR' : '',
         expertise: [],
         bio: '',
         dob: '',
@@ -29,6 +31,13 @@ export default function OnboardingPage() {
         company_name: '',
         accepted_covenant: false,
     });
+
+    // Auto-advance hunters past region selection
+    useEffect(() => {
+        if (intendedRole === 'hunter' && step === 1) {
+            setStep(2); // Skip to profile details
+        }
+    }, [intendedRole, step]);
 
     const isStepValid = () => {
         if (step === 1) return formData.nationality && formData.currency;
@@ -64,15 +73,20 @@ export default function OnboardingPage() {
                 accepted_covenant: formData.accepted_covenant,
                 wallet_balance: 0,
                 total_earnings: 0,
+                total_spent: 0,
             };
 
             if (formData.role === 'hunter') {
                 profileData.expertise = formData.expertise;
                 profileData.bio = formData.bio;
                 profileData.date_of_birth = formData.dob;
+                profileData.hunts_completed = 0;
+                profileData.hunts_won = 0;
+                profileData.success_rate = 0;
             } else {
                 profileData.is_organization = formData.is_organization;
                 profileData.company_name = formData.company_name;
+                profileData.verified_status = false;
             }
 
             const { error: insertError } = await supabase
@@ -99,16 +113,19 @@ export default function OnboardingPage() {
         }
     }
 
+    // Calculate actual step number for progress (hunters skip step 1)
+    const actualStep = intendedRole === 'hunter' ? step - 1 : step;
+    const totalSteps = intendedRole === 'hunter' ? 2 : 3;
+
     return (
         <div className="onboarding-page">
-            {/* HEADER - NO "Cancel & Sign Out" */}
             <header className="onboarding-header">
                 <div className="logo">
                     <Target size={24} />
                     <span>IQHUNT</span>
                 </div>
                 <button
-                    className="help-btn"
+                    class Name="help-btn"
                     onClick={() => window.open('mailto:iqhuntarena@gmail.com')}
                 >
                     <HelpCircle size={20} />
@@ -119,15 +136,13 @@ export default function OnboardingPage() {
             <div className="onboarding-container">
                 {/* Progress Bar */}
                 <div className="progress-bar">
-                    <div className="progress-fill" style={{ width: `${(step / 3) * 100}%` }} />
+                    <div className="progress-fill" style={{ width: `${(actualStep / totalSteps) * 100}%` }} />
                 </div>
 
                 <h1>Complete Your Profile</h1>
                 <p className="onboarding-subtitle">
-                    You're joining as a <strong>{intendedRole === 'hunter' ? 'Hunter' : 'Payer'}</strong>
+                    You're joining as a <strong>{intendedRole === 'hunter' ? 'Hunter 🎯' : 'Payer 💰'}</strong>
                 </p>
-
-                {/* NO ROLE SELECTION - Already set from homepage */}
 
                 {error && (
                     <div className="error-banner">
@@ -136,8 +151,8 @@ export default function OnboardingPage() {
                     </div>
                 )}
 
-                {/* STEP 1: Nationality */}
-                {step === 1 && (
+                {/* STEP 1: Nationality - ONLY FOR PAYERS */}
+                {step === 1 && intendedRole === 'payer' && (
                     <div className="form-step">
                         <h2>Select Your Region</h2>
                         <div className="region-buttons">
@@ -172,11 +187,26 @@ export default function OnboardingPage() {
                     <div className="form-step">
                         <h2>Your Details</h2>
 
+                        {/* Hunter India Notice */}
+                        {formData.role === 'hunter' && (
+                            <div className="info-box" style={{
+                                background: 'rgba(0, 255, 157, 0.1)',
+                                border: '1px solid rgba(0, 255, 157, 0.3)',
+                                padding: '1rem',
+                                borderRadius: '8px',
+                                marginBottom: '1.5rem'
+                            }}>
+                                <p style={{ margin: 0, color: '#00ff9d' }}>
+                                    🇮🇳 <strong>Indian Hunter</strong> - All earnings in INR (₹)
+                                </p>
+                            </div>
+                        )}
+
                         <div className="form-group">
                             <label>Username *</label>
                             <input
                                 type="text"
-                                placeholder="Choose a username"
+                                placeholder="Choose a unique username"
                                 value={formData.username}
                                 onChange={e => setFormData({ ...formData, username: e.target.value })}
                             />
@@ -190,11 +220,15 @@ export default function OnboardingPage() {
                                         type="date"
                                         value={formData.dob}
                                         onChange={e => setFormData({ ...formData, dob: e.target.value })}
+                                        max={new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split('T')[0]}
                                     />
+                                    <small style={{ color: '#888', marginTop: '0.5rem', display: 'block' }}>
+                                        You must be 18+ to participate
+                                    </small>
                                 </div>
 
                                 <div className="form-group">
-                                    <label>Primary Expertise *</label>
+                                    <label>Primary Expertise * (Select at least one)</label>
                                     <div className="tags">
                                         {EXPERTISE_TAGS.map(tag => (
                                             <button
@@ -217,10 +251,10 @@ export default function OnboardingPage() {
                                 <div className="form-group">
                                     <label>Bio (optional)</label>
                                     <textarea
-                                        placeholder="Tell us about yourself..."
+                                        placeholder="Tell payers about your skills and experience..."
                                         value={formData.bio}
                                         onChange={e => setFormData({ ...formData, bio: e.target.value })}
-                                        rows={3}
+                                        rows={4}
                                     />
                                 </div>
                             </>
@@ -253,7 +287,7 @@ export default function OnboardingPage() {
                                         <label>Company Name *</label>
                                         <input
                                             type="text"
-                                            placeholder="Your company name"
+                                            placeholder="Your company or organization name"
                                             value={formData.company_name}
                                             onChange={e => setFormData({ ...formData, company_name: e.target.value })}
                                         />
@@ -267,20 +301,26 @@ export default function OnboardingPage() {
                 {/* STEP 3: Covenant */}
                 {step === 3 && (
                     <div className="form-step">
-                        <h2>The Digital Blood Oath</h2>
+                        <h2>The Covenant</h2>
                         <div className="covenant-text">
+                            <h3 style={{ color: '#00ff9d', marginBottom: '1rem' }}>
+                                Digital Blood Oath
+                            </h3>
                             <p>
-                                By entering the Arena, you sign the Blood Oath. You acknowledge that Stakes
-                                are non-refundable entry fees for a Game of Skill.
+                                By entering the Arena, you sign the Blood Oath. You acknowledge that <strong>Stakes
+                                    are non-refundable entry fees</strong> for a Game of Skill.
                             </p>
                             <p>
-                                You agree to the Digital Autopsy results by our AI Arbitrator. Payers are
-                                contractually bound to fund the Vault 105% before deployment and must select
-                                a winner if criteria are met.
+                                You agree to the results determined by AI scoring and payer selection.
+                                Payers are bound to <strong>fund the Vault at 105%</strong> before deployment
+                                and must select a winner if valid submissions exist.
                             </p>
                             <p>
-                                All Mission PDFs are encrypted. War Room chat logs are ephemeral and purged
-                                immediately upon mission completion—zero history is stored.
+                                All Mission PDFs are encrypted. <strong>War Room chat logs are ephemeral</strong> and
+                                purged immediately upon mission completion—zero history is stored.
+                            </p>
+                            <p style={{ color: '#ff5252', marginTop: '1rem' }}>
+                                ⚠️ This is a skill-based competitive platform. Participate responsibly.
                             </p>
                         </div>
                         <div className="covenant-checkbox">
@@ -290,16 +330,16 @@ export default function OnboardingPage() {
                                 checked={formData.accepted_covenant}
                                 onChange={e => setFormData({ ...formData, accepted_covenant: e.target.checked })}
                             />
-                            <label htmlFor="covenant">
-                                I sign the Covenant and accept all terms
+                            <label htmlFor="covenant" style={{ fontSize: '1.1rem', fontWeight: 500 }}>
+                                I accept the Covenant and all terms
                             </label>
                         </div>
                     </div>
                 )}
 
-                {/* ACTIONS - NO "Cancel & Sign Out" */}
+                {/* ACTIONS */}
                 <div className="onboarding-actions">
-                    {step > 1 && (
+                    {step > (intendedRole === 'hunter' ? 2 : 1) && (
                         <button
                             className="btn-back"
                             onClick={() => setStep(step - 1)}
@@ -313,7 +353,7 @@ export default function OnboardingPage() {
                         onClick={step === 3 ? handleComplete : () => setStep(step + 1)}
                         disabled={!isStepValid() || loading}
                     >
-                        {loading ? 'Saving...' : step === 3 ? 'Complete Setup' : 'Continue'}
+                        {loading ? 'Saving...' : step === 3 ? 'Enter the Arena' : 'Continue'}
                     </button>
                 </div>
             </div>
