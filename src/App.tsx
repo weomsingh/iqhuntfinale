@@ -52,9 +52,10 @@ function App() {
             <Route path="covenant" element={<CovenantPage />} />
             <Route path="signin" element={<SignInPage />} />
             <Route path="signup" element={<SignInPage />} />
-            <Route path="complete-profile" element={<CompleteProfilePage />} />
-            <Route path="auth/callback" element={<AuthCallbackPage />} />
           </Route>
+
+          <Route path="/auth/callback" element={<AuthCallbackPage />} />
+          <Route path="/complete-profile" element={<CompleteProfilePage />} />
 
           <Route path="/hunter" element={
             <RequireAuth allowedRole="hunter">

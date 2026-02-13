@@ -21,9 +21,9 @@ const CompleteProfilePage = () => {
         setLoading(true);
         setError(null);
 
-        // Timeout safety
+        // Timeout safety - increased to 30s to prevent false positives on slow connections
         const timeoutPromise = new Promise((_, reject) =>
-            setTimeout(() => reject(new Error("Request timed out. Please check your connection.")), 10000)
+            setTimeout(() => reject(new Error("Request timed out. Please check your connection.")), 30000)
         );
 
         try {
@@ -87,7 +87,7 @@ const CompleteProfilePage = () => {
                     onClick={handleSignOut}
                     className="px-4 py-2 text-sm font-bold text-red-500 bg-red-500/10 border border-red-500/20 rounded-lg hover:bg-red-500/20 transition-all"
                 >
-                    Sign Out
+                    Cancel & Sign Out
                 </button>
             </div>
 
@@ -95,7 +95,7 @@ const CompleteProfilePage = () => {
                 <div className="text-center mb-8">
                     <Target className="w-10 h-10 text-iq-green mx-auto mb-4" />
                     <h1 className="text-3xl font-bold text-white mb-2">Identify Yourself</h1>
-                    <p className="text-iq-text-secondary">Choose your path and claim your handle.</p>
+                    <p className="text-iq-text-secondary">You are signed in, but we need to set up your profile.</p>
                 </div>
 
                 {/* Env Var Warning */}
