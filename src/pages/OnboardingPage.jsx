@@ -63,10 +63,14 @@ export default function OnboardingPage() {
                 throw new Error('Not authenticated');
             }
 
+            // Check if this is the admin email
+            const adminEmail = import.meta.env.VITE_ADMIN_EMAIL;
+            const isAdmin = user.email === adminEmail;
+
             const profileData = {
                 id: user.id,
                 email: user.email,
-                role: formData.role,
+                role: isAdmin ? 'admin' : formData.role, // Auto-assign admin if email matches
                 username: formData.username,
                 nationality: formData.nationality,
                 currency: formData.currency,
@@ -98,8 +102,10 @@ export default function OnboardingPage() {
             // Clear intended role
             localStorage.removeItem('intended_role');
 
-            // Navigate to dashboard
-            if (formData.role === 'hunter') {
+            // Navigate to appropriate dashboard
+            if (isAdmin) {
+                navigate('/admin/dashboard', { replace: true });
+            } else if (formData.role === 'hunter') {
                 navigate('/hunter/dashboard', { replace: true });
             } else {
                 navigate('/payer/dashboard', { replace: true });
