@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../supabaseClient';
-import { Wallet, TrendingUp, Lock, ArrowUpCircle, DollarSign, Clock, CheckCircle, XCircle } from 'lucide-react';
+import { Wallet, TrendingUp, Lock, ArrowUpCircle, ArrowDownCircle, DollarSign, Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 
 export default function HunterVault() {
     const { currentUser, refreshUser } = useAuth();
     const [transactions, setTransactions] = useState([]);
     const [stakes, setStakes] = useState([]);
+    const [showDepositModal, setShowDepositModal] = useState(false);
     const [showWithdrawModal, setShowWithdrawModal] = useState(false);
     const [withdrawAmount, setWithdrawAmount] = useState('');
     const [upiId, setUpiId] = useState('');
@@ -52,6 +53,53 @@ export default function HunterVault() {
             console.error('Error loading vault data:', error);
         } finally {
             setLoading(false);
+        }
+    }
+
+    async function handleDeposit(e) {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const amount = parseFloat(formData.get('amount'));
+        const utrNumber = formData.get('utr_number');
+        const paymentMethod = formData.get('payment_method');
+
+        if (!amount || amount <= 0) {
+            alert('Please enter a valid amount');
+            return;
+        }
+
+        if (!utrNumber) {
+            alert('Please enter UTR/Transaction number');
+            return;
+        }
+
+        setProcessing(true);
+
+        try {
+            const { error } = await supabase
+                .from('transactions')
+                .insert({
+                    user_id: currentUser.id,
+                    type: 'deposit',
+                    amount: amount,
+                    currency: currentUser.currency,
+                    status: 'pending',
+                    metadata: {
+                        utr_number: utrNumber,
+                        payment_method: paymentMethod
+                    }
+                });
+
+            if (error) throw error;
+
+            alert('✅ Deposit request submitted!\\n\\nYour funds will be added after admin verification (usually within 24 hours).');
+            setShowDepositModal(false);
+            await loadVaultData();
+        } catch (error) {
+            console.error('Deposit error:', error);
+            alert('Failed to submit deposit request');
+        } finally {
+            setProcessing(false);
         }
     }
 
@@ -188,6 +236,13 @@ export default function HunterVault() {
             <div className="vault-actions">
                 <button
                     className="btn-primary"
+                    onClick={() => setShowDepositModal(true)}
+                >
+                    <ArrowDownCircle size={20} />
+                    Deposit Funds
+                </button>
+                <button
+                    className="btn-secondary"
                     onClick={() => setShowWithdrawModal(true)}
                     disabled={currentUser.wallet_balance <= 0}
                 >
@@ -237,11 +292,12 @@ export default function HunterVault() {
                 ) : (
                     <div className="transactions-list">
                         {transactions.map(tx => {
-                            const isPositive = tx.type === 'win_prize' || tx.type === 'refund_stake';
+                            const isPositive = tx.type === 'win_prize' || tx.type === 'refund_stake' || tx.type === 'deposit';
                             const Icon = tx.type === 'withdrawal' ? ArrowUpCircle :
-                                tx.type === 'stake' ? Lock :
-                                    tx.type === 'win_prize' ? TrendingUp :
-                                        tx.type === 'refund_stake' ? TrendingUp : DollarSign;
+                                tx.type === 'deposit' ? ArrowDownCircle :
+                                    tx.type === 'stake' ? Lock :
+                                        tx.type === 'win_prize' ? TrendingUp :
+                                            tx.type === 'refund_stake' ? TrendingUp : DollarSign;
 
                             return (
                                 <div key={tx.id} className="transaction-item">
@@ -253,7 +309,8 @@ export default function HunterVault() {
                                             {tx.type === 'win_prize' ? 'Prize Won' :
                                                 tx.type === 'refund_stake' ? 'Stake Refunded' :
                                                     tx.type === 'stake' ? 'Bounty Stake' :
-                                                        tx.type === 'withdrawal' ? 'Withdrawal' : tx.type}
+                                                        tx.type === 'deposit' ? 'Deposit' :
+                                                            tx.type === 'withdrawal' ? 'Withdrawal' : tx.type}
                                         </div>
                                         <div className="tx-date">
                                             {new Date(tx.created_at).toLocaleString()}
@@ -361,6 +418,103 @@ export default function HunterVault() {
                                     disabled={processing}
                                 >
                                     {processing ? 'Processing...' : `Withdraw ${currency}${withdrawAmount || '0'}`}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {/* Deposit Modal */}
+            {showDepositModal && (
+                <div className="modal-overlay" onClick={() => !processing && setShowDepositModal(false)}>
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                        <div className="modal-header">
+                            <h2>Deposit Funds</h2>
+                            <button
+                                className="modal-close"
+                                onClick={() => setShowDepositModal(false)}
+                                disabled={processing}
+                            >
+                                ×
+                            </button>
+                        </div>
+
+                        <form onSubmit={handleDeposit} className="modal-form">
+                            <div className="modal-info">
+                                <AlertCircle size={20} />
+                                <div>
+                                    <p><strong>How to deposit:</strong></p>
+                                    <ol style={{ margin: '0.5rem 0 0', paddingLeft: '1.5rem' }}>
+                                        <li>Transfer funds via UPI or Bank Transfer to our account</li>
+                                        <li>Enter the amount and transaction details below</li>
+                                        <li>Admin will verify and credit your wallet within 24 hours</li>
+                                    </ol>
+                                    <p style={{ marginTop: '0.75rem', fontSize: '0.875rem', color: '#888' }}>
+                                        <strong>UPI ID:</strong> iqhunt@paytm<br />
+                                        <strong>Account:</strong> Contact support for details
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="form-group">
+                                <label htmlFor="deposit-amount">
+                                    <DollarSign size={18} />
+                                    Amount ({currency})
+                                </label>
+                                <input
+                                    type="number"
+                                    id="deposit-amount"
+                                    name="amount"
+                                    placeholder="Enter amount to deposit"
+                                    min="1"
+                                    step="0.01"
+                                    required
+                                    disabled={processing}
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label htmlFor="utr-number">UTR / Transaction Number *</label>
+                                <input
+                                    type="text"
+                                    id="utr-number"
+                                    name="utr_number"
+                                    placeholder="Enter UTR or Reference Number"
+                                    required
+                                    disabled={processing}
+                                />
+                                <small>This helps us verify your payment</small>
+                            </div>
+
+                            <div className="form-group">
+                                <label htmlFor="payment-method">Payment Method</label>
+                                <select
+                                    id="payment-method"
+                                    name="payment_method"
+                                    defaultValue="upi"
+                                    disabled={processing}
+                                >
+                                    <option value="upi">UPI</option>
+                                    <option value="bank_transfer">Bank Transfer</option>
+                                </select>
+                            </div>
+
+                            <div className="modal-actions">
+                                <button
+                                    type="button"
+                                    className="btn-secondary"
+                                    onClick={() => setShowDepositModal(false)}
+                                    disabled={processing}
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="btn-primary"
+                                    disabled={processing}
+                                >
+                                    {processing ? 'Submitting...' : 'Submit Deposit Request'}
                                 </button>
                             </div>
                         </form>
