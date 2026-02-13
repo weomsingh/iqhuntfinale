@@ -37,3 +37,42 @@ USING (
     bucket_id = 'bounty-missions' 
     AND auth.uid()::text = (storage.foldername(name))[1]
 );
+
+-- 3. Create storage bucket for hunter submissions
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('bounty-submissions', 'bounty-submissions', true)
+ON CONFLICT (id) DO NOTHING;
+
+-- 4. Set up storage policies for bounty-submissions bucket
+
+-- Allow hunters to upload submission files
+CREATE POLICY "Hunters can upload submission files"
+ON storage.objects FOR INSERT
+TO authenticated
+WITH CHECK (
+    bucket_id = 'bounty-submissions'
+    AND EXISTS (
+        SELECT 1 FROM profiles 
+        WHERE id = auth.uid() 
+        AND role = 'hunter'
+    )
+);
+
+-- Allow public read access to submission files
+CREATE POLICY "Public read access to submission files"
+ON storage.objects FOR SELECT
+TO public
+USING (bucket_id = 'bounty-submissions');
+
+-- Allow hunters to delete their own submission files
+CREATE POLICY "Hunters can delete their own submission files"
+ON storage.objects FOR DELETE
+TO authenticated
+USING (
+    bucket_id = 'bounty-submissions'
+    AND EXISTS (
+        SELECT 1 FROM profiles 
+        WHERE id = auth.uid() 
+        AND role = 'hunter'
+    )
+);

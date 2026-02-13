@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../supabaseClient';
+import SubmitWorkModal from '../../components/SubmitWorkModal';
 import {
     Target, Clock, Users, TrendingUp, Lock,
     FileText, MessageSquare, Upload, ArrowLeft,
@@ -15,9 +16,11 @@ export default function BountyDetails() {
 
     const [bounty, setBounty] = useState(null);
     const [myStake, setMyStake] = useState(null);
+    const [mySubmission, setMySubmission] = useState(null);
     const [hunterCount, setHunterCount] = useState(0);
     const [loading, setLoading] = useState(true);
     const [staking, setStaking] = useState(false);
+    const [showSubmitModal, setShowSubmitModal] = useState(false);
 
     useEffect(() => {
         loadBountyData();
@@ -54,6 +57,16 @@ export default function BountyDetails() {
                 .single();
 
             if (stakeData) setMyStake(stakeData);
+
+            // Check if I've submitted
+            const { data: submissionData } = await supabase
+                .from('submissions')
+                .select('*')
+                .eq('bounty_id', id)
+                .eq('hunter_id', currentUser.id)
+                .single();
+
+            if (submissionData) setMySubmission(submissionData);
 
         } catch (error) {
             console.error('Error loading bounty:', error);
@@ -288,12 +301,35 @@ export default function BountyDetails() {
                         <Upload size={32} />
                         <h3>Submit Work</h3>
                         <p>Upload your completed submission</p>
-                        <button className="btn-secondary" disabled>
-                            <Upload size={18} />
-                            Submit Work (Coming Soon)
-                        </button>
+                        {mySubmission ? (
+                            <div className="submission-status">
+                                <CheckCircle size={18} color="#00ff9d" />
+                                <span>Submitted</span>
+                            </div>
+                        ) : (
+                            <button
+                                className="btn-primary"
+                                onClick={() => setShowSubmitModal(true)}
+                                disabled={isExpired}
+                            >
+                                <Upload size={18} />
+                                Submit Work
+                            </button>
+                        )}
                     </div>
                 </div>
+            )}
+
+            {/* Submit Work Modal */}
+            {showSubmitModal && (
+                <SubmitWorkModal
+                    bounty={bounty}
+                    onClose={() => setShowSubmitModal(false)}
+                    onSuccess={() => {
+                        setShowSubmitModal(false);
+                        loadBountyData();
+                    }}
+                />
             )}
 
             {/* Rules & Info */}
