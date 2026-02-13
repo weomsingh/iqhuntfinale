@@ -21,42 +21,29 @@ const CompleteProfilePage = () => {
         setLoading(true);
         setError(null);
 
-        // Timeout safety - increased to 30s to prevent false positives on slow connections
-        const timeoutPromise = new Promise((_, reject) =>
-            setTimeout(() => reject(new Error("Request timed out. Please check your connection.")), 30000)
-        );
-
         try {
-            // Remove timeout for debugging if needed, but keep it to prevent infinite hang
-            // However, we prioritize showing the error if it happens fast
-            await Promise.race([
-                (async () => {
-                    // 1. Perform the Upsert
-                    // Must include ALL required fields from schema (nationality, currency)
-                    const { error: updateError } = await supabase
-                        .from('profiles')
-                        .upsert({
-                            id: user.id,
-                            username,
-                            role,
-                            email: user.email,
-                            nationality,
-                            currency: nationality === 'india' ? 'INR' : 'USD',
-                            updated_at: new Date().toISOString(),
-                        });
+            // 1. Perform the Upsert
+            const { error: updateError } = await supabase
+                .from('profiles')
+                .upsert({
+                    id: user.id,
+                    username,
+                    role,
+                    email: user.email,
+                    nationality,
+                    currency: nationality === 'india' ? 'INR' : 'USD',
+                    updated_at: new Date().toISOString(),
+                });
 
-                    if (updateError) {
-                        console.error("Supabase Upsert Error:", updateError);
-                        // THROW THE RAW ERROR so we can see it on screen
-                        throw new Error(`DB Error: ${updateError.message} (${updateError.code})`);
-                    }
+            if (updateError) {
+                console.error("Supabase Upsert Error:", updateError);
+                // THROW THE RAW ERROR so we can see it on screen
+                throw new Error(`DB Error: ${updateError.message} (${updateError.code})`);
+            }
 
-                    // 2. Force a Hard Navigation to ensure fresh state
-                    const target = role === 'hunter' ? '/hunter/dashboard' : '/payer/dashboard';
-                    window.location.href = target;
-                })(),
-                timeoutPromise
-            ]);
+            // 2. Force a Hard Navigation to ensure fresh state
+            const target = role === 'hunter' ? '/hunter/dashboard' : '/payer/dashboard';
+            window.location.href = target;
 
         } catch (err: any) {
             console.error('Profile Update Error:', err);
@@ -87,7 +74,7 @@ const CompleteProfilePage = () => {
                     onClick={handleSignOut}
                     className="px-4 py-2 text-sm font-bold text-red-500 bg-red-500/10 border border-red-500/20 rounded-lg hover:bg-red-500/20 transition-all"
                 >
-                    Cancel & Sign Out
+                    Cancel Registration
                 </button>
             </div>
 
@@ -95,7 +82,7 @@ const CompleteProfilePage = () => {
                 <div className="text-center mb-8">
                     <Target className="w-10 h-10 text-iq-green mx-auto mb-4" />
                     <h1 className="text-3xl font-bold text-white mb-2">Identify Yourself</h1>
-                    <p className="text-iq-text-secondary">You are signed in, but we need to set up your profile.</p>
+                    <p className="text-iq-text-secondary">You are authenticated. Complete your registration.</p>
                 </div>
 
                 {/* Env Var Warning */}
@@ -126,36 +113,56 @@ const CompleteProfilePage = () => {
                         <p className="text-xs text-iq-text-secondary mt-1">This will be your public handle in the arena.</p>
                     </div>
 
-                    {/* Role Selection - Simplified if pre-selected */}
-                    <div className="grid grid-cols-2 gap-4">
-                        {/* Hunter Button */}
-                        <button
-                            type="button"
-                            onClick={() => setRole('hunter')}
-                            className={`p-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${role === 'hunter'
-                                ? 'bg-iq-green/10 border-iq-green text-iq-green shadow-[0_0_15px_rgba(0,255,157,0.2)]'
-                                : 'bg-white/5 border-white/10 text-iq-text-secondary hover:bg-white/10'
-                                } ${sessionStorage.getItem('iqhunt_role') === 'payer' ? 'opacity-50 grayscale cursor-not-allowed hidden' : ''}`}
-                            disabled={sessionStorage.getItem('iqhunt_role') === 'payer'}
-                        >
-                            <User className="w-6 h-6" />
-                            <span className="font-bold">Hunter</span>
-                        </button>
+                    {/* Role Selection Logic - Clean up based on user feedback */}
+                    {sessionStorage.getItem('iqhunt_role') ? (
+                        <div className="p-4 bg-iq-green/5 border border-iq-green/20 rounded-xl flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                {role === 'hunter' ? <User className="w-5 h-5 text-iq-green" /> : <Wallet className="w-5 h-5 text-blue-400" />}
+                                <div>
+                                    <p className="text-xs text-iq-text-secondary uppercase tracking-wider font-bold">Registering As</p>
+                                    <p className={`text-lg font-bold ${role === 'hunter' ? 'text-iq-green' : 'text-blue-400'} capitalize`}>{role}</p>
+                                </div>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    sessionStorage.removeItem('iqhunt_role');
+                                    window.location.reload();
+                                }}
+                                className="text-xs text-iq-text-secondary hover:text-white underline"
+                            >
+                                Change
+                            </button>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-2 gap-4">
+                            {/* Hunter Button */}
+                            <button
+                                type="button"
+                                onClick={() => setRole('hunter')}
+                                className={`p-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${role === 'hunter'
+                                    ? 'bg-iq-green/10 border-iq-green text-iq-green shadow-[0_0_15px_rgba(0,255,157,0.2)]'
+                                    : 'bg-white/5 border-white/10 text-iq-text-secondary hover:bg-white/10'
+                                    }`}
+                            >
+                                <User className="w-6 h-6" />
+                                <span className="font-bold">Hunter</span>
+                            </button>
 
-                        {/* Payer Button */}
-                        <button
-                            type="button"
-                            onClick={() => setRole('payer')}
-                            className={`p-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${role === 'payer'
-                                ? 'bg-blue-500/10 border-blue-500 text-blue-400 shadow-[0_0_15px_rgba(96,165,250,0.2)]'
-                                : 'bg-white/5 border-white/10 text-iq-text-secondary hover:bg-white/10'
-                                } ${sessionStorage.getItem('iqhunt_role') === 'hunter' ? 'opacity-50 grayscale cursor-not-allowed hidden' : ''}`}
-                            disabled={sessionStorage.getItem('iqhunt_role') === 'hunter'}
-                        >
-                            <Wallet className="w-6 h-6" />
-                            <span className="font-bold">Payer</span>
-                        </button>
-                    </div>
+                            {/* Payer Button */}
+                            <button
+                                type="button"
+                                onClick={() => setRole('payer')}
+                                className={`p-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${role === 'payer'
+                                    ? 'bg-blue-500/10 border-blue-500 text-blue-400 shadow-[0_0_15px_rgba(96,165,250,0.2)]'
+                                    : 'bg-white/5 border-white/10 text-iq-text-secondary hover:bg-white/10'
+                                    }`}
+                            >
+                                <Wallet className="w-6 h-6" />
+                                <span className="font-bold">Payer</span>
+                            </button>
+                        </div>
+                    )}
 
                     {/* Location & Currency Selection */}
                     <div>
@@ -206,21 +213,7 @@ const CompleteProfilePage = () => {
                         </div>
                     </div>
 
-                    {/* Change Role Link if pre-selected */}
-                    {sessionStorage.getItem('iqhunt_role') && (
-                        <div className="text-center">
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    sessionStorage.removeItem('iqhunt_role');
-                                    window.location.reload();
-                                }}
-                                className="text-xs text-iq-text-secondary hover:text-white underline"
-                            >
-                                Not a {role === 'hunter' ? 'Hunter' : 'Payer'}? Switch Role
-                            </button>
-                        </div>
-                    )}
+
 
                     <button
                         type="submit"
