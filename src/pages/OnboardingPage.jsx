@@ -77,16 +77,16 @@ export default function OnboardingPage() {
             };
 
             if (formData.role === 'hunter') {
-                profileData.expertise_tags = formData.expertise;
+                profileData.expertise = formData.expertise;
                 profileData.bio = formData.bio;
                 profileData.date_of_birth = formData.dob;
                 profileData.hunts_completed = 0;
                 profileData.hunts_won = 0;
                 profileData.success_rate = 0;
             } else {
-                profileData.expertise_tags = []; // Empty array for payers
+                profileData.expertise = []; // Empty array for payers
                 profileData.is_organization = formData.is_organization;
-                profileData.company_name = formData.company_name;
+                profileData.company_name = formData.company_name || null;
                 profileData.verified_status = false;
             }
 
@@ -94,7 +94,10 @@ export default function OnboardingPage() {
                 .from('profiles')
                 .upsert(profileData, { onConflict: 'id' });
 
-            if (insertError) throw insertError;
+            if (insertError) {
+                console.error('Insert error details:', insertError);
+                throw insertError;
+            }
 
             // Clear intended role
             localStorage.removeItem('intended_role');
@@ -108,7 +111,7 @@ export default function OnboardingPage() {
 
         } catch (err) {
             console.error('Onboarding error:', err);
-            setError('Failed to save profile. Please try again.');
+            setError(`Failed to save profile: ${err.message || 'Please try again.'}`);
         } finally {
             setLoading(false);
         }
