@@ -41,7 +41,15 @@ export default function AuthCallback() {
             if (existingProfile) {
                 // USER ALREADY HAS PROFILE
 
-                // Check if trying to register with different role
+                // Check if user is admin - skip role check for admins
+                if (existingProfile.role === 'admin') {
+                    // Admin user - redirect to admin dashboard
+                    localStorage.removeItem('intended_role');
+                    navigate('/admin/dashboard', { replace: true });
+                    return;
+                }
+
+                // Check if trying to register with different role (for non-admins)
                 if (existingProfile.role !== intendedRole) {
                     alert(
                         `This email is already registered as a ${existingProfile.role}.\n\n` +
