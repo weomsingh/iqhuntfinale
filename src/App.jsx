@@ -36,6 +36,7 @@ import Contact from './pages/static/Contact';
 import Covenant from './pages/static/Covenant';
 
 import './styles/App.css';
+import './styles/WarRoom.css';
 
 function App() {
     return (
