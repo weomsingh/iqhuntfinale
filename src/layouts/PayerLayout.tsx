@@ -103,7 +103,7 @@ const PayerLayout = () => {
                 <nav className="flex-1 space-y-1">
                     <NavItem to="/payer/dashboard" icon={LayoutDashboard} label="Dashboard" />
                     <NavItem to="/payer/live-bounties" icon={Zap} label="Live Bounties" />
-                    <NavItem to="/payer/post-bounty" icon={PlusCircle} label="Post Bounty" />
+                    <NavItem to="/payer/post-bounty" icon={CirclePlus} label="Post Bounty" />
                     <NavItem to="/payer/history" icon={FileText} label="History" />
                     <NavItem to="/payer/vault" icon={Shield} label="Vault" />
 
@@ -112,9 +112,9 @@ const PayerLayout = () => {
                     <div className="px-6 mb-2">
                         <span className="text-xs font-bold text-[#444] uppercase tracking-wider">Support</span>
                     </div>
-                    <NavItem to="/payer/analytics" icon={BarChart2} label="Analytics" />
+                    <NavItem to="/payer/analytics" icon={ChartColumn} label="Analytics" />
                     <NavItem to="/payer/settings" icon={Settings} label="Settings" />
-                    <NavItem to="/payer/help" icon={HelpCircle} label="Help" />
+                    <NavItem to="/payer/help" icon={CircleHelp} label="Help" />
                 </nav>
 
                 <div className="p-6">
@@ -150,7 +150,7 @@ const PayerLayout = () => {
                                 to="/payer/post-bounty"
                                 className="flex items-center gap-2 bg-iq-green text-[#0a0a0a] px-6 py-3 rounded-lg font-semibold text-sm hover:scale-105 hover:shadow-[0_0_20px_rgba(0,255,157,0.4)] transition-all"
                             >
-                                <PlusCircle className="w-4 h-4" />
+                                <CirclePlus className="w-4 h-4" />
                                 Post Bounty
                             </Link>
                             <Link
