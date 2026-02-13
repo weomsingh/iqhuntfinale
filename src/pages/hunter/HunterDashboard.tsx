@@ -1,4 +1,4 @@
-import { Wallet, Trophy, Target, Star, ArrowUpRight, Clock } from 'lucide-react';
+import { Wallet, Trophy, Target, Star, ArrowUpRight } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Link } from 'react-router-dom';
 
