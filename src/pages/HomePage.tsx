@@ -43,7 +43,7 @@ const HomePage = () => {
                     {/* CTA Buttons */}
                     <div className="flex flex-col sm:flex-row gap-6 justify-center pt-8 w-full max-w-md mx-auto sm:max-w-none">
                         <Link
-                            to={user ? '/hunter/dashboard' : '/signin'}
+                            to="/hunter/dashboard"
                             onClick={() => !user && sessionStorage.setItem('iqhunt_role', 'hunter')}
                             className="px-8 py-5 bg-iq-green text-iq-black font-black text-lg tracking-wider rounded-lg hover:shadow-[0_0_40px_rgba(0,255,157,0.6)] hover:scale-105 transition-all flex items-center justify-center gap-3 group uppercase"
                         >
@@ -51,7 +51,7 @@ const HomePage = () => {
                             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                         </Link>
                         <Link
-                            to={user ? '/payer/post-bounty' : '/signin'}
+                            to="/payer/post-bounty"
                             onClick={() => !user && sessionStorage.setItem('iqhunt_role', 'payer')}
                             className="px-8 py-5 bg-transparent border-2 border-zinc-800 text-white font-bold text-lg tracking-wider rounded-lg hover:border-iq-green hover:text-iq-green hover:bg-iq-green/5 transition-all flex items-center justify-center gap-3 uppercase"
                         >
