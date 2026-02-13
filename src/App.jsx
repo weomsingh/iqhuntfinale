@@ -23,6 +23,10 @@ import PayerVault from './pages/payer/Vault';
 import PostBounty from './pages/payer/PostBounty';
 import PayerBountyDetails from './pages/payer/BountyDetails';
 
+// Admin pages
+import AdminLayout from './pages/admin/AdminLayout';
+import AdminDashboard from './pages/admin/Dashboard';
+
 // Static pages
 import Terms from './pages/static/Terms';
 import Privacy from './pages/static/Privacy';
@@ -79,7 +83,20 @@ function App() {
                         <Route path="vault" element={<PayerVault />} />
                     </Route>
 
-                    {/* 404 */}
+                    {/* Admin routes - PROTECTED */}
+                    <Route
+                        path="/admin"
+                        element={
+                            <ProtectedRoute allowedRole="admin">
+                                <AdminLayout />
+                            </ProtectedRoute>
+                        }
+                    >
+                        <Route index element={<Navigate to="/admin/dashboard" replace />} />
+                        <Route path="dashboard" element={<AdminDashboard />} />
+                    </Route>
+
+                    {/* Static pages - PUBLIC */}
                     <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
             </AuthProvider>

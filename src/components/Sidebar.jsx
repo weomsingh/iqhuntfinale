@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Home, Target, Wallet, LogOut, Zap, History as HistoryIcon } from 'lucide-react';
+import { Home, Target, Wallet, LogOut, Zap, History as HistoryIcon, Shield } from 'lucide-react';
 
 export default function Sidebar({ role }) {
     const location = useLocation();
@@ -19,7 +19,11 @@ export default function Sidebar({ role }) {
         { path: '/payer/vault', label: 'Vault', icon: Wallet },
     ];
 
-    const links = role === 'hunter' ? hunterLinks : payerLinks;
+    const adminLinks = [
+        { path: '/admin/dashboard', label: 'Dashboard', icon: Shield },
+    ];
+
+    const links = role === 'hunter' ? hunterLinks : role === 'payer' ? payerLinks : adminLinks;
 
     return (
         <aside className="sidebar">
