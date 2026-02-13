@@ -14,15 +14,18 @@ import {
     Search,
     Bell,
     ChevronDown,
-    Wallet
+    Wallet,
+    Menu,
+    X
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const PayerLayout = () => {
     const { profile, signOut } = useAuth();
     const location = useLocation();
     const navigate = useNavigate();
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     const handleSignOut = async () => {
         await signOut();
@@ -30,6 +33,11 @@ const PayerLayout = () => {
     };
 
     const isActive = (path: string) => location.pathname === path;
+
+    // Close mobile menu on route change
+    useEffect(() => {
+        setIsMobileMenuOpen(false);
+    }, [location.pathname]);
 
     const NavItem = ({ to, icon: Icon, label }: { to: string; icon: any; label: string }) => (
         <Link
@@ -48,21 +56,84 @@ const PayerLayout = () => {
     );
 
     return (
-        <div className="min-h-screen bg-[#0a0a0a] flex font-sans text-iq-text selection:bg-iq-green selection:text-iq-black">
-            {/* Header - Fixed Top */}
-            <header className="fixed top-0 left-0 right-0 h-20 bg-[#0a0a0a]/95 backdrop-blur-xl border-b border-iq-green/15 z-50 flex items-center justify-between px-0">
-                {/* Logo Section - Matches Sidebar Width */}
-                <div className="w-[240px] h-full flex items-center px-6 border-r border-[#ffffff0d] shrink-0">
+        <div className="min-h-screen bg-[#0a0a0a] flex flex-col lg:flex-row font-sans text-iq-text selection:bg-iq-green selection:text-iq-black">
+
+            {/* Mobile Header */}
+            <header className="lg:hidden h-16 border-b border-iq-border bg-[#0a0a0a] flex items-center justify-between px-4 sticky top-0 z-40">
+                <Link to="/payer/dashboard" className="flex items-center gap-2">
+                    <Target className="w-6 h-6 text-iq-green" />
+                    <span className="font-display font-bold text-xl tracking-tight text-white">IQHUNT</span>
+                </Link>
+                <div className="flex items-center gap-4">
+                    {/* Mobile Wallet Display */}
+                    <div className="flex items-center gap-1 bg-iq-green/10 px-2 py-1 rounded text-xs border border-iq-green/10">
+                        <Wallet className="w-3 h-3 text-iq-green" />
+                        <span className="font-bold text-iq-green">₹{profile?.wallet_balance?.toLocaleString('en-IN') || '0'}</span>
+                    </div>
+                    <button
+                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                        className="p-2 text-white hover:bg-white/10 rounded-lg"
+                    >
+                        {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                    </button>
+                </div>
+            </header>
+
+            {/* Mobile Overlay */}
+            {isMobileMenuOpen && (
+                <div
+                    className="fixed inset-0 bg-black/80 z-40 lg:hidden backdrop-blur-sm"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                />
+            )}
+
+            {/* Main Sidebar - Fixed Left on Desktop, Slide-in on Mobile */}
+            <aside className={`
+                fixed lg:sticky top-0 bottom-0 left-0 z-50 w-[240px] bg-[#0f0f0f]/95 lg:bg-[#0f0f0f]/80 backdrop-blur-md border-r border-[#ffffff0d] flex flex-col pt-6 transition-transform duration-300 ease-in-out h-[100dvh] lg:h-screen
+                ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+            `}>
+                {/* Logo Section (Desktop Only) */}
+                <div className="hidden lg:flex items-center px-6 mb-8 shrink-0 h-14">
                     <Link to="/payer/dashboard" className="flex items-center gap-3 group">
                         <Target className="w-6 h-6 text-iq-green group-hover:rotate-180 transition-transform duration-500" />
                         <span className="font-display font-bold text-xl tracking-tight text-white group-hover:text-iq-green transition-colors">IQHUNT</span>
                     </Link>
                 </div>
 
-                {/* Header Content */}
-                <div className="flex-1 flex items-center justify-between px-8">
+                <nav className="flex-1 space-y-1">
+                    <NavItem to="/payer/dashboard" icon={LayoutDashboard} label="Dashboard" />
+                    <NavItem to="/payer/live-bounties" icon={Zap} label="Live Bounties" />
+                    <NavItem to="/payer/post-bounty" icon={PlusCircle} label="Post Bounty" />
+                    <NavItem to="/payer/history" icon={FileText} label="History" />
+                    <NavItem to="/payer/vault" icon={Shield} label="Vault" />
+
+                    <div className="my-6 mx-6 h-px bg-[#ffffff0d]" />
+
+                    <div className="px-6 mb-2">
+                        <span className="text-xs font-bold text-[#444] uppercase tracking-wider">Support</span>
+                    </div>
+                    <NavItem to="/payer/analytics" icon={BarChart2} label="Analytics" />
+                    <NavItem to="/payer/settings" icon={Settings} label="Settings" />
+                    <NavItem to="/payer/help" icon={HelpCircle} label="Help" />
+                </nav>
+
+                <div className="p-6">
+                    <button
+                        onClick={handleSignOut}
+                        className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-red-500 hover:bg-red-500/10 transition-colors text-left font-medium"
+                    >
+                        <LogOut className="w-5 h-5" />
+                        Sign Out
+                    </button>
+                </div>
+            </aside>
+
+            {/* Content Area */}
+            <main className="flex-1 lg:ml-0 min-h-screen flex flex-col w-full overflow-x-hidden relative">
+                {/* Desktop Header */}
+                <header className="hidden lg:flex h-20 bg-[#0a0a0a]/95 backdrop-blur-xl border-b border-iq-green/15 sticky top-0 z-30 px-8 items-center justify-between">
                     {/* Search Bar */}
-                    <div className="relative w-[400px] hidden md:block">
+                    <div className="relative w-[400px]">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-[#666]" />
                         <input
                             type="text"
@@ -77,14 +148,14 @@ const PayerLayout = () => {
                         <div className="flex items-center gap-3 mr-4">
                             <Link
                                 to="/payer/post-bounty"
-                                className="hidden lg:flex items-center gap-2 bg-iq-green text-[#0a0a0a] px-6 py-3 rounded-lg font-semibold text-sm hover:scale-105 hover:shadow-[0_0_20px_rgba(0,255,157,0.4)] transition-all"
+                                className="flex items-center gap-2 bg-iq-green text-[#0a0a0a] px-6 py-3 rounded-lg font-semibold text-sm hover:scale-105 hover:shadow-[0_0_20px_rgba(0,255,157,0.4)] transition-all"
                             >
                                 <PlusCircle className="w-4 h-4" />
                                 Post Bounty
                             </Link>
                             <Link
                                 to="/payer/vault"
-                                className="hidden lg:flex items-center gap-2 bg-transparent border border-iq-green/30 text-iq-green px-6 py-3 rounded-lg font-semibold text-sm hover:bg-iq-green/10 transition-all"
+                                className="flex items-center gap-2 bg-transparent border border-iq-green/30 text-iq-green px-6 py-3 rounded-lg font-semibold text-sm hover:bg-iq-green/10 transition-all"
                             >
                                 <Wallet className="w-4 h-4" />
                                 Lock Capital
@@ -98,7 +169,7 @@ const PayerLayout = () => {
                         </button>
 
                         {/* Wallet Balance */}
-                        <div className="hidden md:flex items-center gap-2">
+                        <div className="flex items-center gap-2">
                             <Wallet className="w-5 h-5 text-iq-green" />
                             <span className="font-bold text-lg text-white">₹{profile?.wallet_balance?.toLocaleString('en-IN') || '0.00'}</span>
                         </div>
@@ -133,42 +204,11 @@ const PayerLayout = () => {
                             )}
                         </div>
                     </div>
+                </header>
+
+                <div className="px-4 py-6 lg:p-8 flex-1 overflow-y-auto">
+                    <Outlet />
                 </div>
-            </header>
-
-            {/* Main Sidebar - Fixed Left */}
-            <aside className="fixed left-0 top-20 bottom-0 w-[240px] bg-[#0f0f0f]/80 backdrop-blur-md border-r border-[#ffffff0d] flex flex-col z-40 pt-6">
-                <nav className="flex-1 space-y-1">
-                    <NavItem to="/payer/dashboard" icon={LayoutDashboard} label="Dashboard" />
-                    <NavItem to="/payer/live-bounties" icon={Zap} label="Live Bounties" />
-                    <NavItem to="/payer/post-bounty" icon={PlusCircle} label="Post Bounty" />
-                    <NavItem to="/payer/history" icon={FileText} label="History" />
-                    <NavItem to="/payer/vault" icon={Shield} label="Vault" />
-
-                    <div className="my-6 mx-6 h-px bg-[#ffffff0d]" />
-
-                    <div className="px-6 mb-2">
-                        <span className="text-xs font-bold text-[#444] uppercase tracking-wider">Support</span>
-                    </div>
-                    <NavItem to="/payer/analytics" icon={BarChart2} label="Analytics" />
-                    <NavItem to="/payer/settings" icon={Settings} label="Settings" />
-                    <NavItem to="/payer/help" icon={HelpCircle} label="Help" />
-                </nav>
-
-                <div className="p-6">
-                    <button
-                        onClick={handleSignOut}
-                        className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-red-500 hover:bg-red-500/10 transition-colors text-left font-medium"
-                    >
-                        <LogOut className="w-5 h-5" />
-                        Sign Out
-                    </button>
-                </div>
-            </aside>
-
-            {/* Content Area */}
-            <main className="flex-1 ml-[240px] mt-20 p-8 min-h-[calc(100vh-80px)] overflow-y-auto custom-scrollbar">
-                <Outlet />
             </main>
         </div>
     );
