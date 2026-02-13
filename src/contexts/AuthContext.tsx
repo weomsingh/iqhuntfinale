@@ -80,33 +80,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return () => subscription.unsubscribe();
     }, []);
 
-    return () => subscription.unsubscribe();
-}, []);
 
-const signInWithGoogle = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-            redirectTo: `${window.location.origin}/auth/callback`,
-        },
-    });
-    if (error) throw error;
-};
 
-const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) throw error;
-};
+    const signInWithGoogle = async () => {
+        const { error } = await supabase.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+                redirectTo: `${window.location.origin}/auth/callback`,
+            },
+        });
+        if (error) throw error;
+    };
 
-const refreshProfile = async () => {
-    if (user) await fetchProfile(user.id);
-};
+    const signOut = async () => {
+        const { error } = await supabase.auth.signOut();
+        if (error) throw error;
+    };
 
-return (
-    <AuthContext.Provider value={{ user, session, profile, loading, signInWithGoogle, signOut, refreshProfile }}>
-        {!loading && children}
-    </AuthContext.Provider>
-);
+    const refreshProfile = async () => {
+        if (user) await fetchProfile(user.id);
+    };
+
+    return (
+        <AuthContext.Provider value={{ user, session, profile, loading, signInWithGoogle, signOut, refreshProfile }}>
+            {!loading && children}
+        </AuthContext.Provider>
+    );
 };
 
 export const useAuth = () => {
