@@ -28,6 +28,7 @@ const CompleteProfilePage = () => {
             await Promise.race([
                 (async () => {
                     // 1. Perform the Upsert
+                    // Must include ALL required fields from schema (nationality, currency)
                     const { error: updateError } = await supabase
                         .from('profiles')
                         .upsert({
@@ -35,10 +36,15 @@ const CompleteProfilePage = () => {
                             username,
                             role,
                             email: user.email,
+                            nationality: 'global', // Defaulting to global for now
+                            currency: 'USD',       // Defaulting to USD for now
                             updated_at: new Date().toISOString(),
                         });
 
-                    if (updateError) throw updateError;
+                    if (updateError) {
+                        console.error("Supabase Upsert Error:", updateError);
+                        throw updateError;
+                    }
 
                     // 2. Force a Hard Navigation to ensure fresh state
                     // This bypasses any React Context lag and ensures AuthContext re-initializes correctly
