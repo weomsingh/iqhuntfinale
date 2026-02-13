@@ -25,6 +25,8 @@ const CompleteProfilePage = () => {
         );
 
         try {
+            // Remove timeout for debugging if needed, but keep it to prevent infinite hang
+            // However, we prioritize showing the error if it happens fast
             await Promise.race([
                 (async () => {
                     // 1. Perform the Upsert
@@ -43,11 +45,11 @@ const CompleteProfilePage = () => {
 
                     if (updateError) {
                         console.error("Supabase Upsert Error:", updateError);
-                        throw updateError;
+                        // THROW THE RAW ERROR so we can see it on screen
+                        throw new Error(`DB Error: ${updateError.message} (${updateError.code})`);
                     }
 
                     // 2. Force a Hard Navigation to ensure fresh state
-                    // This bypasses any React Context lag and ensures AuthContext re-initializes correctly
                     const target = role === 'hunter' ? '/hunter/dashboard' : '/payer/dashboard';
                     window.location.href = target;
                 })(),
@@ -56,8 +58,9 @@ const CompleteProfilePage = () => {
 
         } catch (err: any) {
             console.error('Profile Update Error:', err);
+            // Display the ACTUAL error message to the user
             setError(err.message || 'Failed to update profile.');
-            setLoading(false); // Only stop loading on error, on success we redirect
+            setLoading(false);
         }
     };
 
