@@ -6,7 +6,6 @@ import { Loader2 } from 'lucide-react';
 const AuthCallbackPage = () => {
     const { user, profile, loading, signOut } = useAuth();
     const navigate = useNavigate();
-    const [error, setError] = useState<string | null>(null);
     const [conflictData, setConflictData] = useState<{ intended: string, actual: string } | null>(null);
 
     useEffect(() => {
