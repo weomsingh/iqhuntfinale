@@ -2445,6 +2445,263 @@
     margin: 0;
 }
 
+/* Payer Bounty Details Page */
+.payer-bounty-details-page {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.mission-pdf-section {
+    background: #111111;
+    border: 1px solid rgba(0, 255, 157, 0.2);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.mission-pdf-section h2 {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #ffffff;
+    margin: 0;
+}
+
+.hunters-section,
+.submissions-section {
+    margin-bottom: 3rem;
+}
+
+.hunters-section h2,
+.submissions-section h2 {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #ffffff;
+    margin-bottom: 1.5rem;
+}
+
+.hunters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+}
+
+.hunter-card {
+    background: #111111;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s;
+}
+
+.hunter-card:hover {
+    border-color: rgba(0, 255, 157, 0.3);
+    transform: translateY(-2px);
+}
+
+.hunter-info {
+    flex: 1;
+}
+
+.hunter-name {
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 1rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.hunter-tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.tag-small {
+    padding: 0.25rem 0.625rem;
+    background: rgba(0, 255, 157, 0.1);
+    color: #00ff9d;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.stake-amount {
+    color: #888888;
+    font-size: 0.875rem;
+    white-space: nowrap;
+}
+
+.empty-state-small {
+    background: #111111;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 3rem 2rem;
+    text-align: center;
+    color: #666666;
+}
+
+.empty-state-small p {
+    color: #888888;
+    margin: 0.5rem 0 0;
+}
+
+.empty-state-small small {
+    color: #666666;
+    font-size: 0.875rem;
+}
+
+.submissions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.submission-card {
+    background: #111111;
+    border: 2px solid rgba(0, 255, 157, 0.2);
+    border-radius: 12px;
+    padding: 2rem;
+    transition: all 0.3s;
+}
+
+.submission-card:hover {
+    border-color: #00ff9d;
+    box-shadow: 0 4px 16px rgba(0, 255, 157, 0.2);
+}
+
+.submission-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.submission-info h3 {
+    color: #ffffff;
+    font-size: 1.25rem;
+    margin: 0 0 0.5rem;
+}
+
+.submission-date {
+    color: #666666;
+    font-size: 0.875rem;
+}
+
+.ai-score {
+    background: rgba(0, 255, 157, 0.1);
+    border: 1px solid rgba(0, 255, 157, 0.3);
+    border-radius: 8px;
+    padding: 0.75rem 1.25rem;
+    text-align: center;
+}
+
+.ai-score .score-label {
+    display: block;
+    color: #666666;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.25rem;
+}
+
+.ai-score .score-value {
+    display: block;
+    color: #00ff9d;
+    font-size: 1.5rem;
+    font-weight: 900;
+}
+
+.submission-content {
+    margin-bottom: 1.5rem;
+}
+
+.submission-content h4 {
+    color: #cccccc;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.75rem;
+}
+
+.submission-content p {
+    color: #ffffff;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.submission-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.btn-select-winner {
+    background: linear-gradient(135deg, #00ff9d 0%, #00cc7d 100%) !important;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.btn-select-winner:hover:not(:disabled) {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 24px rgba(0, 255, 157, 0.4) !important;
+}
+
+.winner-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 193, 7, 0.2) 100%);
+    border: 2px solid #ffd700;
+    border-radius: 8px;
+    color: #ffd700;
+    font-weight: 900;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.info-banner {
+    display: flex;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: rgba(0, 157, 255, 0.1);
+    border: 1px solid rgba(0, 157, 255, 0.3);
+    border-radius: 12px;
+    color: #009dff;
+}
+
+.info-banner svg {
+    flex-shrink: 0;
+    margin-top: 0.25rem;
+}
+
+.info-banner strong {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.info-banner p {
+    margin: 0;
+    color: #cccccc;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .dashboard-layout {

@@ -21,6 +21,7 @@ import PayerLiveBounties from './pages/payer/LiveBounties';
 import PayerHistory from './pages/payer/History';
 import PayerVault from './pages/payer/Vault';
 import PostBounty from './pages/payer/PostBounty';
+import PayerBountyDetails from './pages/payer/BountyDetails';
 
 // Static pages
 import Terms from './pages/static/Terms';
@@ -72,6 +73,7 @@ function App() {
                         <Route index element={<Navigate to="/payer/dashboard" replace />} />
                         <Route path="dashboard" element={<PayerDashboard />} />
                         <Route path="post-bounty" element={<PostBounty />} />
+                        <Route path="bounty/:id" element={<PayerBountyDetails />} />
                         <Route path="live-bounties" element={<PayerLiveBounties />} />
                         <Route path="history" element={<PayerHistory />} />
                         <Route path="vault" element={<PayerVault />} />
