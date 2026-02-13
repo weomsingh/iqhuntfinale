@@ -7,9 +7,9 @@ if (!supabaseUrl || !supabaseKey) {
     console.error('CRITICAL: Missing Supabase environment variables. Check your .env file or deployment settings.');
 }
 
-// Create client. If keys are missing, this will likely throw or fail immediately, 
-// which is better than timing out on a dummy URL.
-const url = supabaseUrl || '';
-const key = supabaseKey || '';
+// Create client. If keys are missing, we use a placeholder to prevent the app from crashing at startup.
+// The auth calls will fail gracefully (handled by AuthContext), allowing the UI to show the config warning.
+const url = supabaseUrl || 'https://placeholder.supabase.co';
+const key = supabaseKey || 'placeholder-key';
 
 export const supabase = createClient(url, key);
