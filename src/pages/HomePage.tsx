@@ -55,7 +55,7 @@ const HomePage = () => {
                             onClick={() => !user && sessionStorage.setItem('iqhunt_role', 'payer')}
                             className="px-8 py-5 bg-transparent border-2 border-zinc-800 text-white font-bold text-lg tracking-wider rounded-lg hover:border-iq-green hover:text-iq-green hover:bg-iq-green/5 transition-all flex items-center justify-center gap-3 uppercase"
                         >
-                            Post a Bounty
+                            Post a Bounty (Payer Only)
                         </Link>
                     </div>
                 </div>

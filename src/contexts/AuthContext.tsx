@@ -52,54 +52,61 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     useEffect(() => {
         // Check active session
-        supabase.auth.getSession().then(({ data: { session } }) => {
+        const initAuth = async () => {
+            const { data: { session } } = await supabase.auth.getSession();
             setSession(session);
             setUser(session?.user ?? null);
-            if (session?.user) {
-                fetchProfile(session.user.id);
-            } else {
-                setLoading(false);
-            }
-        });
 
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+            if (session?.user) {
+                await fetchProfile(session.user.id);
+            }
+            setLoading(false);
+        };
+
+        initAuth();
+
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
             setSession(session);
             setUser(session?.user ?? null);
+
             if (session?.user) {
-                fetchProfile(session.user.id).then(() => setLoading(false));
+                await fetchProfile(session.user.id);
             } else {
                 setProfile(null);
-                setLoading(false);
             }
+            setLoading(false);
         });
 
         return () => subscription.unsubscribe();
     }, []);
 
-    const signInWithGoogle = async () => {
-        const { error } = await supabase.auth.signInWithOAuth({
-            provider: 'google',
-            options: {
-                redirectTo: `${window.location.origin}/auth/callback`,
-            },
-        });
-        if (error) throw error;
-    };
+    return () => subscription.unsubscribe();
+}, []);
 
-    const signOut = async () => {
-        const { error } = await supabase.auth.signOut();
-        if (error) throw error;
-    };
+const signInWithGoogle = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+            redirectTo: `${window.location.origin}/auth/callback`,
+        },
+    });
+    if (error) throw error;
+};
 
-    const refreshProfile = async () => {
-        if (user) await fetchProfile(user.id);
-    };
+const signOut = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) throw error;
+};
 
-    return (
-        <AuthContext.Provider value={{ user, session, profile, loading, signInWithGoogle, signOut, refreshProfile }}>
-            {!loading && children}
-        </AuthContext.Provider>
-    );
+const refreshProfile = async () => {
+    if (user) await fetchProfile(user.id);
+};
+
+return (
+    <AuthContext.Provider value={{ user, session, profile, loading, signInWithGoogle, signOut, refreshProfile }}>
+        {!loading && children}
+    </AuthContext.Provider>
+);
 };
 
 export const useAuth = () => {
