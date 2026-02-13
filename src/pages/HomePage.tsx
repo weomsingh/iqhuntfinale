@@ -1,11 +1,21 @@
 import { useEffect } from 'react';
 import { Target, Shield, ArrowRight, Wallet, Clock } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 const HomePage = () => {
-    const { user, profile } = useAuth();
+    const { user, profile, loading } = useAuth();
     const location = useLocation();
+    const navigate = useNavigate();
+
+    // Auto-redirect if logged in, as per requirements
+    useEffect(() => {
+        if (!loading && user && profile) {
+            // Hunters go to ARENA, Payers to DASHBOARD
+            const target = profile.role === 'hunter' ? '/hunter/arena' : '/payer/dashboard';
+            navigate(target, { replace: true });
+        }
+    }, [user, profile, loading, navigate]);
 
     useEffect(() => {
         if (location.hash === '#how-it-works') {
