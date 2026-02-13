@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { Target, Instagram, ArrowRight, User as UserIcon } from 'lucide-react';
+import { Target, Instagram, User as UserIcon } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
 const MainLayout: React.FC = () => {
