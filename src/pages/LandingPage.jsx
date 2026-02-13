@@ -11,7 +11,9 @@ export default function LandingPage() {
     useEffect(() => {
         // If user is logged in, redirect to their dashboard
         if (!loading && currentUser) {
-            if (currentUser.role === 'hunter') {
+            if (currentUser.role === 'admin') {
+                navigate('/admin/dashboard', { replace: true });
+            } else if (currentUser.role === 'hunter') {
                 navigate('/hunter/dashboard', { replace: true });
             } else {
                 navigate('/payer/dashboard', { replace: true });
