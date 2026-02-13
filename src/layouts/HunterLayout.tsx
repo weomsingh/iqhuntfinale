@@ -1,7 +1,7 @@
 
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Target, LayoutDashboard, Search, Wallet, BarChart2, LogOut, Bell, Menu, X } from 'lucide-react';
+import { Target, LayoutDashboard, Search, Wallet, ChartColumn, LogOut, Bell, Menu, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 const HunterLayout = () => {
@@ -97,7 +97,7 @@ const HunterLayout = () => {
                             : 'text-iq-text-secondary hover:text-white hover:bg-white/5'
                             }`}
                     >
-                        <BarChart2 className="w-5 h-5" />
+                        <ChartColumn className="w-5 h-5" />
                         <span className="font-medium">My Stats</span>
                     </Link>
                 </nav>
