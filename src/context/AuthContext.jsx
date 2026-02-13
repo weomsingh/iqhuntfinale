@@ -89,6 +89,7 @@ export function AuthProvider({ children }) {
         signInWithGoogle,
         signOut,
         refetchProfile: () => currentUser && fetchProfile(currentUser.id),
+        refreshUser: () => currentUser && fetchProfile(currentUser.id), // Alias
     };
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
