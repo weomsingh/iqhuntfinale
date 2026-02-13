@@ -17,7 +17,11 @@ const SignInPage = () => {
             setLoading(true);
             setError(null);
             console.log('Initiating Google Sign In...');
-            await signInWithGoogle();
+
+            // Retrieve intended role from sessionStorage (set by HomePage) or navigate state
+            const storedRole = sessionStorage.getItem('iqhunt_role') as 'hunter' | 'payer' | null;
+
+            await signInWithGoogle(storedRole || undefined);
         } catch (err) {
             console.error('Sign In Error:', err);
             setError('Failed to sign in with Google. Check console for details.');

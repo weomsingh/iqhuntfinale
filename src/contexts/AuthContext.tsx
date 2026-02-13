@@ -17,7 +17,7 @@ interface AuthContextType {
     session: Session | null;
     profile: UserProfile | null;
     loading: boolean;
-    signInWithGoogle: () => Promise<void>;
+    signInWithGoogle: (intendedRole?: 'hunter' | 'payer') => Promise<void>;
     signOut: () => Promise<void>;
     refreshProfile: () => Promise<void>;
 }
@@ -95,17 +95,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
 
 
-    const signInWithGoogle = async () => {
+    const signInWithGoogle = async (intendedRole?: 'hunter' | 'payer') => {
         // Validate configuration before attempting sign in
         const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
         if (!supabaseUrl || supabaseUrl.includes('placeholder')) {
             throw new Error("Configuration Error: Missing VITE_SUPABASE_URL. Please check your deployment settings.");
         }
 
+        // Store intended role if provided
+        if (intendedRole) {
+            window.localStorage.setItem('iqhunt_intended_role', intendedRole);
+        }
+
         const { error } = await supabase.auth.signInWithOAuth({
             provider: 'google',
             options: {
                 redirectTo: `${window.location.origin}/auth/callback`,
+                queryParams: {
+                    access_type: 'offline',
+                    prompt: 'consent',
+                }
             },
         });
         if (error) throw error;
