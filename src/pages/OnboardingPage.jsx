@@ -77,13 +77,14 @@ export default function OnboardingPage() {
             };
 
             if (formData.role === 'hunter') {
-                profileData.expertise = formData.expertise;
+                profileData.expertise_tags = formData.expertise;
                 profileData.bio = formData.bio;
                 profileData.date_of_birth = formData.dob;
                 profileData.hunts_completed = 0;
                 profileData.hunts_won = 0;
                 profileData.success_rate = 0;
             } else {
+                profileData.expertise_tags = []; // Empty array for payers
                 profileData.is_organization = formData.is_organization;
                 profileData.company_name = formData.company_name;
                 profileData.verified_status = false;
@@ -125,7 +126,7 @@ export default function OnboardingPage() {
                     <span>IQHUNT</span>
                 </div>
                 <button
-                    class Name="help-btn"
+                    className="help-btn"
                     onClick={() => window.open('mailto:iqhuntarena@gmail.com')}
                 >
                     <HelpCircle size={20} />
