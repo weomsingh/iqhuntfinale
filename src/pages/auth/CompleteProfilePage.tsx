@@ -21,40 +21,39 @@ const CompleteProfilePage = () => {
         setLoading(true);
         setError(null);
 
+        // Timeout safety
+        const timeoutPromise = new Promise((_, reject) =>
+            setTimeout(() => reject(new Error("Request timed out. Please check your connection.")), 10000)
+        );
+
         try {
-            const { error: updateError } = await supabase
-                .from('profiles')
-                .upsert({
-                    id: user.id,
-                    username,
-                    role,
-                    email: user.email,
-                    updated_at: new Date().toISOString(),
-                });
+            await Promise.race([
+                (async () => {
+                    // 1. Perform the Upsert
+                    const { error: updateError } = await supabase
+                        .from('profiles')
+                        .upsert({
+                            id: user.id,
+                            username,
+                            role,
+                            email: user.email,
+                            updated_at: new Date().toISOString(),
+                        });
 
-            if (updateError) throw updateError;
+                    if (updateError) throw updateError;
 
-            await refreshProfile();
-
-            // Double check if profile is updated before navigating
-            // This prevents the infinite loop where RequireAuth sends us back
-            const { data: refreshedProfile } = await supabase
-                .from('profiles')
-                .select('*')
-                .eq('id', user.id)
-                .single();
-
-            if (refreshedProfile && refreshedProfile.username) {
-                navigate(role === 'hunter' ? '/hunter/dashboard' : '/payer/dashboard');
-            } else {
-                throw new Error("Profile verification failed. Please try again.");
-            }
+                    // 2. Force a Hard Navigation to ensure fresh state
+                    // This bypasses any React Context lag and ensures AuthContext re-initializes correctly
+                    const target = role === 'hunter' ? '/hunter/dashboard' : '/payer/dashboard';
+                    window.location.href = target;
+                })(),
+                timeoutPromise
+            ]);
 
         } catch (err: any) {
             console.error('Profile Update Error:', err);
             setError(err.message || 'Failed to update profile.');
-        } finally {
-            setLoading(false);
+            setLoading(false); // Only stop loading on error, on success we redirect
         }
     };
 
