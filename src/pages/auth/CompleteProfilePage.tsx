@@ -87,6 +87,14 @@ const CompleteProfilePage = () => {
                     <p className="text-iq-text-secondary">Choose your path and claim your handle.</p>
                 </div>
 
+                {/* Env Var Warning */}
+                {!import.meta.env.VITE_SUPABASE_URL && (
+                    <div className="mb-6 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-xl text-yellow-200 text-sm text-center">
+                        <p className="font-bold mb-1">⚠️ Configuration Error</p>
+                        <p>Missing VITE_SUPABASE_URL. Please add your Supabase keys to your Vercel Project Settings.</p>
+                    </div>
+                )}
+
                 {error && (
                     <div className="mb-6 p-3 bg-red-500/10 border border-red-500/20 rounded text-red-400 text-sm text-center">
                         {error}
