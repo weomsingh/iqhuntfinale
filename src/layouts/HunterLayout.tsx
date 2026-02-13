@@ -19,7 +19,7 @@ const HunterLayout = () => {
         <div className="min-h-screen bg-iq-black flex">
             {/* Sidebar */}
             <aside className="fixed left-0 top-0 bottom-0 w-64 bg-iq-secondary/30 border-r border-iq-border p-6 flex flex-col z-20">
-                <Link to="/" className="flex items-center gap-2 mb-10 group">
+                <Link to="/hunter/dashboard" className="flex items-center gap-2 mb-10 group">
                     <Target className="w-8 h-8 text-iq-green group-hover:rotate-180 transition-transform duration-500" />
                     <span className="font-display font-bold text-2xl tracking-tight text-white">IQHUNT</span>
                 </Link>

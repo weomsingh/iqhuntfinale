@@ -35,8 +35,8 @@ const PayerLayout = () => {
         <Link
             to={to}
             className={`flex items-center gap-3 px-6 py-3 transition-all duration-200 group relative ${isActive(to)
-                    ? 'bg-iq-green/10 text-iq-green'
-                    : 'text-[#888] hover:bg-white/5 hover:text-white'
+                ? 'bg-iq-green/10 text-iq-green'
+                : 'text-[#888] hover:bg-white/5 hover:text-white'
                 }`}
         >
             {isActive(to) && (
@@ -53,7 +53,7 @@ const PayerLayout = () => {
             <header className="fixed top-0 left-0 right-0 h-20 bg-[#0a0a0a]/95 backdrop-blur-xl border-b border-iq-green/15 z-50 flex items-center justify-between px-0">
                 {/* Logo Section - Matches Sidebar Width */}
                 <div className="w-[240px] h-full flex items-center px-6 border-r border-[#ffffff0d] shrink-0">
-                    <Link to="/" className="flex items-center gap-3 group">
+                    <Link to="/payer/dashboard" className="flex items-center gap-3 group">
                         <Target className="w-6 h-6 text-iq-green group-hover:rotate-180 transition-transform duration-500" />
                         <span className="font-display font-bold text-xl tracking-tight text-white group-hover:text-iq-green transition-colors">IQHUNT</span>
                     </Link>

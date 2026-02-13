@@ -17,7 +17,7 @@ const MainLayout: React.FC = () => {
         <div className="min-h-screen bg-iq-black text-iq-text font-sans selection:bg-iq-green selection:text-iq-black flex flex-col">
             <header className="fixed top-0 left-0 right-0 z-50 bg-iq-black/80 backdrop-blur-md border-b border-iq-border">
                 <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-                    <Link to="/" className="flex items-center gap-2 group">
+                    <Link to={user ? dashboardLink : "/"} className="flex items-center gap-2 group">
                         <Target className="w-6 h-6 text-iq-green group-hover:rotate-180 transition-transform duration-500" />
                         <span className="font-display font-bold text-xl tracking-tight text-white">IQHUNT</span>
                     </Link>
@@ -57,8 +57,8 @@ const MainLayout: React.FC = () => {
                                 <Link
                                     to={isAuthPage ? "/" : "/signup"}
                                     className={`px-4 py-2 font-bold text-sm rounded transition-all ${isAuthPage
-                                            ? 'bg-[#ffffff1a] text-white hover:bg-[#ffffff2a]'
-                                            : 'bg-iq-green text-iq-black hover:shadow-[0_0_15px_rgba(0,255,157,0.4)]'
+                                        ? 'bg-[#ffffff1a] text-white hover:bg-[#ffffff2a]'
+                                        : 'bg-iq-green text-iq-black hover:shadow-[0_0_15px_rgba(0,255,157,0.4)]'
                                         }`}
                                 >
                                     {isAuthPage ? 'Back to Home' : 'Enter Arena'}
