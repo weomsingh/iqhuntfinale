@@ -3293,45 +3293,374 @@
     margin: 0 auto;
 }
 
-/* Responsive */
+/* ========================================
+   COMPREHENSIVE MOBILE RESPONSIVE STYLES
+   ======================================== */
+
+/* Tablet & Mobile (768px and below) */
 @media (max-width: 768px) {
+
+    /* Layout */
     .dashboard-layout {
         grid-template-columns: 1fr;
+        padding: 0;
     }
 
     .sidebar {
         display: none;
     }
 
-    .bounties-grid {
-        grid-template-columns: 1fr;
+    .main-content {
+        padding: 1rem;
+        margin-left: 0;
     }
 
-    .stats-row {
-        grid-template-columns: 1fr;
-    }
-
-    .wallet-balance {
-        font-size: 2rem;
-    }
-
+    /* Headers */
     .landing-header,
     .static-header {
-        padding: 1rem 2rem;
+        padding: 1rem;
+        flex-wrap: wrap;
     }
 
+    .landing-header nav {
+        width: 100%;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    /* Hero Sections */
     .hero h1,
-    .covenant-hero h1 {
-        font-size: 2.5rem;
+    .covenant-hero h1,
+    .dashboard-hero h1 {
+        font-size: 2rem !important;
+        line-height: 1.2;
     }
 
-    .static-content {
-        padding: 2rem 1rem;
+    .hero-subtitle,
+    .page-subtitle {
+        font-size: 0.9rem !important;
     }
 
+    /* Grids */
+    .bounties-grid,
+    .stats-grid,
+    .stats-row,
     .contact-grid,
-    .covenant-pillars {
-        grid-template-columns: 1fr;
+    .covenant-pillars,
+    .vault-balance-grid,
+    .admin-stats,
+    .payer-bounties-list {
+        grid-template-columns: 1fr !important;
+        gap: 1rem;
+    }
+
+    /* Cards */
+    .bounty-card,
+    .stat-card,
+    .payer-bounty-card,
+    .history-card,
+    .balance-card,
+    .admin-transaction-card {
+        padding: 1.25rem !important;
+    }
+
+    .bounty-card-header h3,
+    .history-card-header h3 {
+        font-size: 1.125rem !important;
+    }
+
+    /* Buttons */
+    .btn-primary,
+    .btn-secondary,
+    .btn-stake {
+        padding: 0.875rem 1.5rem !important;
+        font-size: 0.9375rem !important;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .dashboard-hero {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 1rem;
+    }
+
+    .dashboard-hero .btn-primary {
+        width: 100%;
+    }
+
+    /* Forms */
+    .form-row {
+        flex-direction: column !important;
+        gap: 1rem !important;
+    }
+
+    .post-bounty-page,
+    .vault-page,
+    .history-page,
+    .live-bounties-page,
+    .admin-dashboard-page {
+        padding: 1rem !important;
+    }
+
+    .bounty-form,
+    .modal-form {
+        padding: 1.5rem !important;
+    }
+
+    /* Modals */
+    .modal-content {
+        width: 95% !important;
+        max-width: 95% !important;
+        margin: 1rem !important;
+        padding: 1.5rem !important;
+    }
+
+    .modal-header h2 {
+        font-size: 1.25rem !important;
+    }
+
+    /* Wallet & Balance */
+    .wallet-balance {
+        font-size: 2rem !important;
+    }
+
+    .balance-amount {
+        font-size: 1.75rem !important;
+    }
+
+    /* Static Pages */
+    .static-content {
+        padding: 1.5rem 1rem !important;
+    }
+
+    .covenant-section,
+    .contact-section {
+        padding: 2rem 1rem !important;
+    }
+
+    /* Bounty Details */
+    .bounty-details-page {
+        padding: 1rem !important;
+    }
+
+    .hunter-stakes-grid,
+    .submissions-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Transactions */
+    .transaction-item,
+    .admin-transaction-card {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+    }
+
+    .transaction-actions,
+    .tx-amount {
+        width: 100%;
+        align-items: flex-start !important;
+    }
+
+    /* History Cards */
+    .history-card-details {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* War Room - Mobile Optimized */
+    .war-room-page {
+        padding: 1rem !important;
+    }
+
+    .countdown-display,
+    .war-room-countdown {
+        padding: 2rem 1rem !important;
+        gap: 0.75rem !important;
+    }
+
+    .countdown-value {
+        font-size: 2.5rem !important;
+        min-width: 60px !important;
+    }
+
+    .countdown-separator {
+        font-size: 2rem !important;
+    }
+
+    .countdown-label {
+        font-size: 0.75rem !important;
+    }
+
+    .timer-card-header {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    /* War Room Chat */
+    .war-room-chat {
+        height: 500px !important;
+    }
+
+    .chat-message {
+        max-width: 85% !important;
+    }
+
+    .chat-input-form {
+        padding: 1rem !important;
+        gap: 0.5rem;
+    }
+
+    .chat-input-form input {
+        font-size: 0.875rem !important;
+    }
+
+    /* Admin Panel */
+    .admin-transactions-list {
+        gap: 1rem !important;
+    }
+
+    /* Onboarding */
+    .onboarding-container {
+        padding: 1.5rem 1rem !important;
+    }
+
+    .region-buttons {
+        flex-direction: column !important;
+    }
+
+    .region-btn {
+        width: 100%;
+    }
+
+    /* Empty States */
+    .empty-state h3 {
+        font-size: 1.25rem !important;
+    }
+
+    .empty-state {
+        padding: 3rem 1.5rem !important;
+    }
+}
+
+/* Small Mobile (480px and below) */
+@media (max-width: 480px) {
+
+    /* Extra small screens - phones in portrait */
+    .hero h1,
+    .dashboard-hero h1 {
+        font-size: 1.75rem !important;
+    }
+
+    .logo {
+        font-size: 1.25rem !important;
+    }
+
+    .countdown-value {
+        font-size: 2rem !important;
+        min-width: 50px !important;
+    }
+
+    .countdown-separator {
+        font-size: 1.5rem !important;
+        margin-top: 0 !important;
+    }
+
+    .countdown-label {
+        font-size: 0.625rem !important;
+    }
+
+    .stat-value {
+        font-size: 1.75rem !important;
+    }
+
+    .balance-amount {
+        font-size: 1.5rem !important;
+    }
+
+    /* Stack countdown vertically on very small screens */
+    .countdown-display.small-screen,
+    .war-room-countdown.small-screen {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .chat-message {
+        max-width: 90% !important;
+    }
+
+    .message-content {
+        font-size: 0.875rem !important;
+    }
+
+    .form-group label {
+        font-size: 0.9rem !important;
+    }
+
+    input,
+    textarea,
+    select {
+        font-size: 16px !important;
+        /* Prevents zoom on iOS */
+    }
+}
+
+/* Large Tablet (992px and below) */
+@media (max-width: 992px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    .footer-content {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    .bounties-grid {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)) !important;
+    }
+}
+
+/* Touch Device Improvements */
+@media (hover: none) and (pointer: coarse) {
+
+    /* Increase touch targets */
+    .btn-primary,
+    .btn-secondary,
+    .sidebar-link,
+    .nav-link {
+        min-height: 44px !important;
+        min-width: 44px !important;
+    }
+
+    /* Remove hover effects that don't work on touch */
+    .bounty-card:hover,
+    .stat-card:hover,
+    .balance-card:hover {
+        transform: none !important;
+    }
+
+    /* Add active states instead */
+    .bounty-card:active,
+    .stat-card:active,
+    .btn-primary:active {
+        transform: scale(0.98) !important;
+    }
+}
+
+/* Print Styles */
+@media print {
+
+    .sidebar,
+    .header,
+    .footer,
+    .btn-primary,
+    .btn-secondary {
+        display: none !important;
+    }
+
+    .main-content {
+        margin-left: 0 !important;
+        padding: 0 !important;
     }
 }
 
