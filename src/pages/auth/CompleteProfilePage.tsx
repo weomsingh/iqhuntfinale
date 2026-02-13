@@ -68,10 +68,7 @@ const CompleteProfilePage = () => {
         }
     };
 
-    const handleSignOut = async () => {
-        await supabase.auth.signOut();
-        window.location.href = '/signin';
-    };
+
 
     return (
         <div className="min-h-screen bg-iq-black flex flex-col items-center justify-center p-6 relative overflow-hidden">

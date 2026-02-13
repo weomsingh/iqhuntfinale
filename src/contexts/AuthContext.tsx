@@ -102,9 +102,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             throw new Error("Configuration Error: Missing VITE_SUPABASE_URL. Please check your deployment settings.");
         }
 
-        // Store intended role if provided
+        // Store intended role if provided - using sessionStorage to match HomePage behavior
         if (intendedRole) {
-            window.localStorage.setItem('iqhunt_intended_role', intendedRole);
+            window.sessionStorage.setItem('iqhunt_role', intendedRole);
         }
 
         const { error } = await supabase.auth.signInWithOAuth({
