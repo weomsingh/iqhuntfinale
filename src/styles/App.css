@@ -2129,6 +2129,322 @@
     margin: 0;
 }
 
+/* Post Bounty Page */
+.post-bounty-page {
+    padding: 2rem;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.page-header {
+    margin-bottom: 3rem;
+}
+
+.page-header h1 {
+    font-size: 2.5rem;
+    color: #ffffff;
+    margin-bottom: 0.5rem;
+}
+
+.page-subtitle {
+    color: #888888;
+    font-size: 1.125rem;
+    margin: 0;
+}
+
+.bounty-form {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.form-group label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #cccccc;
+    font-weight: 600;
+    font-size: 0.9375rem;
+}
+
+.form-group label svg {
+    color: #00ff9d;
+}
+
+.form-group input,
+.form-group textarea {
+    background: #111111;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 0.875rem;
+    color: #ffffff;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: all 0.2s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #00ff9d;
+    box-shadow: 0 0 0 3px rgba(0, 255, 157, 0.1);
+}
+
+.form-group input.error,
+.form-group textarea.error {
+    border-color: #ff5252;
+}
+
+.form-group small {
+    color: #666666;
+    font-size: 0.875rem;
+}
+
+.error-text {
+    color: #ff5252;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.file-upload-area {
+    position: relative;
+}
+
+.file-input {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.file-upload-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 3rem 2rem;
+    background: #111111;
+    border: 2px dashed rgba(0, 255, 157, 0.3);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+}
+
+.file-upload-label:hover {
+    background: rgba(0, 255, 157, 0.05);
+    border-color: #00ff9d;
+}
+
+.file-upload-label svg {
+    color: #00ff9d;
+}
+
+.file-name {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.file-size {
+    color: #888888;
+    font-size: 0.875rem;
+}
+
+.vault-info {
+    display: flex;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid;
+}
+
+.vault-info.success {
+    background: rgba(0, 255, 157, 0.1);
+    border-color: rgba(0, 255, 157, 0.3);
+    color: #00ff9d;
+}
+
+.vault-info.warning {
+    background: rgba(255, 157, 0, 0.1);
+    border-color: rgba(255, 157, 0, 0.3);
+    color: #ff9d00;
+}
+
+.vault-info svg {
+    flex-shrink: 0;
+    margin-top: 0.25rem;
+}
+
+.vault-info-content {
+    flex: 1;
+}
+
+.vault-info-content strong {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.vault-info-content p {
+    margin: 0.25rem 0;
+    color: inherit;
+}
+
+.balance-check {
+    font-size: 0.875rem;
+}
+
+.insufficient {
+    color: #ff5252;
+    font-weight: 700;
+}
+
+.error-banner {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.5rem;
+    background: rgba(255, 82, 82, 0.1);
+    border: 1px solid rgba(255, 82, 82, 0.3);
+    border-radius: 8px;
+    color: #ff5252;
+    font-weight: 600;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    padding-top: 1rem;
+}
+
+/* Payer Bounties List */
+.bounties-section {
+    margin-top: 3rem;
+}
+
+.bounties-section h2 {
+    color: #ffffff;
+    margin-bottom: 1.5rem;
+}
+
+.payer-bounties-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.payer-bounty-card {
+    background: #111111;
+    border: 1px solid rgba(0, 255, 157, 0.2);
+    border-radius: 12px;
+    padding: 2rem;
+    transition: all 0.3s;
+}
+
+.payer-bounty-card:hover {
+    border-color: #00ff9d;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 255, 157, 0.2);
+}
+
+.bounty-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+}
+
+.bounty-card-header h3 {
+    color: #ffffff;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.bounty-card-description {
+    color: #888888;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.bounty-card-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.bounty-card-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.bounty-card-stat .stat-label {
+    color: #666666;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.bounty-card-stat .stat-value {
+    color: #ffffff;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.bounty-card-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+.btn-sm {
+    padding: 0.5rem 1rem;
+    font-size: 0.9375rem;
+}
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 4rem 2rem;
+    background: #111111;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    text-align: center;
+}
+
+.empty-state h3 {
+    color: #ffffff;
+    margin: 0;
+}
+
+.empty-state p {
+    color: #888888;
+    margin: 0;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .dashboard-layout {
