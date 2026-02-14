@@ -14,5 +14,6 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
         storageKey: 'iqhunt-auth',
         autoRefreshToken: true,
         detectSessionInUrl: true,
+        flowType: 'pkce',
     },
 });
