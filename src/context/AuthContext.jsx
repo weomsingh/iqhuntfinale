@@ -10,26 +10,12 @@ export function AuthProvider({ children }) {
     useEffect(() => {
         let isMounted = true;
 
-        // CRITICAL: Always set loading to false after max 3 seconds
-        const loadingTimeout = setTimeout(() => {
-            if (isMounted) {
-                console.log('⚠️ Loading timeout - forcing loading=false');
-                setLoading(false);
-            }
-        }, 3000);
-
         // Check for existing session on mount
-        // Add a tiny delay to ensure Supabase auth is ready
-        setTimeout(() => {
+        checkSession().finally(() => {
             if (isMounted) {
-                checkSession().finally(() => {
-                    if (isMounted) {
-                        clearTimeout(loadingTimeout);
-                        console.log('Session check finalization');
-                    }
-                });
+                console.log('Session check finalization');
             }
-        }, 100);
+        });
 
         // Listen for auth changes
         const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -52,7 +38,6 @@ export function AuthProvider({ children }) {
         return () => {
             isMounted = false;
             subscription.unsubscribe();
-            clearTimeout(loadingTimeout);
         };
     }, []);
 

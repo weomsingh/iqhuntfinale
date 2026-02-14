@@ -9,11 +9,9 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     auth: {
-        persistSession: true,
         storage: window.localStorage,
-        storageKey: 'iqhunt-auth',
         autoRefreshToken: true,
+        persistSession: true,
         detectSessionInUrl: true,
-        flowType: 'pkce',
     },
 });
