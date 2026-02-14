@@ -65,9 +65,10 @@ export function AuthProvider({ children }) {
         }
     }
 
-    async function fetchProfile(userId) {
+    async function fetchProfile(userId, retryCount = 0) {
         try {
-            console.log('Fetching profile for:', userId);
+            console.log(`Fetching profile for: ${userId} (Attempt ${retryCount + 1})`);
+
             const { data, error } = await supabase
                 .from('profiles')
                 .select('*')
@@ -76,20 +77,35 @@ export function AuthProvider({ children }) {
 
             if (error) {
                 console.error('Profile fetch error:', error);
-                // If profile doesn't exist, that's okay - user needs to onboard
+
+                // If profile specifically doesn't exist, user needs onboarding
                 if (error.code === 'PGRST116') {
                     console.log('No profile found - user needs onboarding');
                     setCurrentUser(null);
                     return;
                 }
-                throw error;
+
+                // For other errors (network, timeout), retry a few times before giving up
+                if (retryCount < 3) {
+                    console.log(`Retrying profile fetch in 1s...`);
+                    setTimeout(() => fetchProfile(userId, retryCount + 1), 1000);
+                    return;
+                }
+
+                // If we exhausted retries, keep the previous user state if possible or show error
+                // Do NOT set currentUser to null effectively logging them out unless we are sure.
+                console.error('Failed to fetch profile after retries.');
+                // We do NOT set currentUser(null) here to avoid "flashing" logout state on flaky connection.
+                // However, if it's the initial load, we might be stuck in loading state.
+                // Best to keep loading=false but maybe show a toast.
+                return;
             }
 
             console.log('✅ Profile loaded:', data.username);
             setCurrentUser(data);
         } catch (error) {
-            console.error('Profile fetch error:', error);
-            setCurrentUser(null);
+            console.error('Profile fetch exception:', error);
+            // Don't logout immediately on random exceptions
         }
     }
 
