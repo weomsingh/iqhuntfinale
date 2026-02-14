@@ -102,7 +102,8 @@ export default function PostBounty() {
         if (!pdfFile) return null;
 
         const fileName = `${Date.now()}_${pdfFile.name}`;
-        const filePath = `mission-pdfs/${currentUser.id}/${fileName}`;
+        // CHANGED: Removed 'mission-pdfs/' prefix to match RLS policy which expects root folder to be userID
+        const filePath = `${currentUser.id}/${fileName}`;
 
         const { data, error } = await supabase.storage
             .from('bounty-missions')
@@ -144,7 +145,7 @@ export default function PostBounty() {
                 throw new Error('Failed to upload mission PDF');
             }
 
-            // Create bounty (entry_fee calculated automatically by platform)
+            // Create bounty
             const { data: bountyData, error: bountyError } = await supabase
                 .from('bounties')
                 .insert({
@@ -154,7 +155,7 @@ export default function PostBounty() {
                     reward: parseFloat(formData.reward),
                     entry_fee: stakeInfo.stake,
                     max_hunters: stakeInfo.maxHunters,
-                    currency: currentUser.currency,
+                    currency: currentUser.currency || 'INR', // Added fallback
                     submission_deadline: formData.submission_deadline,
                     mission_pdf_url: pdfUrl,
                     status: 'live',
@@ -182,7 +183,7 @@ export default function PostBounty() {
                     user_id: currentUser.id,
                     type: 'lock_vault',
                     amount: parseFloat(formData.reward) * 1.05,
-                    currency: currentUser.currency,
+                    currency: currentUser.currency || 'INR', // Added fallback
                     status: 'completed',
                     metadata: { bounty_id: bountyData.id }
                 });
@@ -194,7 +195,8 @@ export default function PostBounty() {
 
         } catch (error) {
             console.error('Error creating bounty:', error);
-            alert('Failed to create bounty. Please try again.');
+            // IMPROVED: Show detailed error message
+            alert(`Failed to create bounty: ${error.message || error.details || JSON.stringify(error)}`);
         } finally {
             setUploading(false);
         }
