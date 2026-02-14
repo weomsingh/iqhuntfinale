@@ -117,13 +117,17 @@ export default function AdminDashboard() {
                 p_transaction_id: transactionId
             });
 
-            if (error) throw error;
+            if (error) {
+                console.error('RPC Error:', JSON.stringify(error, null, 2));
+                throw error;
+            }
 
             if (data.success) {
                 alert('✅ Deposit verified successfully!');
                 await loadDashboardData();
             } else {
-                alert(data.error || 'Failed to verify deposit');
+                // This shows the actual error message from the database
+                alert(`Failed to verify deposit: ${data.error || 'Unknown error'}`);
             }
         } catch (error) {
             console.error('Verify deposit error:', error);

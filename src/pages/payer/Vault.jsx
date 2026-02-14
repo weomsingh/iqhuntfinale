@@ -61,6 +61,7 @@ export default function PayerVault() {
                     user_id: currentUser.id,
                     type: 'deposit',
                     amount: amount,
+                    currency: currentUser.currency || 'INR',
                     status: 'pending',
                     metadata: {
                         utr_number: utrNumber,
@@ -75,7 +76,7 @@ export default function PayerVault() {
             await loadTransactions();
         } catch (error) {
             console.error('Deposit error:', error);
-            alert('Failed to submit deposit request');
+            alert(`Failed to submit: ${error.message || error.details || 'Unknown error'}`);
         }
     }
 
