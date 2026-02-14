@@ -116,7 +116,7 @@ export default function BountyDetails() {
             }
         } catch (error) {
             console.error('Stake error:', error);
-            alert('Failed to stake. Please try again.');
+            alert(`Failed to stake: ${error.message || 'Please try again.'}`);
         } finally {
             setStaking(false);
         }
