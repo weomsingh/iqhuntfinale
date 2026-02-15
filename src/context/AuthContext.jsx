@@ -30,7 +30,9 @@ export function AuthProvider({ children }) {
             }
         };
 
-        initializeAuth();
+        if (loading) {
+            initializeAuth();
+        }
 
         const { data: { subscription } } = supabase.auth.onAuthStateChange(
             async (event, session) => {
@@ -40,9 +42,10 @@ export function AuthProvider({ children }) {
 
                 if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
                     if (session?.user) {
-                        // Don't await this if we want instant UI feedback, 
-                        // but updating currentUser will trigger re-render anyway.
-                        await fetchProfile(session.user.id);
+                        // Prevent fetching if we already have the user loaded with same ID
+                        if (currentUser?.id !== session.user.id) {
+                            await fetchProfile(session.user.id);
+                        }
                     }
                 } else if (event === 'SIGNED_OUT') {
                     setCurrentUser(null);
@@ -75,8 +78,8 @@ export function AuthProvider({ children }) {
             console.error('Session check error:', error);
             setLoading(false);
         } finally {
-            // Ensure loading is always false at the end of a successful check
-            setLoading(false);
+            // Ideally loading is set false inside fetchProfile or error handlers
+            // But as a fallback we can ensure it here if it's still true
         }
     }
 
@@ -120,7 +123,8 @@ export function AuthProvider({ children }) {
             setCurrentUser(data);
         } catch (error) {
             console.error('Profile fetch exception:', error);
-            // Don't logout immediately on random exceptions
+        } finally {
+            setLoading(false);
         }
     }
 

@@ -1,489 +1,209 @@
 /* ========================================
-   VISUAL POLISH & ENHANCEMENTS
-   Premium gradients, shadows, animations, and micro-interactions
+   VISUAL POLISH & ENHANCEMENTS v2.0
+   Ultramodern Cyberpunk Aesthetics
    ======================================== */
 
-/* Enhanced Gradient Backgrounds */
-.btn-primary {
-    background: linear-gradient(135deg, #00ff9d 0%, #00cc7d 50%, #00ff9d 100%);
-    background-size: 200% 100%;
-    transition: all 0.3s ease, background-position 0.5s ease;
+/* 1. Global Atmosphere & Backgrounds */
+body {
+    background-color: #050505;
+    background-image:
+        radial-gradient(circle at 50% 0%, rgba(0, 255, 157, 0.15) 0%, transparent 50%),
+        linear-gradient(rgba(0, 255, 157, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 157, 0.03) 1px, transparent 1px);
+    background-size: 100% 100%, 40px 40px, 40px 40px;
+    background-position: 0 0, 0 0, 0 0;
+    min-height: 100vh;
 }
 
-.btn-primary:hover:not(:disabled) {
-    background-position: 100% 0;
-    box-shadow: 0 8px 24px rgba(0, 255, 157, 0.4);
-    transform: translateY(-2px);
+.dashboard-layout,
+.landing-page {
+    background: transparent !important;
+    /* Allow body background to show */
 }
 
-.btn-primary:active:not(:disabled) {
-    transform: translateY(0);
-    box-shadow: 0 4px 12px rgba(0, 255, 157, 0.3);
-}
-
-/* Card Enhancements */
+/* 2. Glassmorphism Cards */
 .bounty-card,
 .stat-card,
 .balance-card,
-.payer-bounty-card,
-.history-card {
-    position: relative;
-    overflow: hidden;
+.wallet-card,
+.action-card {
+    background: rgba(20, 20, 20, 0.6) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(0, 255, 157, 0.15) !important;
+    box-shadow:
+        0 4px 24px -1px rgba(0, 0, 0, 0.2),
+        inset 0 0 20px rgba(0, 255, 157, 0.02);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    border-radius: 16px !important;
 }
 
-.bounty-card::before,
-.stat-card::before,
-.balance-card::before {
+.bounty-card:hover,
+.stat-card:hover,
+.action-card:hover {
+    transform: translateY(-5px) scale(1.01);
+    box-shadow:
+        0 20px 40px -5px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(0, 255, 157, 0.4),
+        0 0 30px rgba(0, 255, 157, 0.15);
+    background: rgba(20, 20, 20, 0.8) !important;
+    border-color: #00ff9d !important;
+}
+
+/* 3. Neon Typography */
+h1,
+h2,
+h3,
+.stat-value.reward,
+.wallet-balance {
+    text-shadow: 0 0 20px rgba(0, 255, 157, 0.3);
+    letter-spacing: -0.02em;
+}
+
+.highlight,
+.text-iq-green {
+    text-shadow: 0 0 15px rgba(0, 255, 157, 0.6);
+}
+
+/* 4. Button Enhancements */
+.btn-primary {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(90deg, #00ff9d, #00cc7d) !important;
+    box-shadow: 0 0 20px rgba(0, 255, 157, 0.3);
+    border: none !important;
+    font-weight: 700 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    z-index: 1;
+}
+
+.btn-primary::before {
     content: '';
     position: absolute;
     top: 0;
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-    transition: left 0.5s ease;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: left 0.6s ease;
+    z-index: -1;
 }
 
-.bounty-card:hover::before,
-.stat-card:hover::before,
-.balance-card:hover::before {
+.btn-primary:hover::before {
     left: 100%;
 }
 
-/* Enhanced Shadows */
-.bounty-card {
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 255, 157, 0.1);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 30px rgba(0, 255, 157, 0.5);
 }
 
-.bounty-card:hover {
-    box-shadow:
-        0 20px 40px rgba(0, 0, 0, 0.3),
-        0 0 0 2px rgba(0, 255, 157, 0.3),
-        0 0 40px rgba(0, 255, 157, 0.2);
+.btn-secondary {
+    background: rgba(0, 255, 157, 0.05) !important;
+    border: 1px solid rgba(0, 255, 157, 0.3) !important;
+    color: #00ff9d !important;
+    backdrop-filter: blur(5px);
 }
 
-/* Input Focus Enhancements */
+.btn-secondary:hover {
+    background: rgba(0, 255, 157, 0.15) !important;
+    box-shadow: 0 0 15px rgba(0, 255, 157, 0.2);
+    border-color: #00ff9d !important;
+}
+
+/* 5. Mobile Bottom Nav Polish */
+.bottom-nav {
+    background: rgba(10, 10, 10, 0.85) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border-top: 1px solid rgba(0, 255, 157, 0.2) !important;
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.bottom-nav-link.active .icon-container {
+    filter: drop-shadow(0 0 10px #00ff9d);
+}
+
+/* 6. Form Inputs */
+input,
+textarea,
+select {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    transition: all 0.3s ease;
+}
+
 input:focus,
 textarea:focus,
 select:focus {
-    outline: none;
-    border-color: #00ff9d;
-    box-shadow: 0 0 0 3px rgba(0, 255, 157, 0.1), 0 0 20px rgba(0, 255, 157, 0.15);
-    transform: translateY(-1px);
+    background: rgba(0, 255, 157, 0.05) !important;
+    border-color: #00ff9d !important;
+    box-shadow: 0 0 20px rgba(0, 255, 157, 0.15) !important;
 }
 
-/* Status Badge Glow */
+/* 7. Status Badges */
 .status-badge {
-    position: relative;
-    text-shadow: 0 0 10px currentColor;
+    box-shadow: 0 0 10px currentColor;
+    font-weight: 800 !important;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-size: 0.7rem !important;
 }
 
-.status-badge.live {
-    animation: pulse-glow 2s ease-in-out infinite;
-}
-
-@keyframes pulse-glow {
+/* 8. Animations */
+@keyframes warm-glow {
 
     0%,
     100% {
-        box-shadow: 0 0 10px rgba(0, 255, 157, 0.5);
+        box-shadow: 0 0 20px rgba(0, 255, 157, 0.2);
     }
 
     50% {
-        box-shadow: 0 0 20px rgba(0, 255, 157, 0.8);
+        box-shadow: 0 0 40px rgba(0, 255, 157, 0.4);
     }
 }
 
-/* Stat Value Animation on Hover */
-.stat-value {
-    transition: all 0.3s ease;
+.wallet-card {
+    animation: warm-glow 4s ease-in-out infinite;
 }
 
-.stat-card:hover .stat-value {
-    transform: scale(1.1);
-    text-shadow: 0 0 20px rgba(0, 255, 157, 0.6);
-}
-
-/* Balance Amount Glow */
-.balance-amount {
-    text-shadow: 0 0 30px rgba(0, 255, 157, 0.3);
-    transition: all 0.3s ease;
-}
-
-.balance-card:hover .balance-amount {
-    text-shadow: 0 0 40px rgba(0, 255, 157, 0.6);
-    transform: scale(1.05);
-}
-
-/* Modal Entrance Animation */
-.modal-overlay {
-    animation: fadeIn 0.2s ease-out;
-}
-
-.modal-content {
-    animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 1;
-    }
-}
-
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px) scale(0.95);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-
-/* Loading Spinner Enhancement */
-.spinner {
-    border: 3px solid rgba(0, 255, 157, 0.1);
-    border-top: 3px solid #00ff9d;
-    animation: spin 1s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-    box-shadow: 0 0 20px rgba(0, 255, 157, 0.3);
-}
-
-/* Bounty Card Reward Glow */
-.bounty-reward {
-    transition: all 0.3s ease;
-}
-
-.bounty-card:hover .bounty-reward {
-    text-shadow: 0 0 15px rgba(0, 255, 157, 0.8);
-    color: #00ff9d;
-}
-
-/* Submit Button Pulse on Stake Pages */
-.btn-stake {
-    animation: subtle-pulse 3s ease-in-out infinite;
-}
-
-@keyframes subtle-pulse {
-
-    0%,
-    100% {
-        box-shadow: 0 0 0 0 rgba(0, 255, 157, 0.4);
-    }
-
-    50% {
-        box-shadow: 0 0 0 10px rgba(0, 255, 157, 0);
-    }
-}
-
-/* Transaction Item Slide In */
-.transaction-item {
-    animation: slideInRight 0.4s ease-out backwards;
-}
-
-.transaction-item:nth-child(1) {
-    animation-delay: 0.1s;
-}
-
-.transaction-item:nth-child(2) {
-    animation-delay: 0.15s;
-}
-
-.transaction-item:nth-child(3) {
-    animation-delay: 0.2s;
-}
-
-.transaction-item:nth-child(4) {
-    animation-delay: 0.25s;
-}
-
-.transaction-item:nth-child(5) {
-    animation-delay: 0.3s;
-}
-
-@keyframes slideInRight {
-    from {
-        opacity: 0;
-        transform: translateX(-20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-/* Enhanced Scrollbar for All Containers */
+/* 9. Scrollbar Polish */
 ::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
+    width: 6px;
+    height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 10px;
+    background: #050505;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, #00ff9d, #00cc7d);
-    border-radius: 10px;
-    border: 2px solid rgba(0, 0, 0, 0.2);
+    background: #1a1a1a;
+    border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(180deg, #00cc7d, #00ff9d);
-    box-shadow: 0 0 10px rgba(0, 255, 157, 0.5);
+    background: #00ff9d;
 }
 
-/* Navbar/Header Glassmorphism Enhancement */
-.landing-header,
-.static-header {
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border-bottom: 1px solid rgba(0, 255, 157, 0.1);
+/* 10. Selection */
+::selection {
+    background: rgba(0, 255, 157, 0.3);
+    color: #ffffff;
 }
 
-/* Page Hero Gradient Text */
-.dashboard-hero h1,
-.page-header h1,
-.hero h1 {
-    background: linear-gradient(135deg, #00ff9d, #00cc7d, #00ffcc);
-    background-size: 200% 200%;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    animation: gradient-shift 6s ease infinite;
-}
-
-@keyframes gradient-shift {
-
-    0%,
-    100% {
-        background-position: 0% 50%;
-    }
-
-    50% {
-        background-position: 100% 50%;
-    }
-}
-
-/* Empty State Enhancement */
-.empty-state {
-    animation: fadeInScale 0.5s ease-out;
-}
-
-@keyframes fadeInScale {
-    from {
-        opacity: 0;
-        transform: scale(0.9);
-    }
-
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-.empty-state svg {
-    animation: float 3s ease-in-out infinite;
-    filter: drop-shadow(0 0 20px rgba(0, 255, 157, 0.3));
-}
-
-@keyframes float {
-
-    0%,
-    100% {
-        transform: translateY(0);
-    }
-
-    50% {
-        transform: translateY(-10px);
-    }
-}
-
-/* Form Group Label Enhancement */
-.form-group label {
-    transition: color 0.2s ease;
-}
-
-.form-group:focus-within label {
-    color: #00ff9d;
-    text-shadow: 0 0 10px rgba(0, 255, 157, 0.3);
-}
-
-/* Logo Glow Effect */
-.logo {
-    text-shadow: 0 0 20px rgba(0, 255, 157, 0.4);
-    transition: all 0.3s ease;
-}
-
-.logo:hover {
-    text-shadow: 0 0 30px rgba(0, 255, 157, 0.6);
-    transform: scale(1.05);
-}
-
-/* Sidebar Link Active State Enhancement */
-.sidebar-link.active {
-    background: linear-gradient(90deg, rgba(0, 255, 157, 0.2), transparent);
-    border-left: 3px solid #00ff9d;
-    box-shadow: 0 0 20px rgba(0, 255, 157, 0.2);
-}
-
-/* Countdown Timer Digit Flip Effect */
-.countdown-value {
-    animation: digit-glow 2s ease-in-out infinite;
-}
-
-@keyframes digit-glow {
-
-    0%,
-    100% {
-        text-shadow:
-            0 0 20px rgba(0, 255, 157, 0.5),
-            0 0 40px rgba(0, 255, 157, 0.3);
-    }
-
-    50% {
-        text-shadow:
-            0 0 30px rgba(0, 255, 157, 0.8),
-            0 0 60px rgba(0, 255, 157, 0.5);
-    }
-}
-
-/* File Upload Area Enhancement */
-.file-upload-area {
-    transition: all 0.3s ease;
-}
-
-.file-upload-area:hover {
-    border-color: rgba(0, 255, 157, 0.5);
-    background: rgba(0, 255, 157, 0.05);
-    box-shadow: 0 0 20px rgba(0, 255, 157, 0.1);
-}
-
-/* Admin Transaction Card Pulse for Pending */
-.admin-transaction-card[data-status="pending"] {
-    animation: subtle-pulse 3s ease-in-out infinite;
-    border-color: rgba(255, 157, 0, 0.4);
-}
-
-/* Success/Error Alert Animations */
-.alert-success,
-.modal-info {
-    animation: slideDown 0.3s ease-out;
-}
-
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Link Underline Animation */
-a:not(.btn-primary):not(.btn-secondary):not(.sidebar-link) {
-    position: relative;
-}
-
-a:not(.btn-primary):not(.btn-secondary):not(.sidebar-link)::after {
+/* 11. Custom Border Animations */
+.bounty-card::after {
     content: '';
     position: absolute;
-    bottom: -2px;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: linear-gradient(90deg, #00ff9d, #00cc7d);
-    transition: width 0.3s ease;
-}
-
-a:not(.btn-primary):not(.btn-secondary):not(.sidebar-link):hover::after {
-    width: 100%;
-}
-
-/* Tooltip Enhancement (if you add tooltips later) */
-[data-tooltip] {
-    position: relative;
-}
-
-[data-tooltip]:hover::before {
-    content: attr(data-tooltip);
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 0.5rem 1rem;
-    background: rgba(0, 0, 0, 0.9);
-    color: #00ff9d;
-    border: 1px solid rgba(0, 255, 157, 0.3);
-    border-radius: 8px;
-    font-size: 0.875rem;
-    white-space: nowrap;
-    z-index: 1000;
-    animation: fadeIn 0.2s ease-out;
-}
-
-/* Mobile Touch Feedback Enhancement */
-@media (hover: none) and (pointer: coarse) {
-
-    .btn-primary:active,
-    .btn-secondary:active,
-    .bounty-card:active {
-        transform: scale(0.97);
-        transition: transform 0.1s ease;
-    }
-}
-
-/* Print Optimization */
-@media print {
-
-    .modal-overlay,
-    .btn-primary,
-    .btn-secondary,
-    .sidebar {
-        display: none !important;
-    }
-
-    .bounty-card,
-    .stat-card,
-    .balance-card {
-        box-shadow: none !important;
-        border: 1px solid #cccccc;
-    }
-}
-
-/* Reduce Motion for Accessibility */
-@media (prefers-reduced-motion: reduce) {
-
-    *,
-    *::before,
-    *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-    }
-}
-
-/* High Contrast Mode Support */
-@media (prefers-contrast: high) {
-    .btn-primary {
-        border: 2px solid #00ff9d;
-        font-weight: 700;
-    }
-
-    .bounty-card,
-    .stat-card,
-    .balance-card {
-        border: 2px solid rgba(0, 255, 157, 0.5);
-    }
+    inset: -1px;
+    border-radius: 16px;
+    padding: 1px;
+    background: linear-gradient(45deg, transparent, rgba(0, 255, 157, 0.3), transparent);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
 }
