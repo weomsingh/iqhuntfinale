@@ -10,41 +10,54 @@ export function AuthProvider({ children }) {
     useEffect(() => {
         let isMounted = true;
 
-        // Function to handle efficient session check
+        // Function to check session explicitly via getSession
         const initializeAuth = async () => {
             try {
-                // Race the session check against a 5-second timeout
-                // If Supabase is slow, we don't want to block the UI forever
-                const sessionPromise = checkSession();
-                const timeoutPromise = new Promise(resolve => setTimeout(() => resolve('timeout'), 5000));
+                // If we are already loading via onAuthStateChange, wait a bit
+                // But generally getSession is the source of truth
+                const { data: { session }, error } = await supabase.auth.getSession();
 
-                const result = await Promise.race([sessionPromise, timeoutPromise]);
-
-                if (result === 'timeout') {
-                    console.warn('Session check timed out - forcing app load');
-                    if (isMounted) setLoading(false);
+                if (error) {
+                    console.error("Initial session check error:", error);
+                    // Don't kill loading yet, let onAuthStateChange handle it or timeout
                 }
-            } catch (error) {
-                console.error('Auth initialization error:', error);
-                if (isMounted) setLoading(false);
+
+                if (session?.user) {
+                    console.log("✅ Initial session found via getSession");
+                    await fetchProfile(session.user.id);
+                } else {
+                    // If getSession says no session, it might be right.
+                    // But onAuthStateChange(INITIAL_SESSION) is the final authority.
+                    // We'll let the event listener handle the "no session" state if it fires.
+                    // But just in case it doesn't fire (race condition), we set a fallback.
+                    console.log("ℹ️ No session found via getSession");
+                }
+            } catch (err) {
+                console.error("Auth init exception:", err);
             }
         };
 
-        if (loading) {
-            initializeAuth();
-        }
-
+        // Initialize listener
         const { data: { subscription } } = supabase.auth.onAuthStateChange(
             async (event, session) => {
                 if (!isMounted) return;
 
                 console.log('Auth event:', event);
 
-                if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+                if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'INITIAL_SESSION') {
                     if (session?.user) {
-                        // Prevent fetching if we already have the user loaded with same ID
+                        // If we have a session, ensure profile is loaded
+                        // Only fetch if ID changed to prevent loops/duplicate fetches
                         if (currentUser?.id !== session.user.id) {
                             await fetchProfile(session.user.id);
+                        } else {
+                            // User already loaded, ensure loading is off
+                            setLoading(false);
+                        }
+                    } else {
+                        // If INITIAL_SESSION fires with no session, user is definitely logged out
+                        if (event === 'INITIAL_SESSION') {
+                            setLoading(false);
                         }
                     }
                 } else if (event === 'SIGNED_OUT') {
@@ -54,34 +67,23 @@ export function AuthProvider({ children }) {
             }
         );
 
+        // Run explicit check as backup
+        initializeAuth();
+
+        // Safety timeout: If nothing happens in 3 seconds, turn off loading
+        const timeoutId = setTimeout(() => {
+            if (loading && isMounted) {
+                console.warn("⚠️ Auth timeout reached - forcing loading false");
+                setLoading(false);
+            }
+        }, 3000);
+
         return () => {
             isMounted = false;
             subscription.unsubscribe();
+            clearTimeout(timeoutId);
         };
-    }, []);
-
-    async function checkSession() {
-        try {
-            console.log('🔍 Fast session check...');
-            const { data: { session }, error } = await supabase.auth.getSession();
-
-            if (error) throw error;
-
-            if (session?.user) {
-                console.log('✅ Session found');
-                await fetchProfile(session.user.id);
-            } else {
-                console.log('ℹ️ No active session');
-                setLoading(false);
-            }
-        } catch (error) {
-            console.error('Session check error:', error);
-            setLoading(false);
-        } finally {
-            // Ideally loading is set false inside fetchProfile or error handlers
-            // But as a fallback we can ensure it here if it's still true
-        }
-    }
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     async function fetchProfile(userId, retryCount = 0) {
         try {
@@ -96,53 +98,39 @@ export function AuthProvider({ children }) {
             if (error) {
                 console.error('Profile fetch error:', error);
 
-                // If profile specifically doesn't exist, user needs onboarding
-                if (error.code === 'PGRST116') {
-                    console.log('No profile found - user needs onboarding');
-                    setCurrentUser(null);
-                    return;
-                }
-
-                // For other errors (network, timeout), retry a few times before giving up
-                if (retryCount < 3) {
+                // If connection error, retry
+                if (retryCount < 3 && error.code !== 'PGRST116') {
                     console.log(`Retrying profile fetch in 1s...`);
                     setTimeout(() => fetchProfile(userId, retryCount + 1), 1000);
                     return;
                 }
 
-                // If we exhausted retries, keep the previous user state if possible or show error
-                // Do NOT set currentUser to null effectively logging them out unless we are sure.
-                console.error('Failed to fetch profile after retries.');
-                // We do NOT set currentUser(null) here to avoid "flashing" logout state on flaky connection.
-                // However, if it's the initial load, we might be stuck in loading state.
-                // Best to keep loading=false but maybe show a toast.
-                return;
+                // If profile genuinely missing (new user?)
+                if (error.code === 'PGRST116') {
+                    // Maybe redirect to onboarding? For now, just stop loading.
+                    console.warn("Profile missing for user");
+                }
+            } else {
+                console.log('✅ Profile loaded:', data.username);
+                setCurrentUser(data);
             }
-
-            console.log('✅ Profile loaded:', data.username);
-            setCurrentUser(data);
         } catch (error) {
             console.error('Profile fetch exception:', error);
         } finally {
+            // ALWAYS turn off loading after an attempt
             setLoading(false);
         }
     }
 
     async function signInWithGoogle(intendedRole) {
-        // Save intended role BEFORE OAuth redirect
         localStorage.setItem('intended_role', intendedRole);
-
         const { error } = await supabase.auth.signInWithOAuth({
             provider: 'google',
             options: {
                 redirectTo: `${window.location.origin}/auth/callback`,
             },
         });
-
-        if (error) {
-            console.error('OAuth error:', error);
-            throw error;
-        }
+        if (error) throw error;
     }
 
     async function signOut() {
@@ -158,7 +146,7 @@ export function AuthProvider({ children }) {
         signInWithGoogle,
         signOut,
         refetchProfile: () => currentUser && fetchProfile(currentUser.id),
-        refreshUser: () => currentUser && fetchProfile(currentUser.id), // Alias
+        refreshUser: () => currentUser && fetchProfile(currentUser.id),
     };
 
     // Show loading screen only for first 3 seconds max
@@ -173,10 +161,11 @@ export function AuthProvider({ children }) {
                 color: '#00ff9d',
                 fontSize: '1.5rem',
                 flexDirection: 'column',
-                gap: '1rem'
+                gap: '1rem',
+                fontFamily: 'monospace'
             }}>
                 <div className="spinner"></div>
-                <div>Loading...</div>
+                <div>Initializing...</div>
             </div>
         );
     }

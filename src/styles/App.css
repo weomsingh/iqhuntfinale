@@ -223,9 +223,17 @@
     }
 
     .bounty-stats {
-        grid-template-columns: 1fr 1fr;
-        /* Force 2 columns even on small screens */
-        gap: 0.75rem;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .bounty-description {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
 
     .stat-value {
