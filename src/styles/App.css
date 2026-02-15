@@ -73,6 +73,20 @@
     line-height: 1.1;
 }
 
+@media (max-width: 768px) {
+    .hero {
+        padding: 4rem 1.5rem;
+    }
+
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+
+    .landing-header {
+        padding: 1rem;
+    }
+}
+
 .hero .highlight {
     color: #00ff9d;
 }
@@ -147,6 +161,43 @@
     grid-template-rows: auto 1fr;
     min-height: 100vh;
     background: #0a0a0a;
+}
+
+@media (max-width: 768px) {
+    .dashboard-layout {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        overflow: hidden;
+        /* Prevent body scroll, handle in main-content */
+    }
+
+    .sidebar {
+        display: none !important;
+    }
+
+    .main-content {
+        padding-bottom: 80px !important;
+        /* Space for bottom nav */
+        overflow-y: auto;
+        flex: 1;
+    }
+
+    .header {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        padding: 0.75rem 1rem;
+    }
+
+    .header-title {
+        font-size: 1.25rem;
+    }
+
+    .header-role-badge {
+        display: none;
+        /* Hide badge on small screens to save space */
+    }
 }
 
 .header {

@@ -10,14 +10,28 @@ export function AuthProvider({ children }) {
     useEffect(() => {
         let isMounted = true;
 
-        // Check for existing session on mount
-        checkSession().finally(() => {
-            if (isMounted) {
-                console.log('Session check finalization');
-            }
-        });
+        // Function to handle efficient session check
+        const initializeAuth = async () => {
+            try {
+                // Race the session check against a 5-second timeout
+                // If Supabase is slow, we don't want to block the UI forever
+                const sessionPromise = checkSession();
+                const timeoutPromise = new Promise(resolve => setTimeout(() => resolve('timeout'), 5000));
 
-        // Listen for auth changes
+                const result = await Promise.race([sessionPromise, timeoutPromise]);
+
+                if (result === 'timeout') {
+                    console.warn('Session check timed out - forcing app load');
+                    if (isMounted) setLoading(false);
+                }
+            } catch (error) {
+                console.error('Auth initialization error:', error);
+                if (isMounted) setLoading(false);
+            }
+        };
+
+        initializeAuth();
+
         const { data: { subscription } } = supabase.auth.onAuthStateChange(
             async (event, session) => {
                 if (!isMounted) return;
@@ -26,6 +40,8 @@ export function AuthProvider({ children }) {
 
                 if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
                     if (session?.user) {
+                        // Don't await this if we want instant UI feedback, 
+                        // but updating currentUser will trigger re-render anyway.
                         await fetchProfile(session.user.id);
                     }
                 } else if (event === 'SIGNED_OUT') {
@@ -43,25 +59,23 @@ export function AuthProvider({ children }) {
 
     async function checkSession() {
         try {
-            console.log('🔍 Checking session...');
+            console.log('🔍 Fast session check...');
             const { data: { session }, error } = await supabase.auth.getSession();
 
-            if (error) {
-                console.error('Session error:', error);
-                setLoading(false);
-                return;
-            }
+            if (error) throw error;
 
             if (session?.user) {
-                console.log('✅ Session found, fetching profile...');
+                console.log('✅ Session found');
                 await fetchProfile(session.user.id);
             } else {
                 console.log('ℹ️ No active session');
+                setLoading(false);
             }
         } catch (error) {
             console.error('Session check error:', error);
+            setLoading(false);
         } finally {
-            console.log('✅ Session check complete, setting loading=false');
+            // Ensure loading is always false at the end of a successful check
             setLoading(false);
         }
     }
