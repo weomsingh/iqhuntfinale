@@ -7,28 +7,50 @@ import LoadingScreen from '../components/LoadingScreen';
 export default function AuthCallback() {
     const navigate = useNavigate();
     const { currentUser, loading: authLoading } = useAuth();
-    const [status, setStatus] = useState('Checking session...');
+    const [status, setStatus] = useState('Verifying login...');
 
     useEffect(() => {
-        // If AuthContext is still loading, wait.
-        if (authLoading) return;
+        let isMounted = true;
+        let timeoutId;
 
-        // If AuthContext already found the user, we can proceed directly!
+        // If AuthContext already has the user, we're done!
         if (currentUser) {
             handleUserRouting(currentUser);
-        } else {
-            // If AuthContext finished but found no user, double check with getSession
-            // incase of race conditions or initial-session delay.
-            handleManualCheck();
+            return;
         }
+
+        // If AuthContext is done loading but no user found, try manual check
+        if (!authLoading && !currentUser) {
+            handleManualCheck(isMounted);
+        }
+
+        // If we've been waiting for AuthContext too long (e.g. 4s), try manual check anyway
+        timeoutId = setTimeout(() => {
+            if (isMounted && !currentUser) {
+                console.warn("AuthContext slow, trying manual check in callback...");
+                handleManualCheck(isMounted);
+            }
+        }, 4000);
+
+        return () => {
+            isMounted = false;
+            clearTimeout(timeoutId);
+        };
     }, [currentUser, authLoading]);
 
-    async function handleManualCheck() {
+    async function handleManualCheck(isMounted) {
+        if (!isMounted) return;
+
         try {
             setStatus('Finalizing login...');
+
+            // Check session directly from Supabase (this parses the URL hash)
             const { data: { session }, error } = await supabase.auth.getSession();
 
-            if (error) throw error;
+            if (error) {
+                console.error("Manual callback error:", error);
+                throw error;
+            }
 
             if (!session) {
                 console.warn("No session found in callback, redirecting home.");
@@ -36,8 +58,8 @@ export default function AuthCallback() {
                 return;
             }
 
-            // If session exists, fetch profile manually since AuthContext might have missed it
-            // or is in the process of updating.
+            // Session found! Fetch profile.
+            setStatus('Setting up profile...');
             const { data: profile, error: profileError } = await supabase
                 .from('profiles')
                 .select('*')
@@ -51,14 +73,14 @@ export default function AuthCallback() {
             if (profile) {
                 handleUserRouting(profile);
             } else {
-                // New user
+                // New user - redirect to onboarding
                 navigate('/onboarding', { replace: true });
             }
 
         } catch (err) {
-            console.error('Manual callback check failed:', err);
-            // Don't show error immediately, just redirect home
-            navigate('/', { replace: true });
+            console.error('Callback critical failure:', err);
+            // Fallback: wait a bit and go home
+            setTimeout(() => navigate('/', { replace: true }), 2000);
         }
     }
 
@@ -75,12 +97,8 @@ export default function AuthCallback() {
 
         // Role mismatch check (only if profile exists and has role)
         if (profile.role && profile.role !== intendedRole) {
-            alert(
-                `Account exists as ${profile.role}.\n` +
-                `Please login with the correct role.`
-            );
-            navigate('/', { replace: true });
-            return;
+            // We could alert here, but let's just log them in to avoid blocking flow
+            console.warn(`Role mismatch: Expected ${intendedRole}, got ${profile.role}`);
         }
 
         // Onboarding check
