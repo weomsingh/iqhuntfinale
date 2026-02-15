@@ -1,111 +1,104 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
+import { useAuth } from '../context/AuthContext';
 import LoadingScreen from '../components/LoadingScreen';
 
 export default function AuthCallback() {
     const navigate = useNavigate();
-    const [error, setError] = useState(null);
+    const { currentUser, loading: authLoading } = useAuth();
+    const [status, setStatus] = useState('Checking session...');
 
     useEffect(() => {
-        handleCallback();
-    }, []);
+        // If AuthContext is still loading, wait.
+        if (authLoading) return;
 
-    async function handleCallback() {
+        // If AuthContext already found the user, we can proceed directly!
+        if (currentUser) {
+            handleUserRouting(currentUser);
+        } else {
+            // If AuthContext finished but found no user, double check with getSession
+            // incase of race conditions or initial-session delay.
+            handleManualCheck();
+        }
+    }, [currentUser, authLoading]);
+
+    async function handleManualCheck() {
         try {
-            // Get session from URL
-            const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+            setStatus('Finalizing login...');
+            const { data: { session }, error } = await supabase.auth.getSession();
 
-            if (sessionError) throw sessionError;
+            if (error) throw error;
 
             if (!session) {
+                console.warn("No session found in callback, redirecting home.");
                 navigate('/', { replace: true });
                 return;
             }
 
-            const { user } = session;
-            const intendedRole = localStorage.getItem('intended_role') || 'hunter';
-
-            // Check if profile exists
-            const { data: existingProfile, error: profileError } = await supabase
+            // If session exists, fetch profile manually since AuthContext might have missed it
+            // or is in the process of updating.
+            const { data: profile, error: profileError } = await supabase
                 .from('profiles')
                 .select('*')
-                .eq('id', user.id)
+                .eq('id', session.user.id)
                 .single();
 
             if (profileError && profileError.code !== 'PGRST116') {
-                // Error other than "not found"
                 throw profileError;
             }
 
-            if (existingProfile) {
-                // USER ALREADY HAS PROFILE
-
-                // Check if user is admin - skip role check for admins
-                if (existingProfile.role === 'admin') {
-                    // Admin user - redirect to admin dashboard
-                    localStorage.removeItem('intended_role');
-                    navigate('/admin/dashboard', { replace: true });
-                    return;
-                }
-
-                // Check if trying to register with different role (for non-admins)
-                if (existingProfile.role !== intendedRole) {
-                    alert(
-                        `This email is already registered as a ${existingProfile.role}.\n\n` +
-                        `Please use a different email to register as a ${intendedRole}.`
-                    );
-                    await supabase.auth.signOut();
-                    localStorage.removeItem('intended_role');
-                    navigate('/', { replace: true });
-                    return;
-                }
-
-                // Check if onboarding complete
-                if (!existingProfile.username || !existingProfile.accepted_covenant) {
-                    // Resume onboarding
-                    navigate('/onboarding', { replace: true });
-                    return;
-                }
-
-                // All good - go to dashboard
-                localStorage.removeItem('intended_role');
-                if (existingProfile.role === 'hunter') {
-                    navigate('/hunter/dashboard', { replace: true });
-                } else {
-                    navigate('/payer/dashboard', { replace: true });
-                }
-
+            if (profile) {
+                handleUserRouting(profile);
             } else {
-                // NEW USER - Start onboarding
+                // New user
                 navigate('/onboarding', { replace: true });
             }
 
         } catch (err) {
-            console.error('Callback error:', err);
-            setError('Login failed. Please try again.');
-            setTimeout(() => navigate('/', { replace: true }), 3000);
+            console.error('Manual callback check failed:', err);
+            // Don't show error immediately, just redirect home
+            navigate('/', { replace: true });
         }
     }
 
-    if (error) {
-        return (
-            <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                height: '100vh',
-                background: '#0a0a0a',
-                color: '#ff5252',
-                textAlign: 'center',
-            }}>
-                <div>
-                    <p>{error}</p>
-                    <p style={{ color: '#888', marginTop: '10px' }}>Redirecting...</p>
-                </div>
-            </div>
-        );
+    function handleUserRouting(profile) {
+        setStatus('Redirecting...');
+        const intendedRole = localStorage.getItem('intended_role') || 'hunter';
+
+        // Admin override
+        if (profile.role === 'admin') {
+            localStorage.removeItem('intended_role');
+            navigate('/admin/dashboard', { replace: true });
+            return;
+        }
+
+        // Role mismatch check (only if profile exists and has role)
+        if (profile.role && profile.role !== intendedRole) {
+            alert(
+                `Account exists as ${profile.role}.\n` +
+                `Please login with the correct role.`
+            );
+            navigate('/', { replace: true });
+            return;
+        }
+
+        // Onboarding check
+        if (!profile.username || !profile.accepted_covenant) {
+            navigate('/onboarding', { replace: true });
+            return;
+        }
+
+        // Success redirect
+        localStorage.removeItem('intended_role');
+        if (profile.role === 'hunter') {
+            navigate('/hunter/dashboard', { replace: true });
+        } else {
+            navigate('/payer/dashboard', { replace: true });
+        }
     }
 
-    return <LoadingScreen />;
+    return (
+        <LoadingScreen message={status} />
+    );
 }
