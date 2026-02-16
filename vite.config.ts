@@ -22,6 +22,10 @@ export default defineConfig(({ mode }) => {
     },
     define: {
       'process.env': env
+    },
+    server: {
+      host: true, // Expose to network (e.g. 192.168.x.x)
+      port: 5173,
     }
   };
 });
