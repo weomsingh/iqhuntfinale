@@ -1,12 +1,59 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../supabaseClient';
 import BountyCard from '../../components/BountyCard';
-import { Target, Trophy, TrendingUp, Clock, ArrowRight, Zap, CheckCircle, AlertTriangle, Wallet } from 'lucide-react';
+import { Target, Trophy, TrendingUp, Clock, ArrowRight, Zap, CheckCircle, AlertTriangle, Wallet, Settings, MessageSquare } from 'lucide-react';
+
+// Countdown Component
+function Countdown({ targetDate }) {
+    const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setTimeLeft(calculateTimeLeft());
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [targetDate]);
+
+    function calculateTimeLeft() {
+        const difference = new Date(targetDate) - new Date();
+
+        if (difference <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+
+        return {
+            days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+            hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+            minutes: Math.floor((difference / 1000 / 60) % 60),
+            seconds: Math.floor((difference / 1000) % 60)
+        };
+    }
+
+    return (
+        <span className="font-mono tabular-nums">
+            {timeLeft.days > 0 && `${timeLeft.days}d `}
+            {String(timeLeft.hours).padStart(2, '0')}h {String(timeLeft.minutes).padStart(2, '0')}m {String(timeLeft.seconds).padStart(2, '0')}s
+        </span>
+    );
+}
+
+// Progress Bar Component
+function ProgressBar({ percentage, color = 'yellow' }) {
+    const colorClass = color === 'red' ? 'bg-red-500' : 'bg-yellow-400';
+    return (
+        <div className="w-full h-1.5 bg-gray-700 rounded-full overflow-hidden">
+            <div
+                className={`h-full ${colorClass} transition-all duration-1000 ease-out`}
+                style={{ width: `${Math.min(100, Math.max(0, percentage))}%` }}
+            />
+        </div>
+    );
+}
 
 export default function HunterDashboard() {
     const { currentUser } = useAuth();
+    const navigate = useNavigate();
     const [activeStake, setActiveStake] = useState(null);
     const [recentBounties, setRecentBounties] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -56,6 +103,25 @@ export default function HunterDashboard() {
                 <div className="w-10 h-10 border-4 border-iq-primary border-t-transparent rounded-full animate-spin"></div>
             </div>
         );
+    }
+
+    // Calculate progress for active mission
+    let timeRemainingPercentage = 0;
+    let isUrgent = false;
+
+    if (activeStake?.bounty?.submission_deadline) {
+        const start = new Date(activeStake.bounty.created_at).getTime();
+        const end = new Date(activeStake.bounty.submission_deadline).getTime();
+        const now = new Date().getTime();
+        const total = end - start;
+        const remaining = end - now;
+
+        if (total > 0) {
+            timeRemainingPercentage = (remaining / total) * 100;
+        }
+
+        // If less than 20% time remaining, mark urgent
+        if (timeRemainingPercentage < 20) isUrgent = true;
     }
 
     return (
@@ -128,40 +194,62 @@ export default function HunterDashboard() {
                 </div>
             </div>
 
-            {/* Active Mission Card */}
+            {/* Active Mission Card with Timer */}
             {activeStake ? (
-                <div className="rounded-2xl bg-gradient-to-r from-iq-primary/10 to-iq-accent/10 p-[1px]">
+                <div className="rounded-2xl bg-gradient-to-r from-iq-primary/10 to-iq-accent/10 p-[1px] transform transition-all hover:scale-[1.01]">
                     <div className="rounded-2xl bg-iq-card p-6 md:p-8 backdrop-blur-xl relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-64 h-64 bg-iq-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
 
-                        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                            <div className="flex-1">
-                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-iq-primary/20 text-iq-primary border border-iq-primary/20 mb-4 animate-pulse">
-                                    <span className="relative flex h-2 w-2">
-                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-iq-primary opacity-75"></span>
-                                        <span className="relative inline-flex rounded-full h-2 w-2 bg-iq-primary"></span>
-                                    </span>
-                                    LIVE MISSION IN PROGRESS
-                                </div>
-                                <h3 className="text-3xl font-bold text-white mb-2">{activeStake.bounty.title}</h3>
-                                <div className="flex items-center gap-4 text-iq-text-secondary text-sm">
-                                    <span className="flex items-center gap-1">
-                                        <Target size={14} className="text-iq-primary" />
-                                        Reward: {currency}{activeStake.bounty.reward.toLocaleString()}
-                                    </span>
-                                    <span className="flex items-center gap-1">
-                                        <Clock size={14} />
-                                        Due: {new Date(activeStake.bounty.submission_deadline).toLocaleDateString()}
-                                    </span>
-                                </div>
+                        <div className="relative z-10">
+                            {/* Live Badge */}
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-green-500/20 text-green-400 border border-green-500/20 mb-4 animate-pulse">
+                                <span className="relative flex h-2 w-2">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                                </span>
+                                LIVE MISSION IN PROGRESS
                             </div>
 
-                            <Link
-                                to={`/hunter/bounty/${activeStake.bounty.id}`}
-                                className="w-full md:w-auto px-8 py-4 bg-iq-primary text-black font-bold rounded-xl hover:scale-105 transition-transform shadow-lg shadow-iq-primary/20 flex items-center justify-center gap-2"
-                            >
-                                Continue Mission <ArrowRight size={20} />
-                            </Link>
+                            <div className="flex flex-col lg:flex-row gap-8 justify-between">
+                                <div className="flex-1">
+                                    <h3 className="text-xl md:text-2xl font-bold text-white mb-6 leading-tight">
+                                        {activeStake.bounty.title}
+                                    </h3>
+
+                                    {/* Timer Section */}
+                                    <div className="bg-yellow-900/10 border border-yellow-500/30 rounded-xl p-4 mb-6 max-w-xl">
+                                        <div className="flex items-center justify-between mb-3">
+                                            <div className="flex items-center gap-2">
+                                                <Clock className="w-5 h-5 text-yellow-500" />
+                                                <span className="text-sm text-gray-400 font-medium">Mission Deadline</span>
+                                            </div>
+                                            <div className="text-xl font-bold text-yellow-400">
+                                                <Countdown targetDate={activeStake.bounty.submission_deadline} />
+                                            </div>
+                                        </div>
+                                        <ProgressBar
+                                            percentage={timeRemainingPercentage}
+                                            color={isUrgent ? 'red' : 'yellow'}
+                                        />
+                                    </div>
+
+                                    <div className="flex items-center gap-6">
+                                        <div>
+                                            <p className="text-sm text-gray-500 mb-1">Reward Pool</p>
+                                            <p className="text-2xl font-bold text-green-400">{currency}{activeStake.bounty.reward.toLocaleString()}</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="flex flex-col justify-end">
+                                    <button
+                                        onClick={() => navigate('/hunter/war-room')}
+                                        className="w-full md:w-auto px-8 py-4 bg-green-500 hover:bg-green-600 text-white font-bold rounded-xl shadow-lg shadow-green-500/20 flex items-center justify-center gap-2 transition-all"
+                                    >
+                                        Continue Mission <ArrowRight size={20} />
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -213,30 +301,31 @@ export default function HunterDashboard() {
                 )}
             </div>
 
-            {/* Quick Actions */}
+            {/* Quick Actions Grid - Fixed Settings Card */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <Link to="/hunter/arena" className="p-6 rounded-xl bg-iq-card border border-white/5 hover:border-iq-primary/50 hover:bg-iq-surface transition-all group">
-                    <Target size={28} className="text-iq-primary mb-4 group-hover:scale-110 transition-transform" />
+                <Link to="/hunter/arena" className="p-6 rounded-xl bg-iq-card border border-white/5 hover:border-cyan-400/50 hover:bg-iq-surface transition-all group">
+                    <Target size={28} className="text-cyan-400 mb-4 group-hover:scale-110 transition-transform" />
                     <h3 className="font-bold text-white mb-1">Browse Arena</h3>
                     <p className="text-xs text-iq-text-secondary">Find new missions</p>
                 </Link>
 
-                <Link to="/hunter/vault" className="p-6 rounded-xl bg-iq-card border border-white/5 hover:border-iq-accent/50 hover:bg-iq-surface transition-all group">
-                    <TrendingUp size={28} className="text-iq-accent mb-4 group-hover:scale-110 transition-transform" />
+                <Link to="/hunter/vault" className="p-6 rounded-xl bg-iq-card border border-white/5 hover:border-green-400/50 hover:bg-iq-surface transition-all group">
+                    <TrendingUp size={28} className="text-green-400 mb-4 group-hover:scale-110 transition-transform" />
                     <h3 className="font-bold text-white mb-1">My Vault</h3>
                     <p className="text-xs text-iq-text-secondary">Check earnings</p>
                 </Link>
 
-                <Link to="/hunter/war-room" className="p-6 rounded-xl bg-iq-card border border-white/5 hover:border-yellow-500/50 hover:bg-iq-surface transition-all group">
-                    <Clock size={28} className="text-yellow-500 mb-4 group-hover:scale-110 transition-transform" />
+                <Link to="/hunter/war-room" className="p-6 rounded-xl bg-iq-card border border-white/5 hover:border-orange-400/50 hover:bg-iq-surface transition-all group">
+                    <MessageSquare size={28} className="text-orange-400 mb-4 group-hover:scale-110 transition-transform" />
                     <h3 className="font-bold text-white mb-1">War Room</h3>
                     <p className="text-xs text-iq-text-secondary">Mission Comms</p>
                 </Link>
 
-                <Link to="/hunter/settings" className="p-6 rounded-xl bg-iq-card border border-white/5 hover:border-white/20 hover:bg-iq-surface transition-all group">
-                    <Trophy size={28} className="text-white mb-4 group-hover:scale-110 transition-transform" />
-                    <h3 className="font-bold text-white mb-1">Leaderboard</h3>
-                    <p className="text-xs text-iq-text-secondary">Global ranking</p>
+                {/* Fixed: Leaderboard -> Settings */}
+                <Link to="/hunter/settings" className="p-6 rounded-xl bg-iq-card border border-white/5 hover:border-purple-400/50 hover:bg-iq-surface transition-all group">
+                    <Settings size={28} className="text-purple-400 mb-4 group-hover:scale-110 transition-transform" />
+                    <h3 className="font-bold text-white mb-1">Settings</h3>
+                    <p className="text-xs text-iq-text-secondary">Update profile info</p>
                 </Link>
             </div>
         </div>
