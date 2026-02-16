@@ -188,70 +188,55 @@ export default function HunterWarRoom() {
 
             <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-6 min-h-0">
                 {/* Left Column: Stats & Brief */}
+                {/* Left Column: Stats & Timer */}
                 <div className="lg:col-span-1 flex flex-col gap-6 overflow-y-auto pr-2">
-                    {/* Timer Card */}
-                    <div className="bg-iq-card border border-white/5 rounded-2xl p-6 text-center shadow-lg relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-iq-primary/5 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
-                        <p className="text-sm text-iq-text-secondary mb-4 uppercase tracking-widest font-medium">Mission Deadline</p>
+                    {/* Timer Card - ENHANCED */}
+                    <div className="bg-iq-card border border-white/5 rounded-2xl p-8 text-center shadow-lg relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-48 h-48 bg-iq-primary/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
+
+                        <p className="text-sm text-iq-text-secondary mb-6 uppercase tracking-widest font-bold">MISSION DEADLINE</p>
 
                         {timer.expired ? (
-                            <div className="text-iq-error font-bold text-2xl animate-pulse flex flex-col items-center gap-2">
-                                <AlertCircle size={32} />
+                            <div className="text-iq-error font-bold text-3xl animate-pulse flex flex-col items-center gap-4 py-8">
+                                <AlertCircle size={48} />
                                 MISSION EXPIRED
                             </div>
                         ) : (
-                            <div className="flex justify-center gap-4 text-white">
-                                <div className="flex flex-col items-center">
-                                    <span className="text-3xl md:text-4xl font-mono font-bold">{timer.days || 0}</span>
-                                    <span className="text-[10px] text-iq-text-secondary uppercase mt-1">Days</span>
+                            <div className="py-4">
+                                <div className="flex justify-center gap-4 text-white mb-6">
+                                    <div className="flex flex-col items-center">
+                                        <span className="text-5xl md:text-6xl font-mono font-bold text-yellow-500">{timer.days || 0}</span>
+                                        <span className="text-xs text-iq-text-secondary uppercase mt-2 font-bold">Days</span>
+                                    </div>
+                                    <span className="text-5xl md:text-6xl font-mono opacity-20 text-yellow-500/50">:</span>
+                                    <div className="flex flex-col items-center">
+                                        <span className="text-5xl md:text-6xl font-mono font-bold text-yellow-500">{String(timer.hours || 0).padStart(2, '0')}</span>
+                                        <span className="text-xs text-iq-text-secondary uppercase mt-2 font-bold">Hours</span>
+                                    </div>
+                                    <span className="text-5xl md:text-6xl font-mono opacity-20 text-yellow-500/50">:</span>
+                                    <div className="flex flex-col items-center">
+                                        <span className="text-5xl md:text-6xl font-mono font-bold text-yellow-500">{String(timer.minutes || 0).padStart(2, '0')}</span>
+                                        <span className="text-xs text-iq-text-secondary uppercase mt-2 font-bold">Mins</span>
+                                    </div>
                                 </div>
-                                <span className="text-3xl md:text-4xl font-mono opacity-20">:</span>
-                                <div className="flex flex-col items-center">
-                                    <span className="text-3xl md:text-4xl font-mono font-bold">{String(timer.hours || 0).padStart(2, '0')}</span>
-                                    <span className="text-[10px] text-iq-text-secondary uppercase mt-1">Hours</span>
+
+                                {/* Progress Bar */}
+                                <div className="w-full bg-white/5 h-2 rounded-full overflow-hidden mb-4">
+                                    <div
+                                        className="h-full bg-yellow-500 transition-all duration-1000"
+                                        style={{ width: `${Math.max(0, Math.min(100, 100 - (timer.days * 24 + timer.hours) / (3 * 24) * 100))}%` }} // Mock percentage logic
+                                    />
                                 </div>
-                                <span className="text-3xl md:text-4xl font-mono opacity-20">:</span>
-                                <div className="flex flex-col items-center">
-                                    <span className="text-3xl md:text-4xl font-mono font-bold">{String(timer.minutes || 0).padStart(2, '0')}</span>
-                                    <span className="text-[10px] text-iq-text-secondary uppercase mt-1">Mins</span>
-                                </div>
+
+                                {/* Urgency Indicator */}
+                                {(timer.days === 0 && timer.hours < 24) && (
+                                    <div className="mt-6 bg-red-500/10 border border-red-500/30 rounded-xl p-3 flex items-center justify-center gap-2 text-red-400 animate-pulse">
+                                        <AlertCircle className="w-5 h-5" />
+                                        <span className="font-bold">URGENT: Less than 24 hours left!</span>
+                                    </div>
+                                )}
                             </div>
                         )}
-                    </div>
-
-                    {/* Brief Card */}
-                    <div className="bg-iq-card border border-white/5 rounded-2xl p-6 flex-1">
-                        <div className="flex items-center justify-between mb-4">
-                            <h3 className="font-bold text-white flex items-center gap-2">
-                                <FileText size={20} className="text-iq-primary" /> Mission Assets
-                            </h3>
-                            <span className="text-xs px-2 py-0.5 rounded bg-iq-success/10 text-iq-success border border-iq-success/20">Unlocked</span>
-                        </div>
-                        <p className="text-sm text-iq-text-secondary mb-6">
-                            Securely download mission directives and required assets.
-                        </p>
-                        <a
-                            href={activeBounty.mission_pdf_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-iq-surface border border-white/10 rounded-xl text-white hover:bg-white/5 hover:border-iq-primary/50 transition-all font-medium"
-                        >
-                            <Download size={18} /> Download Brief
-                        </a>
-
-                        <div className="mt-6 pt-6 border-t border-white/5">
-                            <h4 className="text-xs font-bold text-iq-text-secondary uppercase tracking-wider mb-3">Protocol</h4>
-                            <div className="space-y-3">
-                                <div className="flex items-center gap-3 text-xs text-iq-text-secondary">
-                                    <Shield size={14} className="text-iq-primary" />
-                                    <span>Encrypted Communication Channel</span>
-                                </div>
-                                <div className="flex items-center gap-3 text-xs text-iq-text-secondary">
-                                    <Users size={14} className="text-iq-primary" />
-                                    <span>{activeBounty.max_hunters || 5} Operatives Active</span>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
@@ -288,8 +273,8 @@ export default function HunterWarRoom() {
                                         </div>
                                         <div className={`max-w-[70%] space-y-1`}>
                                             <div className={`p-3 rounded-2xl text-sm ${isMe
-                                                    ? 'bg-iq-primary text-black rounded-tr-none'
-                                                    : 'bg-iq-surface text-white border border-white/10 rounded-tl-none'
+                                                ? 'bg-iq-primary text-black rounded-tr-none'
+                                                : 'bg-iq-surface text-white border border-white/10 rounded-tl-none'
                                                 }`}>
                                                 {msg.message}
                                             </div>

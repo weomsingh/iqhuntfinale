@@ -39,6 +39,8 @@ import Privacy from './pages/static/Privacy';
 import Contact from './pages/static/Contact';
 import Covenant from './pages/static/Covenant';
 import PricingGuide from './pages/static/PricingGuide';
+import Help from './pages/static/Help';
+import RefundPolicy from './pages/static/RefundPolicy';
 
 import './styles/App.css';
 import './styles/WarRoom.css';
@@ -59,6 +61,8 @@ function App() {
                     <Route path="/contact" element={<Contact />} />
                     <Route path="/covenant" element={<Covenant />} />
                     <Route path="/pricing" element={<PricingGuide />} />
+                    <Route path="/help" element={<Help />} />
+                    <Route path="/refund" element={<RefundPolicy />} />
 
                     {/* Hunter routes - PROTECTED */}
                     <Route
@@ -113,7 +117,7 @@ function App() {
                         <Route path="dashboard" element={<AdminDashboard />} />
                     </Route>
 
-                    {/* Static pages - PUBLIC */}
+                    {/* Catch all */}
                     <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
             </AuthProvider>

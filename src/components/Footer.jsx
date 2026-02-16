@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Target, Mail, Twitter, Linkedin, Github } from 'lucide-react';
+import { Target, Mail, Instagram, Linkedin } from 'lucide-react';
 
 export default function Footer() {
     return (
@@ -13,7 +13,7 @@ export default function Footer() {
                             <span>IQHUNT</span>
                         </div>
                         <p className="text-iq-text-secondary text-sm leading-relaxed max-w-xs">
-                            Where skill hunts money. A sovereign, skill-based competitive platform designed for elite freelancers and ambitious clients.
+                            Where skill hunts money. A sovereign, skill-based competitive platform.
                         </p>
                     </div>
 
@@ -24,6 +24,7 @@ export default function Footer() {
                             <li><Link to="/covenant" className="hover:text-iq-primary transition-colors">The Covenant</Link></li>
                             <li><Link to="/terms" className="hover:text-iq-primary transition-colors">Terms of Service</Link></li>
                             <li><Link to="/privacy" className="hover:text-iq-primary transition-colors">Privacy Policy</Link></li>
+                            <li><Link to="/refund" className="hover:text-iq-primary transition-colors">Refund Policy</Link></li>
                         </ul>
                     </div>
 
@@ -32,8 +33,7 @@ export default function Footer() {
                         <h4 className="font-bold text-white mb-6">Support</h4>
                         <ul className="space-y-3 text-iq-text-secondary">
                             <li><Link to="/contact" className="hover:text-iq-primary transition-colors">Contact Us</Link></li>
-                            <li><a href="mailto:iqhuntarena@gmail.com" className="hover:text-iq-primary transition-colors">Email Support</a></li>
-                            <li><Link to="/faq" className="hover:text-iq-primary transition-colors">FAQ</Link></li>
+                            <li><a href="mailto:support@iqhunt.com" className="hover:text-iq-primary transition-colors">Email Support</a></li>
                         </ul>
                     </div>
 
@@ -41,13 +41,18 @@ export default function Footer() {
                     <div>
                         <h4 className="font-bold text-white mb-6">Connect</h4>
                         <div className="flex gap-4">
-                            <a href="mailto:iqhuntarena@gmail.com" className="p-2 bg-iq-surface rounded-full text-iq-text-secondary hover:text-white hover:bg-iq-primary hover:scale-110 transition-all border border-white/5">
+                            <a href="mailto:contact@iqhunt.com" className="p-2 bg-iq-surface rounded-full text-iq-text-secondary hover:text-white hover:bg-iq-primary hover:scale-110 transition-all border border-white/5">
                                 <Mail size={20} />
                             </a>
-                            <a href="#" className="p-2 bg-iq-surface rounded-full text-iq-text-secondary hover:text-white hover:bg-iq-primary hover:scale-110 transition-all border border-white/5">
-                                <Twitter size={20} />
+                            <a
+                                href="https://www.instagram.com/iqhunt.arena?igsh=MW16d3RseXp6N3VreA=="
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="p-2 bg-iq-surface rounded-full text-iq-text-secondary hover:text-white hover:bg-iq-primary hover:scale-110 transition-all border border-white/5"
+                            >
+                                <Instagram size={20} />
                             </a>
-                            <a href="#" className="p-2 bg-iq-surface rounded-full text-iq-text-secondary hover:text-white hover:bg-iq-primary hover:scale-110 transition-all border border-white/5">
+                            <a href="https://linkedin.com/company/iqhunt" target="_blank" className="p-2 bg-iq-surface rounded-full text-iq-text-secondary hover:text-white hover:bg-iq-primary hover:scale-110 transition-all border border-white/5">
                                 <Linkedin size={20} />
                             </a>
                         </div>
@@ -56,7 +61,7 @@ export default function Footer() {
 
                 <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
                     <p className="text-iq-text-secondary text-sm">
-                        &copy; {new Date().getFullYear()} IQHUNT. All rights reserved.
+                        &copy; 2026 IQHUNT. All rights reserved.
                     </p>
                     <p className="text-iq-text-secondary text-xs opacity-60">
                         This is a skill-based competitive platform. Participate responsibly.

@@ -7,9 +7,9 @@ import { User, Shield, Mail, Wallet, Save, CheckCircle, AlertCircle, Loader } fr
 function showToast(message, type = 'info') {
     const toast = document.createElement('div');
     toast.className = `fixed top-4 right-4 z-50 flex items-center gap-3 px-6 py-4 rounded-lg shadow-2xl transform transition-all duration-300 ${type === 'success' ? 'bg-green-500 text-white' :
-            type === 'error' ? 'bg-red-500 text-white' :
-                type === 'warning' ? 'bg-yellow-500 text-white' :
-                    'bg-blue-500 text-white'
+        type === 'error' ? 'bg-red-500 text-white' :
+            type === 'warning' ? 'bg-yellow-500 text-white' :
+                'bg-blue-500 text-white'
         }`;
 
     toast.innerHTML = `<span class="font-medium">${message}</span>`;
@@ -167,6 +167,7 @@ export default function HunterSettings() {
                 bio: formData.operativeBio,
                 expertise: formData.expertiseTags.split(',').map(s => s.trim()).filter(Boolean),
                 updated_at: new Date(),
+                role: 'hunter' // Added role to satisfy DB constraint
             };
 
             const { error: updateError } = await supabase.from('profiles').upsert(updates);

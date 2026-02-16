@@ -34,10 +34,25 @@ export default function Header() {
 
     const handleLogout = async () => {
         try {
+            // Call signOut from context first
             await signOut();
-            navigate('/');
         } catch (error) {
-            console.error('Error logging out:', error);
+            console.error('Logout error:', error);
+        } finally {
+            // Robust cleanup
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            // Check if there are any other specific keys to clear, or clear all
+            // localStorage.clear(); // Use with caution if other apps share domain, but usually fine for separate apps
+            sessionStorage.clear();
+
+            // Redirect
+            navigate('/');
+
+            // Force reload to clear states
+            setTimeout(() => {
+                window.location.reload();
+            }, 100);
         }
     };
 
@@ -138,14 +153,16 @@ export default function Header() {
                                         <span>Profile Settings</span>
                                     </button>
 
-                                    {/* Added Leaderboard Option */}
-                                    <button
-                                        onClick={() => goTo(`/${role}/leaderboard`)}
-                                        className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors text-left"
-                                    >
-                                        <Trophy size={16} className="text-yellow-400" />
-                                        <span>Leaderboard</span>
-                                    </button>
+                                    {/* Leaderboard Option - Hunters Only */}
+                                    {role === 'hunter' && (
+                                        <button
+                                            onClick={() => goTo(`/${role}/leaderboard`)}
+                                            className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors text-left"
+                                        >
+                                            <Trophy size={16} className="text-yellow-400" />
+                                            <span>Leaderboard</span>
+                                        </button>
+                                    )}
 
                                     <button
                                         onClick={() => goTo(`/${role}/vault`)}
@@ -220,11 +237,13 @@ export default function Header() {
                                 <span>War Room</span>
                             </button>
 
-                            {/* Added Leaderboard Option */}
-                            <button onClick={() => goTo(`/${role}/leaderboard`)} className="w-full flex items-center gap-3 px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-colors text-left">
-                                <Trophy size={20} className="text-yellow-400" />
-                                <span>Leaderboard</span>
-                            </button>
+                            {/* Leaderboard Option - Hunters Only */}
+                            {role === 'hunter' && (
+                                <button onClick={() => goTo(`/${role}/leaderboard`)} className="w-full flex items-center gap-3 px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-colors text-left">
+                                    <Trophy size={20} className="text-yellow-400" />
+                                    <span>Leaderboard</span>
+                                </button>
+                            )}
 
                             <button onClick={() => goTo(`/${role}/vault`)} className="w-full flex items-center gap-3 px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-colors text-left">
                                 <Wallet size={20} className="text-green-400" />

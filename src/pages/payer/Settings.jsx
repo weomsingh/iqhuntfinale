@@ -34,7 +34,7 @@ export default function PayerSettings() {
         try {
             const { error } = await supabase
                 .from('profiles')
-                .update(profileData)
+                .update({ ...profileData, role: 'payer' })
                 .eq('id', currentUser.id);
 
             if (error) throw error;
@@ -69,8 +69,8 @@ export default function PayerSettings() {
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id)}
                                 className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors ${activeTab === tab.id
-                                        ? 'bg-iq-primary/10 text-iq-primary border-r-2 border-iq-primary'
-                                        : 'text-iq-text-secondary hover:bg-white/5 hover:text-white'
+                                    ? 'bg-iq-primary/10 text-iq-primary border-r-2 border-iq-primary'
+                                    : 'text-iq-text-secondary hover:bg-white/5 hover:text-white'
                                     }`}
                             >
                                 <tab.icon size={18} />
@@ -104,26 +104,14 @@ export default function PayerSettings() {
                             </div>
 
                             <form onSubmit={handleProfileUpdate} className="space-y-4">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div className="space-y-2">
-                                        <label className="text-sm text-iq-text-secondary">Username</label>
-                                        <input
-                                            type="text"
-                                            value={profileData.username}
-                                            onChange={(e) => setProfileData({ ...profileData, username: e.target.value })}
-                                            className="w-full bg-iq-surface border border-white/10 rounded-lg p-3 text-white focus:border-iq-primary focus:outline-none"
-                                        />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-sm text-iq-text-secondary">Company Name</label>
-                                        <input
-                                            type="text"
-                                            value={profileData.company}
-                                            onChange={(e) => setProfileData({ ...profileData, company: e.target.value })}
-                                            className="w-full bg-iq-surface border border-white/10 rounded-lg p-3 text-white focus:border-iq-primary focus:outline-none"
-                                            placeholder="e.g. Acme Corp"
-                                        />
-                                    </div>
+                                <div className="space-y-2">
+                                    <label className="text-sm text-iq-text-secondary">Username</label>
+                                    <input
+                                        type="text"
+                                        value={profileData.username}
+                                        onChange={(e) => setProfileData({ ...profileData, username: e.target.value })}
+                                        className="w-full bg-iq-surface border border-white/10 rounded-lg p-3 text-white focus:border-iq-primary focus:outline-none"
+                                    />
                                 </div>
 
                                 <div className="space-y-2">
@@ -133,22 +121,8 @@ export default function PayerSettings() {
                                         onChange={(e) => setProfileData({ ...profileData, bio: e.target.value })}
                                         rows={4}
                                         className="w-full bg-iq-surface border border-white/10 rounded-lg p-3 text-white focus:border-iq-primary focus:outline-none resize-none"
-                                        placeholder="Tell hunters about your company..."
+                                        placeholder="Tell us about your business needs..."
                                     />
-                                </div>
-
-                                <div className="space-y-2">
-                                    <label className="text-sm text-iq-text-secondary">Website</label>
-                                    <div className="relative">
-                                        <Globe size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-iq-text-secondary" />
-                                        <input
-                                            type="url"
-                                            value={profileData.website}
-                                            onChange={(e) => setProfileData({ ...profileData, website: e.target.value })}
-                                            className="w-full bg-iq-surface border border-white/10 rounded-lg pl-10 pr-3 py-3 text-white focus:border-iq-primary focus:outline-none"
-                                            placeholder="https://example.com"
-                                        />
-                                    </div>
                                 </div>
 
                                 <div className="pt-4 flex justify-end">
@@ -201,8 +175,8 @@ export default function PayerSettings() {
                         </div>
                     )}
                 </div>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 }
 

@@ -15,61 +15,68 @@ export default function PayerVault() {
         thisMonth: 0
     });
     const [loading, setLoading] = useState(true);
-    const [filter, setFilter] = useState('all'); // all, deposit, withdraw, escrow
+    const [showDepositModal, setShowDepositModal] = useState(false);
+    const [showWithdrawModal, setShowWithdrawModal] = useState(false);
+    const [amount, setAmount] = useState('');
+    const [processing, setProcessing] = useState(false);
 
-    useEffect(() => {
-        loadVaultData();
-    }, [currentUser]);
+    // ... existing loadVaultData ...
 
-    async function loadVaultData() {
+    async function handleTransaction(type) {
+        if (!amount || isNaN(amount) || parseFloat(amount) <= 0) {
+            alert('Please enter a valid amount');
+            return;
+        }
+
+        const value = parseFloat(amount);
+        if (type === 'withdraw' && value > currentUser.wallet_balance) {
+            alert('Insufficient funds');
+            return;
+        }
+
+        setProcessing(true);
         try {
-            // Get Transactions
-            const { data: txs, error: txError } = await supabase
+            // 1. Create Transaction Record
+            const { error: txError } = await supabase
                 .from('transactions')
-                .select('*')
-                .eq('user_id', currentUser.id)
-                .order('created_at', { ascending: false });
+                .insert({
+                    user_id: currentUser.id,
+                    amount: value,
+                    type: type, // 'deposit' or 'withdrawal'
+                    description: type === 'deposit' ? 'Manual Deposit' : 'Manual Withdrawal',
+                    status: 'completed' // In real app, might be 'pending'
+                });
 
             if (txError) throw txError;
-            setTransactions(txs || []);
 
-            // Calculate Stats (Mock Logic for now, can be real later)
-            const escrow = txs
-                ?.filter(t => t.type === 'lock_vault' && t.status === 'completed')
-                .reduce((acc, t) => acc + t.amount, 0) || 0;
+            // 2. Update Wallet Balance
+            const newBalance = type === 'deposit'
+                ? currentUser.wallet_balance + value
+                : currentUser.wallet_balance - value;
 
-            const spent = txs
-                ?.filter(t => t.type === 'payment' && t.status === 'completed')
-                .reduce((acc, t) => acc + t.amount, 0) || 0;
+            const { error: profileError } = await supabase
+                .from('profiles')
+                .update({ wallet_balance: newBalance })
+                .eq('id', currentUser.id);
 
-            const monthStart = new Date();
-            monthStart.setDate(1);
-            const spentThisMonth = txs
-                ?.filter(t => t.type === 'payment' && new Date(t.created_at) >= monthStart)
-                .reduce((acc, t) => acc + t.amount, 0) || 0;
+            if (profileError) throw profileError;
 
-            setStats({
-                totalSpent: spent,
-                inEscrow: escrow, // This might need adjustment based on released escrows
-                thisMonth: spentThisMonth
-            });
+            // 3. Refresh
+            await refreshUser();
+            await loadVaultData();
+
+            setShowDepositModal(false);
+            setShowWithdrawModal(false);
+            setAmount('');
+            alert(`${type === 'deposit' ? 'Deposit' : 'Withdrawal'} successful!`);
 
         } catch (error) {
-            console.error('Error loading vault:', error);
+            console.error('Transaction failed:', error);
+            alert('Transaction failed: ' + error.message);
         } finally {
-            setLoading(false);
+            setProcessing(false);
         }
     }
-
-    const currency = currentUser?.currency === 'INR' ? '₹' : '$';
-
-    const filteredTransactions = transactions.filter(t => {
-        if (filter === 'all') return true;
-        if (filter === 'deposit') return t.type === 'deposit';
-        if (filter === 'withdraw') return t.type === 'withdrawal';
-        if (filter === 'escrow') return t.type === 'lock_vault' || t.type === 'release_vault';
-        return true;
-    });
 
     if (loading) return (
         <div className="flex h-screen items-center justify-center">
@@ -78,7 +85,7 @@ export default function PayerVault() {
     );
 
     return (
-        <div className="space-y-8 pb-20 animate-fade-in text-white">
+        <div className="space-y-8 pb-20 animate-fade-in text-white relative">
             {/* Header */}
             <div>
                 <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">My Vault</h1>
@@ -107,10 +114,16 @@ export default function PayerVault() {
                         </div>
 
                         <div className="flex gap-4">
-                            <button className="btn-primary flex-1 py-3 text-base flex items-center justify-center gap-2">
+                            <button
+                                onClick={() => setShowDepositModal(true)}
+                                className="btn-primary flex-1 py-3 text-base flex items-center justify-center gap-2"
+                            >
                                 <ArrowDownLeft size={20} /> Add Funds
                             </button>
-                            <button className="btn-secondary flex-1 py-3 text-base flex items-center justify-center gap-2">
+                            <button
+                                onClick={() => setShowWithdrawModal(true)}
+                                className="btn-secondary flex-1 py-3 text-base flex items-center justify-center gap-2"
+                            >
                                 <ArrowUpRight size={20} /> Withdraw
                             </button>
                         </div>
@@ -179,8 +192,8 @@ export default function PayerVault() {
                                     key={f}
                                     onClick={() => setFilter(f)}
                                     className={`px-3 py-1.5 rounded text-xs font-medium capitalize transition-colors ${filter === f
-                                            ? 'bg-white/10 text-white'
-                                            : 'text-iq-text-secondary hover:text-white'
+                                        ? 'bg-white/10 text-white'
+                                        : 'text-iq-text-secondary hover:text-white'
                                         }`}
                                 >
                                     {f}
@@ -215,7 +228,7 @@ export default function PayerVault() {
                                         </div>
                                         <div>
                                             <p className="text-white font-medium capitalize">
-                                                {tx.type.replace('_', ' ')}
+                                                {tx.type ? tx.type.replace('_', ' ') : 'Transaction'}
                                             </p>
                                             <p className="text-xs text-iq-text-secondary">
                                                 {new Date(tx.created_at).toLocaleDateString()} at {new Date(tx.created_at).toLocaleTimeString()}
@@ -228,7 +241,8 @@ export default function PayerVault() {
                                                 : 'text-white'
                                             }`}>
                                             {tx.type === 'deposit' || tx.type === 'release_vault' ? '+' : '-'}
-                                            {currency}{tx.amount.toLocaleString()}
+                                            {currency}
+                                            {typeof tx.amount === 'number' ? tx.amount.toLocaleString() : tx.amount}
                                         </p>
                                         <p className={`text-xs capitalize ${tx.status === 'completed' ? 'text-iq-success' : 'text-yellow-500'
                                             }`}>
@@ -241,6 +255,82 @@ export default function PayerVault() {
                     )}
                 </div>
             </div>
+
+            {/* Deposit Modal */}
+            {showDepositModal && (
+                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <div className="bg-[#1A1F2E] border border-white/10 rounded-2xl p-6 w-full max-w-md animate-fade-in-up">
+                        <h2 className="text-2xl font-bold mb-4">Add Funds</h2>
+                        <p className="text-gray-400 mb-6">Enter the amount you wish to deposit into your IQHUNT Wallet.</p>
+
+                        <div className="mb-6">
+                            <label className="block text-sm text-gray-400 mb-2">Amount ({currency})</label>
+                            <input
+                                type="number"
+                                value={amount}
+                                onChange={(e) => setAmount(e.target.value)}
+                                className="w-full bg-[#141922] border border-white/10 rounded-xl p-4 text-2xl text-white font-mono focus:border-iq-primary focus:outline-none"
+                                placeholder="0.00"
+                            />
+                        </div>
+
+                        <div className="flex gap-4">
+                            <button
+                                onClick={() => setShowDepositModal(false)}
+                                className="flex-1 py-3 rounded-xl border border-white/10 text-white hover:bg-white/5 transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={() => handleTransaction('deposit')}
+                                disabled={processing}
+                                className="flex-1 py-3 rounded-xl bg-iq-primary text-black font-bold hover:bg-iq-primary/90 transition-colors disabled:opacity-50"
+                            >
+                                {processing ? 'Processing...' : 'Confirm Deposit'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Withdraw Modal */}
+            {showWithdrawModal && (
+                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <div className="bg-[#1A1F2E] border border-white/10 rounded-2xl p-6 w-full max-w-md animate-fade-in-up">
+                        <h2 className="text-2xl font-bold mb-4">Withdraw Funds</h2>
+                        <p className="text-gray-400 mb-6">Withdraw funds securely to your linked bank account.</p>
+
+                        <div className="mb-6">
+                            <label className="block text-sm text-gray-400 mb-2">Amount ({currency})</label>
+                            <input
+                                type="number"
+                                value={amount}
+                                onChange={(e) => setAmount(e.target.value)}
+                                className="w-full bg-[#141922] border border-white/10 rounded-xl p-4 text-2xl text-white font-mono focus:border-iq-primary focus:outline-none"
+                                placeholder="0.00"
+                                max={currentUser.wallet_balance}
+                            />
+                            <p className="text-xs text-gray-400 mt-2">Available: {currency}{currentUser.wallet_balance.toLocaleString()}</p>
+                        </div>
+
+                        <div className="flex gap-4">
+                            <button
+                                onClick={() => setShowWithdrawModal(false)}
+                                className="flex-1 py-3 rounded-xl border border-white/10 text-white hover:bg-white/5 transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={() => handleTransaction('withdrawal')}
+                                disabled={processing}
+                                className="flex-1 py-3 rounded-xl bg-iq-primary text-black font-bold hover:bg-iq-primary/90 transition-colors disabled:opacity-50"
+                            >
+                                {processing ? 'Processing...' : 'Confirm Withdrawal'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

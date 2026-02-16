@@ -1,6 +1,7 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { supabase } from '../supabaseClient';
 import { Target, Users, CheckCircle, ArrowRight, Shield, Zap, Lock, ChevronDown, Award } from 'lucide-react';
 import Footer from '../components/Footer';
 import BountyCard from '../components/BountyCard';
@@ -41,50 +42,35 @@ export default function LandingPage() {
         return null; // Or a loading spinner
     }
 
-    // Dummy bounties for display
-    const demoBounties = [
-        {
-            id: 'demo-1',
-            title: 'Design a Futuristic Logo for AI Startup',
-            description: 'We need a sleek, modern logo for our new AI-powered trading platform. Must be vector-based and include dark mode variations.',
-            reward: 25000,
-            currency: 'INR',
-            max_hunters: 5,
-            staked_count: 2,
-            submission_deadline: new Date(Date.now() + 86400000 * 3).toISOString(), // 3 days from now
-            status: 'live',
-            difficulty: 'Medium',
-            is_featured: true,
-            payment_secured: true
-        },
-        {
-            id: 'demo-2',
-            title: 'Fix React Performance Issues in Dashboard',
-            description: 'Our dashboard is rendering too many times on update. Need an expert to optimize useMemo and useCallback hooks.',
-            reward: 45000,
-            currency: 'INR',
-            max_hunters: 3,
-            staked_count: 1,
-            submission_deadline: new Date(Date.now() + 86400000 * 2).toISOString(),
-            status: 'live',
-            difficulty: 'Hard',
-            is_urgent: true,
-            payment_secured: true
-        },
-        {
-            id: 'demo-3',
-            title: 'Write 5 SEO Articles for Crypto Blog',
-            description: 'Looking for a content writer to produce high-quality, researched articles about DeFi and Web3 trends.',
-            reward: 12000,
-            currency: 'INR',
-            max_hunters: 10,
-            staked_count: 8,
-            submission_deadline: new Date(Date.now() + 86400000 * 5).toISOString(),
-            status: 'live',
-            difficulty: 'Easy',
-            payment_secured: true
+    // State for auto-displaying bounties
+    const [hotBounties, setHotBounties] = React.useState([]);
+    const [bountiesLoading, setBountiesLoading] = React.useState(true);
+
+    useEffect(() => {
+        async function loadTopBounties() {
+            try {
+                // In a real app we'd fetch from API
+                // For now, let's look for real bounties in Supabase, else fallback to empty
+                const { data, error } = await supabase
+                    .from('bounties')
+                    .select('*, profiles!bounties_payer_id_fkey(username)')
+                    .eq('status', 'active')
+                    .order('reward_amount', { ascending: false })
+                    .limit(3);
+
+                if (data && data.length > 0) {
+                    setHotBounties(data);
+                } else {
+                    setHotBounties([]);
+                }
+            } catch (err) {
+                console.error("Failed to load bounties", err);
+            } finally {
+                setBountiesLoading(false);
+            }
         }
-    ];
+        loadTopBounties();
+    }, []);
 
     return (
         <div className="min-h-screen bg-iq-background text-white selection:bg-iq-primary selection:text-black overflow-x-hidden">
@@ -152,12 +138,12 @@ export default function LandingPage() {
                                 <div className="text-xs md:text-sm text-iq-text-secondary uppercase tracking-wider">Paid Out</div>
                             </div>
                             <div className="text-center border-l border-white/5">
-                                <div className="text-3xl md:text-4xl font-bold text-white mb-1">1,200+</div>
-                                <div className="text-xs md:text-sm text-iq-text-secondary uppercase tracking-wider">Active Hunters</div>
+                                <div className="text-3xl md:text-4xl font-bold text-white mb-1">100+</div>
+                                <div className="text-xs md:text-sm text-iq-text-secondary uppercase tracking-wider">Hunters</div>
                             </div>
                             <div className="col-span-2 md:col-span-1 text-center border-l-0 md:border-l border-white/5 pt-4 md:pt-0 border-t md:border-t-0 border-white/5">
-                                <div className="text-3xl md:text-4xl font-bold text-iq-primary mb-1">98%</div>
-                                <div className="text-xs md:text-sm text-iq-text-secondary uppercase tracking-wider">Success Rate</div>
+                                <div className="text-3xl md:text-4xl font-bold text-iq-primary mb-1">90+</div>
+                                <div className="text-xs md:text-sm text-iq-text-secondary uppercase tracking-wider">Satisfied Payers</div>
                             </div>
                         </div>
                     </div>
@@ -208,13 +194,35 @@ export default function LandingPage() {
                         </button>
                     </div>
 
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {demoBounties.map(bounty => (
-                            <div key={bounty.id} onClick={handleEnterAsHunter} className="h-full">
-                                <BountyCard bounty={bounty} userRole="hunter" />
-                            </div>
-                        ))}
-                    </div>
+                    {bountiesLoading ? (
+                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {[1, 2, 3].map(i => (
+                                <div key={i} className="bg-iq-card rounded-xl border border-white/5 h-64 animate-pulse"></div>
+                            ))}
+                        </div>
+                    ) : hotBounties.length > 0 ? (
+                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {hotBounties.map(bounty => (
+                                <div key={bounty.id} onClick={handleEnterAsHunter} className="h-full">
+                                    <BountyCard bounty={{
+                                        ...bounty,
+                                        reward: bounty.reward_amount,
+                                        max_hunters: bounty.max_applicants,
+                                        staked_count: bounty.current_applicants || 0,
+                                        submission_deadline: bounty.deadline
+                                    }} userRole="hunter" />
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="text-center py-12 bg-iq-card border border-white/5 rounded-2xl">
+                            <h3 className="text-xl font-bold mb-2">No Active Bounties Yet</h3>
+                            <p className="text-iq-text-secondary mb-6">Be the first to post a bounty and attract top talent.</p>
+                            <button onClick={handlePostBounty} className="px-6 py-2 bg-iq-primary text-black font-bold rounded-lg hover:bg-iq-primary/90">
+                                Post a Bounty
+                            </button>
+                        </div>
+                    )}
                 </div>
             </section>
 
@@ -259,10 +267,10 @@ export default function LandingPage() {
                                 Got my logo designed in 24 hours. The quality was lightyears ahead of generic freelance sites. IQHUNT is a game changer for startups.
                             </p>
                             <div className="flex items-center gap-4">
-                                <div className="w-10 h-10 rounded-full bg-gray-700" /> {/* Avatar placeholder */}
+                                <div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center text-gray-400 font-bold">A</div>
                                 <div>
-                                    <div className="font-bold text-white">Rahul Sharma</div>
-                                    <div className="text-sm text-iq-text-secondary">Startup Founder</div>
+                                    <div className="font-bold text-white">Anant Singh</div>
+                                    <div className="text-sm text-iq-text-secondary">Founder, AMCRO INDIA</div>
                                 </div>
                                 <div className="ml-auto flex gap-1">
                                     {[1, 2, 3, 4, 5].map(i => <Award key={i} size={16} className="text-yellow-500" />)}
@@ -273,13 +281,13 @@ export default function LandingPage() {
                         <div className="bg-iq-card p-8 rounded-2xl border border-white/5 relative">
                             <div className="text-iq-primary text-4xl font-serif absolute top-6 left-6">"</div>
                             <p className="text-lg text-white mb-6 pt-6 relative z-10 leading-relaxed">
-                                Earned ₹45,000 in my first month. The competition aspect pushes you to be better, and the payouts are actually instant.
+                                Excellent service by IQHunt. They delivered our product design in the exact formats we needed at a very cost-effective price. Highly satisfied with the quality and support.
                             </p>
                             <div className="flex items-center gap-4">
-                                <div className="w-10 h-10 rounded-full bg-gray-700" /> {/* Avatar placeholder */}
+                                <div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center text-gray-400 font-bold">N</div>
                                 <div>
-                                    <div className="font-bold text-white">Priya Patel</div>
-                                    <div className="text-sm text-iq-text-secondary">Graphic Designer</div>
+                                    <div className="font-bold text-white">Niteesh Kumar</div>
+                                    <div className="text-sm text-iq-text-secondary">Sunsprout Foods</div>
                                 </div>
                                 <div className="ml-auto flex gap-1">
                                     {[1, 2, 3, 4, 5].map(i => <Award key={i} size={16} className="text-yellow-500" />)}
