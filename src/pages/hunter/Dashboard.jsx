@@ -130,7 +130,7 @@ export default function HunterDashboard() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">
-                        Welcome back, <span className="text-iq-primary">{currentUser?.username}</span> 👋
+                        Welcome back, <span className="text-iq-primary">{currentUser?.username}</span>
                     </h1>
                     <p className="text-iq-text-secondary">
                         Ready to hunt? Here's your mission report.
@@ -277,7 +277,7 @@ export default function HunterDashboard() {
             <div className="space-y-6">
                 <div className="flex items-center justify-between">
                     <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                        <span className="text-iq-primary">🔥</span> Hot Bounties
+                        Hot Bounties
                     </h2>
                     <Link to="/hunter/arena" className="font-medium text-iq-primary hover:text-white transition-colors flex items-center gap-1">
                         View All <ArrowRight size={16} />

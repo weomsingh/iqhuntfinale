@@ -134,8 +134,8 @@ export default function LandingPage() {
                         {/* Stats */}
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-8 p-6 md:p-8 rounded-2xl bg-iq-surface/30 backdrop-blur-md border border-white/5 max-w-3xl mx-auto">
                             <div className="text-center">
-                                <div className="text-3xl md:text-4xl font-bold text-white mb-1">₹2.5Cr+</div>
-                                <div className="text-xs md:text-sm text-iq-text-secondary uppercase tracking-wider">Paid Out</div>
+                                <div className="text-3xl md:text-4xl font-bold text-white mb-1">98%</div>
+                                <div className="text-xs md:text-sm text-iq-text-secondary uppercase tracking-wider">(Success Rate)</div>
                             </div>
                             <div className="text-center border-l border-white/5">
                                 <div className="text-3xl md:text-4xl font-bold text-white mb-1">100+</div>
@@ -186,7 +186,7 @@ export default function LandingPage() {
                 <div className="container mx-auto px-4 md:px-6">
                     <div className="flex justify-between items-end mb-12">
                         <div>
-                            <h2 className="text-3xl md:text-5xl font-bold mb-4">🔥 Hot Bounties</h2>
+                            <h2 className="text-3xl md:text-5xl font-bold mb-4">Hot Bounties</h2>
                             <p className="text-iq-text-secondary">Compete for high-value rewards.</p>
                         </div>
                         <button onClick={handleEnterAsHunter} className="text-iq-primary font-medium hover:underline flex items-center gap-1">
@@ -259,7 +259,7 @@ export default function LandingPage() {
             {/* Testimonials */}
             <section id="testimonials" className="py-24 bg-iq-background">
                 <div className="container mx-auto px-4 md:px-6">
-                    <h2 className="text-3xl md:text-5xl font-bold text-center mb-16">Victor Studies</h2>
+                    <h2 className="text-3xl md:text-5xl font-bold text-center mb-16">Visitor Stories</h2>
                     <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
                         <div className="bg-iq-card p-8 rounded-2xl border border-white/5 relative">
                             <div className="text-iq-primary text-4xl font-serif absolute top-6 left-6">"</div>

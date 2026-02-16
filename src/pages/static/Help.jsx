@@ -90,27 +90,16 @@ export default function HelpPage() {
                         <h2 className="text-2xl font-bold mb-8 text-center text-white">Still Need Help?</h2>
                         <p className="text-center text-gray-400 mb-8">Our support team is on standby.</p>
 
-                        <div className="grid md:grid-cols-2 gap-6">
-                            <div className="bg-[#1A1F2E] border border-gray-800 rounded-2xl p-8 hover:border-green-500/30 transition-all group group-hover:shadow-glow">
-                                <div className="w-12 h-12 bg-green-900/20 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <div className="flex justify-center">
+                            <div className="bg-[#1A1F2E] border border-gray-800 rounded-2xl p-8 hover:border-green-500/30 transition-all group group-hover:shadow-glow max-w-md w-full">
+                                <div className="w-12 h-12 bg-green-900/20 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform mx-auto">
                                     <Mail className="w-6 h-6 text-green-400" />
                                 </div>
-                                <h3 className="text-xl font-bold mb-2">Email Support</h3>
-                                <a href="mailto:support@iqhunt.com" className="text-green-400 hover:underline text-lg font-medium block mb-2">
+                                <h3 className="text-xl font-bold mb-2 text-center">Email Support</h3>
+                                <a href="mailto:support@iqhunt.com" className="text-green-400 hover:underline text-lg font-medium block mb-2 text-center">
                                     support@iqhunt.com
                                 </a>
-                                <p className="text-sm text-gray-400">Response within 24 hours</p>
-                            </div>
-
-                            <div className="bg-[#1A1F2E] border border-gray-800 rounded-2xl p-8 hover:border-green-500/30 transition-all group hover:shadow-lg">
-                                <div className="w-12 h-12 bg-green-900/20 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                                    <MessageSquare className="w-6 h-6 text-green-400" />
-                                </div>
-                                <h3 className="text-xl font-bold mb-2">Live Chat</h3>
-                                <button className="bg-green-600 hover:bg-green-500 text-white px-6 py-2 rounded-lg font-medium transition-colors mb-2 inline-block">
-                                    Start Chat
-                                </button>
-                                <p className="text-sm text-gray-400 block mt-2">Available 9 AM - 6 PM IST</p>
+                                <p className="text-sm text-gray-400 text-center">Response within 24 hours</p>
                             </div>
                         </div>
                     </div>

@@ -82,7 +82,7 @@ export default function PayerDashboard() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
                     <h1 className="text-2xl md:text-3xl font-bold text-white">
-                        Welcome back, <span className="text-iq-primary">{currentUser?.username}</span>! 👋
+                        Welcome back, <span className="text-iq-primary">{currentUser?.username}</span>!
                     </h1>
                     <p className="text-iq-text-secondary mt-1">
                         Your bounties are getting great responses.
@@ -183,43 +183,7 @@ export default function PayerDashboard() {
                 </div>
             )}
 
-            {/* Recommended Hunters (Mock) */}
-            <div>
-                <h2 className="text-xl font-bold text-white mb-4">Top Hunters for You</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    {[1, 2, 3, 4].map((_, i) => (
-                        <div key={i} className="bg-iq-card border border-white/5 rounded-xl p-4 hover:-translate-y-1 transition-transform duration-300">
-                            <div className="flex items-start justify-between mb-3">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center text-white font-bold">
-                                        {['JD', 'AS', 'MK', 'RL'][i]}
-                                    </div>
-                                    <div>
-                                        <p className="font-bold text-white text-sm">Hunter Name</p>
-                                        <div className="flex items-center gap-1 text-xs text-yellow-500">
-                                            <Star size={10} fill="currentColor" /> 4.{8 + (i % 2)}
-                                        </div>
-                                    </div>
-                                </div>
-                                <button className="text-iq-text-secondary hover:text-white"><MoreHorizontal size={16} /></button>
-                            </div>
 
-                            <div className="flex flex-wrap gap-1.5 mb-4">
-                                {['React', 'Design', 'Python', 'Video'].slice(i, i + 3).map(skill => (
-                                    <span key={skill} className="px-2 py-0.5 rounded text-[10px] bg-iq-surface text-iq-text-secondary border border-white/5">
-                                        {skill}
-                                    </span>
-                                ))}
-                            </div>
-
-                            <div className="flex items-center justify-between pt-3 border-t border-white/5">
-                                <p className="text-xs text-iq-text-secondary">98% Success</p>
-                                <Link to="#" className="text-xs text-iq-primary hover:underline">View Profile</Link>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
 
             {/* Quick Actions */}
             <div>
@@ -237,7 +201,7 @@ export default function PayerDashboard() {
                         <div className="w-12 h-12 rounded-xl bg-iq-surface flex items-center justify-center text-white mb-4 group-hover:scale-110 transition-transform">
                             <Search size={24} />
                         </div>
-                        <h3 className="text-lg font-bold text-white mb-1">Browse Hunters</h3>
+                        <h3 className="text-lg font-bold text-white mb-1">Browse Bounties</h3>
                         <p className="text-xs text-iq-text-secondary">Find talent directly</p>
                     </Link>
 
@@ -249,7 +213,7 @@ export default function PayerDashboard() {
                         <p className="text-xs text-iq-text-secondary">View transaction history</p>
                     </Link>
 
-                    <Link to="/settings" className="p-6 rounded-2xl bg-iq-card border border-white/5 hover:border-white/20 hover:bg-iq-surface transition-all group">
+                    <Link to="/payer/settings" className="p-6 rounded-2xl bg-iq-card border border-white/5 hover:border-white/20 hover:bg-iq-surface transition-all group">
                         <div className="w-12 h-12 rounded-xl bg-iq-surface flex items-center justify-center text-white mb-4 group-hover:scale-110 transition-transform">
                             <MoreHorizontal size={24} />
                         </div>

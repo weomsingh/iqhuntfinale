@@ -114,6 +114,27 @@ export default function PayerSettings() {
                                     />
                                 </div>
 
+                                <div className="grid md:grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <label className="text-sm text-iq-text-secondary">Company Name</label>
+                                        <input
+                                            type="text"
+                                            value={profileData.company}
+                                            onChange={(e) => setProfileData({ ...profileData, company: e.target.value })}
+                                            className="w-full bg-iq-surface border border-white/10 rounded-lg p-3 text-white focus:border-iq-primary focus:outline-none"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-sm text-iq-text-secondary">Website</label>
+                                        <input
+                                            type="text"
+                                            value={profileData.website}
+                                            onChange={(e) => setProfileData({ ...profileData, website: e.target.value })}
+                                            className="w-full bg-iq-surface border border-white/10 rounded-lg p-3 text-white focus:border-iq-primary focus:outline-none"
+                                        />
+                                    </div>
+                                </div>
+
                                 <div className="space-y-2">
                                     <label className="text-sm text-iq-text-secondary">Bio</label>
                                     <textarea

@@ -174,7 +174,7 @@ export default function Header() {
 
                                     {role === 'hunter' && (
                                         <button
-                                            onClick={() => goTo(`/${role}/dashboard`)}
+                                            onClick={() => goTo(`/${role}/war-room`)}
                                             className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors text-left"
                                         >
                                             <Briefcase size={16} className="text-orange-400" />
@@ -234,7 +234,7 @@ export default function Header() {
 
                             <button onClick={() => goTo(`/${role}/war-room`)} className="w-full flex items-center gap-3 px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-colors text-left">
                                 <MessageSquare size={20} className="text-orange-400" />
-                                <span>War Room</span>
+                                <span>My Missions</span>
                             </button>
 
                             {/* Leaderboard Option - Hunters Only */}
@@ -244,6 +244,11 @@ export default function Header() {
                                     <span>Leaderboard</span>
                                 </button>
                             )}
+
+                            <button onClick={() => goTo(`/${role}/settings`)} className="w-full flex items-center gap-3 px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-colors text-left">
+                                <User size={20} className="text-purple-400" />
+                                <span>View Profile</span>
+                            </button>
 
                             <button onClick={() => goTo(`/${role}/vault`)} className="w-full flex items-center gap-3 px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-colors text-left">
                                 <Wallet size={20} className="text-green-400" />
