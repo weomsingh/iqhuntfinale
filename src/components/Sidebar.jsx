@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Home, Target, Wallet, LogOut, Zap, History as HistoryIcon, Shield, MessageSquare } from 'lucide-react';
+import { Home, Target, Wallet, LogOut, Zap, History as HistoryIcon, Shield, MessageSquare, Menu } from 'lucide-react';
 
 export default function Sidebar({ role }) {
     const location = useLocation();
@@ -28,27 +28,35 @@ export default function Sidebar({ role }) {
     const links = role === 'hunter' ? hunterLinks : role === 'payer' ? payerLinks : adminLinks;
 
     return (
-        <aside className="sidebar">
-            {links.map(link => {
-                const Icon = link.icon;
-                return (
-                    <Link
-                        key={link.path}
-                        to={link.path}
-                        className={`sidebar-link ${location.pathname === link.path ? 'active' : ''}`}
-                    >
-                        <Icon size={20} />
-                        <span>{link.label}</span>
-                    </Link>
-                );
-            })}
+        <aside className="hidden md:flex flex-col w-64 h-screen fixed left-0 top-0 bg-iq-background border-r border-white/5 z-40 pt-20 pb-6 px-4">
+            <nav className="flex-1 space-y-2 mt-6">
+                {links.map(link => {
+                    const Icon = link.icon;
+                    const isActive = location.pathname === link.path;
+                    return (
+                        <Link
+                            key={link.path}
+                            to={link.path}
+                            className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group ${isActive
+                                    ? 'bg-iq-primary/10 text-iq-primary font-medium'
+                                    : 'text-iq-text-secondary hover:bg-white/5 hover:text-white'
+                                }`}
+                        >
+                            <Icon size={20} className={isActive ? 'text-iq-primary' : 'group-hover:text-white'} />
+                            <span>{link.label}</span>
+                        </Link>
+                    );
+                })}
+            </nav>
 
-            <div className="sidebar-spacer"></div>
-
-            <button className="sidebar-link sign-out" onClick={signOut}>
+            <button
+                onClick={signOut}
+                className="flex items-center gap-3 px-4 py-3 rounded-xl text-iq-text-secondary hover:bg-iq-error/10 hover:text-iq-error transition-all mt-auto"
+            >
                 <LogOut size={20} />
                 <span>Sign Out</span>
             </button>
         </aside>
     );
 }
+

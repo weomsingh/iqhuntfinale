@@ -1,21 +1,33 @@
 @import "tailwindcss";
 
 @theme {
-  --color-iq-black: #0a0a0a;
-  --color-iq-secondary: #111111;
-  --color-iq-green: #00ff9d;
-  --color-iq-text: #ffffff;
-  --color-iq-text-secondary: #888888;
-  --color-iq-border: rgba(0, 255, 157, 0.2);
+  --color-iq-primary: #00FF9D;
+  --color-iq-background: #0A0E14;
+  --color-iq-surface: #141922;
+  --color-iq-card: #1A1F2E;
+  --color-iq-text-primary: #FFFFFF;
+  --color-iq-text-secondary: #8B92A8;
+  --color-iq-accent: #00D9FF;
+  --color-iq-success: #00FF9D;
+  --color-iq-warning: #FFB800;
+  --color-iq-error: #FF4757;
 
-  --font-sans: Inter, sans-serif;
+  --font-sans: "Inter", "Poppins", sans-serif;
   --font-display: "Space Grotesk", sans-serif;
   --font-mono: "JetBrains Mono", monospace;
+
+  /* Custom shadow aliases */
+  --shadow-glow: 0 0 20px rgba(0, 255, 157, 0.3);
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 @layer base {
   :root {
-    @apply bg-iq-black text-iq-text font-sans;
+    @apply bg-[--color-iq-background] text-[--color-iq-text-primary] font-sans antialiased text-base;
+  }
+
+  body {
+    @apply selection:bg-[--color-iq-primary] selection:text-black;
   }
 
   h1,
@@ -24,11 +36,37 @@
   h4,
   h5,
   h6 {
-    @apply font-display font-bold;
+    @apply font-display font-bold tracking-tight text-[--color-iq-text-primary];
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-[--color-iq-background];
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-800 rounded-full hover:bg-gray-700 transition-colors;
   }
 }
 
 @layer utilities {
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-[--color-iq-primary] to-[--color-iq-accent];
+  }
+
+  .glass-panel {
+    @apply bg-[--color-iq-surface]/80 backdrop-blur-md border border-white/5;
+  }
+
+  .hover-lift {
+    @apply transition-transform duration-300 hover:-translate-y-1;
+  }
+
   @keyframes fade-in {
     from {
       opacity: 0;

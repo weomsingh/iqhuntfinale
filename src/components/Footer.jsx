@@ -1,54 +1,69 @@
 import { Link } from 'react-router-dom';
-import { Target, Mail, Twitter, Github } from 'lucide-react';
+import { Target, Mail, Twitter, Linkedin, Github } from 'lucide-react';
 
 export default function Footer() {
     return (
-        <footer className="footer">
-            <div className="footer-content">
-                <div className="footer-section">
-                    <div className="footer-brand">
-                        <Target size={24} />
-                        <span className="footer-logo">IQHUNT</span>
+        <footer className="bg-iq-background border-t border-white/5 py-16">
+            <div className="container mx-auto px-4 md:px-6">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+                    {/* Brand Column */}
+                    <div className="flex flex-col items-start gap-4">
+                        <div className="flex items-center gap-2 text-iq-primary font-display font-bold text-xl">
+                            <Target size={24} />
+                            <span>IQHUNT</span>
+                        </div>
+                        <p className="text-iq-text-secondary text-sm leading-relaxed max-w-xs">
+                            Where skill hunts money. A sovereign, skill-based competitive platform designed for elite freelancers and ambitious clients.
+                        </p>
                     </div>
-                    <p className="footer-tagline">
-                        Where skill hunts money. A sovereign, skill-based competitive platform.
+
+                    {/* Platform Links */}
+                    <div>
+                        <h4 className="font-bold text-white mb-6">Platform</h4>
+                        <ul className="space-y-3 text-iq-text-secondary">
+                            <li><Link to="/covenant" className="hover:text-iq-primary transition-colors">The Covenant</Link></li>
+                            <li><Link to="/terms" className="hover:text-iq-primary transition-colors">Terms of Service</Link></li>
+                            <li><Link to="/privacy" className="hover:text-iq-primary transition-colors">Privacy Policy</Link></li>
+                        </ul>
+                    </div>
+
+                    {/* Support Links */}
+                    <div>
+                        <h4 className="font-bold text-white mb-6">Support</h4>
+                        <ul className="space-y-3 text-iq-text-secondary">
+                            <li><Link to="/contact" className="hover:text-iq-primary transition-colors">Contact Us</Link></li>
+                            <li><a href="mailto:iqhuntarena@gmail.com" className="hover:text-iq-primary transition-colors">Email Support</a></li>
+                            <li><Link to="/faq" className="hover:text-iq-primary transition-colors">FAQ</Link></li>
+                        </ul>
+                    </div>
+
+                    {/* Connect Links */}
+                    <div>
+                        <h4 className="font-bold text-white mb-6">Connect</h4>
+                        <div className="flex gap-4">
+                            <a href="mailto:iqhuntarena@gmail.com" className="p-2 bg-iq-surface rounded-full text-iq-text-secondary hover:text-white hover:bg-iq-primary hover:scale-110 transition-all border border-white/5">
+                                <Mail size={20} />
+                            </a>
+                            <a href="#" className="p-2 bg-iq-surface rounded-full text-iq-text-secondary hover:text-white hover:bg-iq-primary hover:scale-110 transition-all border border-white/5">
+                                <Twitter size={20} />
+                            </a>
+                            <a href="#" className="p-2 bg-iq-surface rounded-full text-iq-text-secondary hover:text-white hover:bg-iq-primary hover:scale-110 transition-all border border-white/5">
+                                <Linkedin size={20} />
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
+                    <p className="text-iq-text-secondary text-sm">
+                        &copy; {new Date().getFullYear()} IQHUNT. All rights reserved.
+                    </p>
+                    <p className="text-iq-text-secondary text-xs opacity-60">
+                        This is a skill-based competitive platform. Participate responsibly.
                     </p>
                 </div>
-
-                <div className="footer-section">
-                    <h4>Platform</h4>
-                    <ul className="footer-links">
-                        <li><Link to="/covenant">The Covenant</Link></li>
-                        <li><Link to="/terms">Terms of Service</Link></li>
-                        <li><Link to="/privacy">Privacy Policy</Link></li>
-                    </ul>
-                </div>
-
-                <div className="footer-section">
-                    <h4>Support</h4>
-                    <ul className="footer-links">
-                        <li><Link to="/contact">Contact Us</Link></li>
-                        <li><a href="mailto:iqhuntarena@gmail.com">Email Support</a></li>
-                    </ul>
-                </div>
-
-                <div className="footer-section">
-                    <h4>Connect</h4>
-                    <div className="footer-social">
-                        <a href="mailto:iqhuntarena@gmail.com" className="social-link" aria-label="Email">
-                            <Mail size={20} />
-                        </a>
-                        {/* Add more social links as needed */}
-                    </div>
-                </div>
-            </div>
-
-            <div className="footer-bottom">
-                <p>&copy; {new Date().getFullYear()} IQHUNT. All rights reserved.</p>
-                <p className="footer-disclaimer">
-                    This is a skill-based competitive platform. Participate responsibly.
-                </p>
             </div>
         </footer>
     );
 }
+
