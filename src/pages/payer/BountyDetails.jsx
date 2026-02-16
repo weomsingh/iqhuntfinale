@@ -91,8 +91,8 @@ export default function PayerBountyDetails() {
                         <div className="flex items-center gap-3 mb-2">
                             <h1 className="text-2xl md:text-3xl font-bold text-white leading-tight">{bounty.title}</h1>
                             <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${bounty.status === 'live'
-                                    ? 'bg-iq-success/10 text-iq-success border-iq-success/20'
-                                    : 'bg-white/10 text-white border-white/20'
+                                ? 'bg-iq-success/10 text-iq-success border-iq-success/20'
+                                : 'bg-white/10 text-white border-white/20'
                                 }`}>
                                 {bounty.status}
                             </span>
@@ -103,14 +103,57 @@ export default function PayerBountyDetails() {
                         </div>
                     </div>
 
-                    <div className="flex gap-3">
-                        <button className="btn-secondary text-sm flex items-center gap-2">
-                            <Share2 size={16} /> Share
-                        </button>
-                        <button className="btn-primary text-sm flex items-center gap-2">
-                            <Settings size={16} /> Manage
-                        </button>
-                    </div>
+                    {/* Logic Check */}
+                    {(() => {
+                        const deadline = new Date(bounty.submission_deadline);
+                        const isExpired = deadline < new Date();
+                        const hasEnrollments = hunters.length > 0;
+                        const hasSubmissions = submissions.length > 0;
+                        // Active if NO enrollments OR (Expired AND No Submissions)
+                        const canManage = !hasEnrollments || (isExpired && !hasSubmissions);
+
+                        return (
+                            <div className="flex gap-3">
+                                <button
+                                    onClick={async () => {
+                                        if (!confirm('Pause this bounty? Hunters will not be able to join.')) return;
+                                        try {
+                                            const { error } = await supabase.from('bounties').update({ status: 'paused' }).eq('id', bounty.id);
+                                            if (error) throw error;
+                                            loadBountyData();
+                                        } catch (e) { alert(e.message); }
+                                    }}
+                                    disabled={!canManage}
+                                    className="btn-secondary text-sm flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    <Clock size={16} /> Pause
+                                </button>
+
+                                <button
+                                    onClick={async () => {
+                                        if (!confirm('DELETE this bounty? Funds will be refunded to your vault.')) return;
+                                        try {
+                                            // 1. Update status
+                                            const { error: bErr } = await supabase.from('bounties').update({ status: 'deleted' }).eq('id', bounty.id);
+                                            if (bErr) throw bErr;
+
+                                            // 2. Refund Transaction (Manual logic for now, ideally backend trigger)
+                                            // We rely on "reverted in 2-3 hours" manual process OR we can insert a refund tx now.
+                                            // User said "payment will be reverted in 2-3 hours". So just marking deleted is enough?
+                                            // Better to be safe and just mark deleted.
+
+                                            alert('Bounty deleted. Funds will be reverted within 2-3 hours.');
+                                            navigate('/payer/dashboard');
+                                        } catch (e) { alert(e.message); }
+                                    }}
+                                    disabled={!canManage}
+                                    className="bg-red-500/10 text-red-500 border border-red-500/20 px-4 py-2 rounded-lg text-sm font-bold hover:bg-red-500/20 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    <Trophy size={16} className="rotate-180" /> Delete
+                                </button>
+                            </div>
+                        );
+                    })()}
                 </div>
             </div>
 
@@ -127,8 +170,8 @@ export default function PayerBountyDetails() {
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
                             className={`flex items-center gap-2 pb-3 text-sm font-medium whitespace-nowrap transition-colors relative ${activeTab === tab.id
-                                    ? 'text-iq-primary'
-                                    : 'text-iq-text-secondary hover:text-white'
+                                ? 'text-iq-primary'
+                                : 'text-iq-text-secondary hover:text-white'
                                 }`}
                         >
                             <tab.icon size={16} />

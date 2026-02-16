@@ -20,7 +20,63 @@ export default function PayerVault() {
     const [amount, setAmount] = useState('');
     const [processing, setProcessing] = useState(false);
 
-    // ... existing loadVaultData ...
+    useEffect(() => {
+        loadVaultData();
+    }, [currentUser.id]);
+
+    async function loadVaultData() {
+        try {
+            setLoading(true);
+            const { data, error } = await supabase
+                .from('transactions')
+                .select('*')
+                .eq('user_id', currentUser.id)
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+            setTransactions(data || []);
+
+            // Calculate stats
+            const inEscrow = data
+                ?.filter(t => t.type === 'lock_vault' && t.status === 'completed')
+                .reduce((acc, t) => acc + t.amount, 0) || 0;
+
+            // Subtract released escrow (approvals)
+            const releasedEscrow = data
+                ?.filter(t => t.type === 'release_vault' && t.status === 'completed')
+                .reduce((acc, t) => acc + t.amount, 0) || 0;
+
+            const refundedEscrow = data
+                ?.filter(t => t.type === 'refund_vault' && t.status === 'completed')
+                .reduce((acc, t) => acc + t.amount, 0) || 0;
+
+            const totalSpent = data
+                ?.filter(t => (t.type === 'payment' || t.type === 'release_vault') && t.status === 'completed')
+                .reduce((acc, t) => acc + t.amount, 0) || 0;
+
+            const thisMonth = data
+                ?.filter(t => {
+                    const d = new Date(t.created_at);
+                    const now = new Date();
+                    return d.getMonth() === now.getMonth() &&
+                        d.getFullYear() === now.getFullYear() &&
+                        (t.type === 'payment' || t.type === 'release_vault') &&
+                        t.status === 'completed';
+                })
+                .reduce((acc, t) => acc + t.amount, 0) || 0;
+
+            setStats({
+                inEscrow: Math.max(0, inEscrow - releasedEscrow - refundedEscrow),
+                totalSpent,
+                thisMonth
+            });
+
+        } catch (error) {
+            console.error('Error loading vault:', error);
+        } finally {
+            setLoading(false);
+        }
+    }
 
     async function handleTransaction(type) {
         if (!amount || isNaN(amount) || parseFloat(amount) <= 0) {
@@ -217,8 +273,8 @@ export default function PayerVault() {
                                 <div key={tx.id} className="p-4 flex items-center justify-between hover:bg-white/5 transition-colors">
                                     <div className="flex items-center gap-4">
                                         <div className={`w-10 h-10 rounded-full flex items-center justify-center ${tx.type === 'deposit' || tx.type === 'release_vault'
-                                                ? 'bg-iq-success/10 text-iq-success'
-                                                : 'bg-white/5 text-white'
+                                            ? 'bg-iq-success/10 text-iq-success'
+                                            : 'bg-white/5 text-white'
                                             }`}>
                                             {tx.type === 'deposit' && <ArrowDownLeft size={20} />}
                                             {tx.type === 'withdrawal' && <ArrowUpRight size={20} />}
@@ -237,8 +293,8 @@ export default function PayerVault() {
                                     </div>
                                     <div className="text-right">
                                         <p className={`font-bold ${tx.type === 'deposit' || tx.type === 'release_vault'
-                                                ? 'text-iq-success'
-                                                : 'text-white'
+                                            ? 'text-iq-success'
+                                            : 'text-white'
                                             }`}>
                                             {tx.type === 'deposit' || tx.type === 'release_vault' ? '+' : '-'}
                                             {currency}

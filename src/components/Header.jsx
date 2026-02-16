@@ -227,28 +227,38 @@ export default function Header() {
                                 <span>Home</span>
                             </button>
 
-                            <button onClick={() => goTo(`/${role}/arena`)} className="w-full flex items-center gap-3 px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-colors text-left">
-                                <Target size={20} className="text-red-400" />
-                                <span>Browse Arena</span>
-                            </button>
-
-                            <button onClick={() => goTo(`/${role}/war-room`)} className="w-full flex items-center gap-3 px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-colors text-left">
-                                <MessageSquare size={20} className="text-orange-400" />
-                                <span>My Missions</span>
-                            </button>
-
-                            {/* Leaderboard Option - Hunters Only */}
+                            {/* Hunter Specific Links */}
                             {role === 'hunter' && (
-                                <button onClick={() => goTo(`/${role}/leaderboard`)} className="w-full flex items-center gap-3 px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-colors text-left">
-                                    <Trophy size={20} className="text-yellow-400" />
-                                    <span>Leaderboard</span>
-                                </button>
+                                <>
+                                    <button onClick={() => goTo(`/${role}/arena`)} className="w-full flex items-center gap-3 px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-colors text-left">
+                                        <Target size={20} className="text-red-400" />
+                                        <span>Browse Arena</span>
+                                    </button>
+
+                                    <button onClick={() => goTo(`/${role}/war-room`)} className="w-full flex items-center gap-3 px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-colors text-left">
+                                        <MessageSquare size={20} className="text-orange-400" />
+                                        <span>My Missions</span>
+                                    </button>
+
+                                    <button onClick={() => goTo(`/${role}/leaderboard`)} className="w-full flex items-center gap-3 px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-colors text-left">
+                                        <Trophy size={20} className="text-yellow-400" />
+                                        <span>Leaderboard</span>
+                                    </button>
+
+                                    <button onClick={() => goTo(`/${role}/settings`)} className="w-full flex items-center gap-3 px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-colors text-left">
+                                        <User size={20} className="text-purple-400" />
+                                        <span>View Profile</span>
+                                    </button>
+                                </>
                             )}
 
-                            <button onClick={() => goTo(`/${role}/settings`)} className="w-full flex items-center gap-3 px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-colors text-left">
-                                <User size={20} className="text-purple-400" />
-                                <span>View Profile</span>
-                            </button>
+                            {/* Payer Specific Links */}
+                            {role === 'payer' && (
+                                <button onClick={() => goTo(`/${role}/live-bounties`)} className="w-full flex items-center gap-3 px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-colors text-left">
+                                    <Target size={20} className="text-orange-400" />
+                                    <span>My Bounties</span>
+                                </button>
+                            )}
 
                             <button onClick={() => goTo(`/${role}/vault`)} className="w-full flex items-center gap-3 px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-colors text-left">
                                 <Wallet size={20} className="text-green-400" />
