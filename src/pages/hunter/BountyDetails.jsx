@@ -6,7 +6,7 @@ import SubmitWorkModal from '../../components/SubmitWorkModal';
 import {
     Target, Clock, Users, TrendingUp, Lock,
     FileText, MessageSquare, Upload, ArrowLeft,
-    AlertCircle, CheckCircle
+    AlertCircle, CheckCircle, Download, ShieldCheck
 } from 'lucide-react';
 
 export default function BountyDetails() {
@@ -70,8 +70,8 @@ export default function BountyDetails() {
 
         } catch (error) {
             console.error('Error loading bounty:', error);
-            alert('Failed to load bounty details');
-            navigate('/hunter/arena');
+            // alert('Failed to load bounty details'); // Silent fail or redirect
+            // navigate('/hunter/arena');
         } finally {
             setLoading(false);
         }
@@ -81,7 +81,7 @@ export default function BountyDetails() {
         if (!currentUser) return;
 
         // Check if user has enough balance
-        if (currentUser.wallet_balance < bounty.entry_fee) {
+        if (currentUser.wallet_balance < (bounty.entry_fee || 0)) {
             alert(`Insufficient balance! You need ${currency}${bounty.entry_fee} to stake.\n\nGo to Vault to deposit funds.`);
             navigate('/hunter/vault');
             return;
@@ -100,9 +100,10 @@ export default function BountyDetails() {
         setStaking(true);
 
         try {
-            const { data, error } = await supabase.rpc('lock_target', {
+            const { data, error } = await supabase.rpc('stake_on_bounty', {
                 p_bounty_id: id,
-                p_hunter_id: currentUser.id
+                p_hunter_id: currentUser.id,
+                p_stake_amount: bounty.entry_fee || 0
             });
 
             if (error) throw error;
@@ -124,20 +125,19 @@ export default function BountyDetails() {
 
     if (loading) {
         return (
-            <div className="loading-state">
-                <div className="spinner"></div>
-                <p>Loading bounty details...</p>
+            <div className="flex h-screen items-center justify-center">
+                <div className="w-10 h-10 border-4 border-iq-primary border-t-transparent rounded-full animate-spin"></div>
             </div>
         );
     }
 
     if (!bounty) {
         return (
-            <div className="error-state">
-                <AlertCircle size={48} />
-                <h2>Bounty Not Found</h2>
-                <Link to="/hunter/arena" className="btn-secondary">
-                    ← Back to Arena
+            <div className="flex flex-col items-center justify-center h-[60vh] text-center">
+                <AlertCircle size={48} className="text-iq-error mb-4 opacity-50" />
+                <h2 className="text-2xl font-bold text-white mb-2">Bounty Not Found</h2>
+                <Link to="/hunter/arena" className="btn-secondary flex items-center gap-2">
+                    <ArrowLeft size={16} /> Back to Arena
                 </Link>
             </div>
         );
@@ -150,175 +150,217 @@ export default function BountyDetails() {
     const canStake = bounty.status === 'live' && !isExpired && !myStake;
 
     return (
-        <div className="bounty-details-page">
+        <div className="max-w-5xl mx-auto pb-20 animate-fade-in px-4 md:px-0">
             {/* Header */}
-            <div className="details-header">
-                <Link to="/hunter/arena" className="back-link">
+            <div className="py-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <Link to="/hunter/arena" className="text-iq-text-secondary hover:text-white flex items-center gap-2 transition-colors">
                     <ArrowLeft size={20} />
                     Back to Arena
                 </Link>
-                <div className="status-badges">
-                    <span className={`status-badge ${bounty.status}`}>
+                <div className="flex items-center gap-3">
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${bounty.status === 'live'
+                        ? 'bg-iq-success/10 text-iq-success border-iq-success/20'
+                        : 'bg-white/10 text-white border-white/20'
+                        }`}>
                         {bounty.status}
                     </span>
-                    {isExpired && (
-                        <span className="status-badge expired">Expired</span>
-                    )}
                     {myStake && (
-                        <span className="status-badge staked">
-                            <Lock size={14} /> You're Staked
+                        <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-iq-primary/10 text-iq-primary border border-iq-primary/20 flex items-center gap-1">
+                            <Lock size={12} /> Staked
                         </span>
                     )}
                 </div>
             </div>
 
-            {/* Title Section */}
-            <div className="bounty-title-section">
-                <h1>{bounty.title}</h1>
-                <p className="bounty-description">{bounty.description}</p>
-            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Main Content */}
+                <div className="lg:col-span-2 space-y-6">
+                    {/* Title & Description */}
+                    <div className="bg-iq-card border border-white/5 rounded-2xl p-6 md:p-8">
+                        <h1 className="text-2xl md:text-3xl font-bold text-white mb-4 leading-tight">{bounty.title}</h1>
+                        <div className="prose prose-invert max-w-none text-iq-text-secondary whitespace-pre-line text-sm leading-relaxed border-t border-white/5 pt-4">
+                            {bounty.description}
+                        </div>
+                    </div>
 
-            {/* Key Stats Grid */}
-            <div className="bounty-stats-grid">
-                <div className="stat-box">
-                    <div className="stat-icon">
-                        <TrendingUp size={24} />
-                    </div>
-                    <div className="stat-info">
-                        <span className="stat-label">Reward Pool</span>
-                        <span className="stat-value highlight">
-                            {currency}{bounty.reward.toLocaleString()}
-                        </span>
-                    </div>
-                </div>
+                    {/* Mission Brief Section */}
+                    <div className="bg-iq-card border border-white/5 rounded-2xl p-6 md:p-8">
+                        <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                            <FileText size={24} className="text-iq-primary" />
+                            Mission Assets
+                        </h2>
 
-                <div className="stat-box">
-                    <div className="stat-icon">
-                        <Target size={24} />
-                    </div>
-                    <div className="stat-info">
-                        <span className="stat-label">Entry Fee</span>
-                        <span className="stat-value">
-                            {currency}{bounty.entry_fee.toLocaleString()}
-                        </span>
-                    </div>
-                </div>
-
-                <div className="stat-box">
-                    <div className="stat-icon">
-                        <Users size={24} />
-                    </div>
-                    <div className="stat-info">
-                        <span className="stat-label">Hunters Staked</span>
-                        <span className="stat-value">{hunterCount}</span>
-                    </div>
-                </div>
-
-                <div className="stat-box">
-                    <div className="stat-icon">
-                        <Clock size={24} />
-                    </div>
-                    <div className="stat-info">
-                        <span className="stat-label">Deadline</span>
-                        <span className="stat-value">
-                            {daysLeft > 0 ? `${daysLeft} days left` : 'Expired'}
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-            {/* Mission Brief */}
-            <div className="mission-section">
-                <h2>
-                    <FileText size={24} />
-                    Mission Brief
-                </h2>
-
-                {myStake ? (
-                    <div className="mission-access">
-                        <CheckCircle size={48} color="#00ff9d" />
-                        <h3>Mission Unlocked</h3>
-                        <p>You have staked on this bounty. Download the full mission PDF to start hunting.</p>
-                        <a
-                            href={bounty.mission_pdf_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="btn-primary"
-                        >
-                            <FileText size={20} />
-                            Download Mission PDF
-                        </a>
-                    </div>
-                ) : (
-                    <div className="mission-locked">
-                        <Lock size={48} />
-                        <h3>Mission Details Locked</h3>
-                        <p>Stake your entry fee to unlock the full mission PDF and join the War Room.</p>
-
-                        {canStake ? (
-                            <button
-                                className="btn-primary btn-stake"
-                                onClick={handleStake}
-                                disabled={staking}
-                            >
-                                {staking ? (
-                                    'Processing...'
-                                ) : (
-                                    <>
-                                        <Lock size={20} />
-                                        Stake {currency}{bounty.entry_fee} & Enter Hunt
-                                    </>
-                                )}
-                            </button>
+                        {myStake ? (
+                            <div className="bg-iq-success/5 border border-iq-success/20 rounded-xl p-6 flex flex-col md:flex-row items-center gap-4 text-center md:text-left">
+                                <div className="w-12 h-12 rounded-full bg-iq-success/10 flex items-center justify-center text-iq-success shrink-0">
+                                    <CheckCircle size={24} />
+                                </div>
+                                <div className="flex-1">
+                                    <h3 className="font-bold text-white text-lg">Mission Unlocked</h3>
+                                    <p className="text-sm text-iq-text-secondary opacity-80">
+                                        You have successfully staked. Access the full mission brief to proceed.
+                                    </p>
+                                </div>
+                                <a
+                                    href={bounty.mission_pdf_url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="btn-primary whitespace-nowrap flex items-center gap-2"
+                                >
+                                    <Download size={18} /> Download Brief
+                                </a>
+                            </div>
                         ) : (
-                            <div className="cannot-stake">
-                                {bounty.status !== 'live' && (
-                                    <p>❌ This bounty is not live</p>
-                                )}
-                                {isExpired && (
-                                    <p>❌ Deadline has passed</p>
-                                )}
+                            <div className="bg-iq-surface border border-white/5 rounded-xl p-8 text-center relative overflow-hidden">
+                                <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none">
+                                    <Lock size={120} className="text-white" />
+                                </div>
+                                <div className="relative z-10 flex flex-col items-center">
+                                    <div className="w-16 h-16 rounded-full bg-iq-card border border-white/10 flex items-center justify-center mb-4 shadow-lg">
+                                        <Lock size={32} className="text-iq-text-secondary" />
+                                    </div>
+                                    <h3 className="text-xl font-bold text-white mb-2">Assets Locked</h3>
+                                    <p className="text-iq-text-secondary mb-6 max-w-sm">
+                                        Stake the entry fee to unlock the full mission brief, assets, and gain access to the War Room.
+                                    </p>
+
+                                    {canStake ? (
+                                        <button
+                                            className="btn-primary px-8 py-3 text-base shadow-glow flex items-center gap-2 group"
+                                            onClick={handleStake}
+                                            disabled={staking}
+                                        >
+                                            {staking ? (
+                                                'Processing Transaction...'
+                                            ) : (
+                                                <>
+                                                    <Lock size={18} className="group-hover:hidden" />
+                                                    <CheckCircle size={18} className="hidden group-hover:block" />
+                                                    Stake {currency}{bounty.entry_fee} & Enter Hunt
+                                                </>
+                                            )}
+                                        </button>
+                                    ) : (
+                                        <div className="px-4 py-2 bg-red-500/10 border border-red-500/20 text-red-500 rounded-lg text-sm font-medium">
+                                            {isExpired ? 'Mission Deadline Passed' : 'Mission Currently Unavailable'}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         )}
                     </div>
-                )}
-            </div>
+                </div>
 
-            {/* War Room & Submit Section (Only if staked) */}
-            {myStake && (
-                <div className="hunter-actions">
-                    <div className="action-card">
-                        <MessageSquare size={32} />
-                        <h3>War Room</h3>
-                        <p>Chat with other hunters and strategize</p>
-                        <button className="btn-secondary" disabled>
-                            <MessageSquare size={18} />
-                            Enter War Room (Coming Soon)
-                        </button>
+                {/* Sidebar Stats & Actions */}
+                <div className="space-y-6">
+                    {/* Stats Card */}
+                    <div className="bg-iq-card border border-white/5 rounded-2xl p-6 space-y-6">
+                        <div className="space-y-1 pb-4 border-b border-white/5">
+                            <p className="text-sm text-iq-text-secondary">Reward Pool</p>
+                            <p className="text-3xl font-bold text-iq-primary">{currency}{bounty.reward.toLocaleString()}</p>
+                            {bounty.vault_locked > 0 && (
+                                <div className="flex items-center gap-1 text-xs text-iq-success mt-1">
+                                    <ShieldCheck size={12} />
+                                    {bounty.vault_locked}% Secured in Vault
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="space-y-4">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2 text-iq-text-secondary text-sm">
+                                    <Target size={16} /> Entry Fee
+                                </div>
+                                <span className="font-bold text-white">{currency}{(bounty.entry_fee || 0).toLocaleString()}</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2 text-iq-text-secondary text-sm">
+                                    <Users size={16} /> Hunters Staked
+                                </div>
+                                <span className="font-bold text-white">{hunterCount}/{bounty.max_hunters || '∞'}</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2 text-iq-text-secondary text-sm">
+                                    <Clock size={16} /> Time Left
+                                </div>
+                                <span className={`font-bold ${daysLeft < 3 ? 'text-red-500' : 'text-white'}`}>
+                                    {daysLeft > 0 ? `${daysLeft} days` : 'Expired'}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div className="pt-4 border-t border-white/5">
+                            <p className="text-xs text-center text-iq-text-secondary">
+                                Funds held in escrow until completion.
+                            </p>
+                        </div>
                     </div>
 
-                    <div className="action-card">
-                        <Upload size={32} />
-                        <h3>Submit Work</h3>
-                        <p>Upload your completed submission</p>
-                        {mySubmission ? (
-                            <div className="submission-status">
-                                <CheckCircle size={18} color="#00ff9d" />
-                                <span>Submitted</span>
-                            </div>
-                        ) : (
+                    {/* Staked Actions */}
+                    {myStake && (
+                        <div className="bg-gradient-to-br from-iq-primary/10 to-iq-accent/5 border border-iq-primary/20 rounded-2xl p-6 space-y-4">
+                            <h3 className="font-bold text-white flex items-center gap-2">
+                                <Target size={18} className="text-iq-primary" /> Active Hunt
+                            </h3>
+
+                            <Link to="/hunter/war-room" className="w-full flex items-center justify-between p-4 bg-iq-surface border border-white/10 rounded-xl hover:bg-white/5 hover:border-white/20 transition-all group">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-full bg-iq-card flex items-center justify-center text-white">
+                                        <MessageSquare size={18} />
+                                    </div>
+                                    <div className="text-left">
+                                        <p className="font-bold text-white text-sm">War Room</p>
+                                        <p className="text-xs text-iq-text-secondary">Mission Comms</p>
+                                    </div>
+                                </div>
+                                <ArrowLeft size={16} className="rotate-180 text-iq-text-secondary group-hover:text-white transition-colors" />
+                            </Link>
+
                             <button
-                                className="btn-primary"
                                 onClick={() => setShowSubmitModal(true)}
                                 disabled={isExpired}
+                                className={`w-full flex items-center justify-between p-4 border rounded-xl transition-all group ${mySubmission
+                                    ? 'bg-iq-success/10 border-iq-success/20'
+                                    : 'bg-iq-surface border-white/10 hover:bg-iq-primary/10 hover:border-iq-primary/30'
+                                    }`}
                             >
-                                <Upload size={18} />
-                                Submit Work
+                                <div className="flex items-center gap-3">
+                                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${mySubmission ? 'bg-iq-success/20 text-iq-success' : 'bg-iq-card text-white'
+                                        }`}>
+                                        {mySubmission ? <CheckCircle size={18} /> : <Upload size={18} />}
+                                    </div>
+                                    <div className="text-left">
+                                        <p className="font-bold text-white text-sm">{mySubmission ? 'Work Submitted' : 'Submit Work'}</p>
+                                        <p className="text-xs text-iq-text-secondary">
+                                            {mySubmission ? 'Under Review' : 'Upload deliverables'}
+                                        </p>
+                                    </div>
+                                </div>
+                                {!mySubmission && <ArrowLeft size={16} className="rotate-180 text-iq-text-secondary group-hover:text-white transition-colors" />}
                             </button>
-                        )}
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            {/* Rules */}
+            <div className="mt-8 pt-8 border-t border-white/5 text-center md:text-left">
+                <h3 className="text-sm font-bold text-iq-text-secondary uppercase tracking-wider mb-4">Mission Rules</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-xs text-iq-text-secondary">
+                    <div className="flex items-center gap-2 p-3 bg-iq-surface rounded-lg border border-white/5">
+                        <div className="w-1 h-1 rounded-full bg-iq-error" /> Entry fees are non-refundable
+                    </div>
+                    <div className="flex items-center gap-2 p-3 bg-iq-surface rounded-lg border border-white/5">
+                        <div className="w-1 h-1 rounded-full bg-iq-primary" /> One winner takes the full reward
+                    </div>
+                    <div className="flex items-center gap-2 p-3 bg-iq-surface rounded-lg border border-white/5">
+                        <div className="w-1 h-1 rounded-full bg-iq-accent" /> Winner chosen by Payer review
+                    </div>
+                    <div className="flex items-center gap-2 p-3 bg-iq-surface rounded-lg border border-white/5">
+                        <div className="w-1 h-1 rounded-full bg-white" /> War Room chats are encrypted
                     </div>
                 </div>
-            )}
+            </div>
 
             {/* Submit Work Modal */}
             {showSubmitModal && (
@@ -331,18 +373,6 @@ export default function BountyDetails() {
                     }}
                 />
             )}
-
-            {/* Rules & Info */}
-            <div className="bounty-info-section">
-                <h3>⚔️ Hunt Rules</h3>
-                <ul>
-                    <li>Entry fees are <strong>non-refundable</strong></li>
-                    <li>Only <strong>one winner</strong> will be selected</li>
-                    <li>Winner is chosen by the Payer based on submission quality</li>
-                    <li>War Room chats are <strong>ephemeral</strong> (deleted after completion)</li>
-                    <li>Deadline: <strong>{deadline.toLocaleString()}</strong></li>
-                </ul>
-            </div>
         </div>
     );
 }

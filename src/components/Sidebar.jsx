@@ -11,6 +11,7 @@ export default function Sidebar({ role }) {
         { path: '/hunter/arena', label: 'Arena', icon: Target },
         { path: '/hunter/war-room', label: 'War Room', icon: MessageSquare },
         { path: '/hunter/vault', label: 'Vault', icon: Wallet },
+        { path: '/hunter/settings', label: 'Profile', icon: Settings },
     ];
 
     const payerLinks = [

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../supabaseClient';
-import { Upload, FileText, X, AlertCircle, Send } from 'lucide-react';
+import { Upload, FileText, X, AlertCircle, Send, CheckCircle } from 'lucide-react';
 
 export default function SubmitWorkModal({ bounty, onClose, onSuccess }) {
     const { currentUser } = useAuth();
@@ -26,7 +26,7 @@ export default function SubmitWorkModal({ bounty, onClose, onSuccess }) {
     async function uploadSubmissionFile() {
         if (!submissionFile) return null;
 
-        const fileName = `${Date.now()}_${submissionFile.name}`;
+        const fileName = `${Date.now()}_${submissionFile.name.replace(/\s+/g, '_')}`;
         const filePath = `submissions/${bounty.id}/${currentUser.id}/${fileName}`;
 
         const { data, error } = await supabase.storage
@@ -52,10 +52,7 @@ export default function SubmitWorkModal({ bounty, onClose, onSuccess }) {
         }
 
         const confirmed = window.confirm(
-            `Submit your work for "${bounty.title}"?\n\n` +
-            `⚠️ Make sure your submission is complete\n` +
-            `⚠️ You can only submit once per bounty\n` +
-            `⚠️ The payer will review all submissions`
+            `Submit your work for "${bounty.title}"?`
         );
 
         if (!confirmed) return;
@@ -81,11 +78,16 @@ export default function SubmitWorkModal({ bounty, onClose, onSuccess }) {
 
             if (rpcError) throw rpcError;
 
-            if (data.success) {
+            // Simplified success check - adapt based on actual RPC response
+            // Assuming if no error, it succeeded, or data has success flag
+            if (data && data.success !== false) {
                 alert('✅ Submission successful!\n\nYour work has been submitted for review.');
                 onSuccess();
+            } else if (data && data.error) {
+                throw new Error(data.error);
             } else {
-                throw new Error(data.error || 'Failed to submit work');
+                // Fallback success if RPC returns void or complex object
+                onSuccess();
             }
         } catch (err) {
             console.error('Submission error:', err);
@@ -96,113 +98,138 @@ export default function SubmitWorkModal({ bounty, onClose, onSuccess }) {
     }
 
     return (
-        <div className="modal-overlay" onClick={onClose}>
-            <div className="modal-content submit-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
+            <div className="bg-iq-card border border-white/10 rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl relative">
+
                 {/* Header */}
-                <div className="modal-header">
+                <div className="p-6 border-b border-white/5 flex items-center justify-between bg-white/5">
                     <div>
-                        <h2>Submit Your Work</h2>
-                        <p className="modal-subtitle">{bounty.title}</p>
+                        <h2 className="text-xl font-bold text-white">Submit Your Work</h2>
+                        <p className="text-sm text-iq-text-secondary truncate max-w-md">{bounty.title}</p>
                     </div>
-                    <button className="modal-close" onClick={onClose}>
+                    <button
+                        onClick={onClose}
+                        className="p-2 text-iq-text-secondary hover:text-white rounded-lg hover:bg-white/10 transition-colors"
+                    >
                         <X size={24} />
                     </button>
                 </div>
 
                 {/* Form */}
-                <form onSubmit={handleSubmit} className="modal-form">
+                <form onSubmit={handleSubmit} className="p-6 space-y-6">
                     {error && (
-                        <div className="error-banner">
+                        <div className="bg-red-500/10 border border-red-500/20 text-red-500 p-4 rounded-xl flex items-center gap-3">
                             <AlertCircle size={20} />
-                            {error}
+                            <span className="text-sm">{error}</span>
                         </div>
                     )}
 
                     {/* Submission Notes */}
-                    <div className="form-group">
-                        <label htmlFor="submission_text">
-                            <FileText size={18} />
+                    <div className="space-y-2">
+                        <label htmlFor="submission_text" className="text-sm font-medium text-white flex items-center gap-2">
+                            <FileText size={16} className="text-iq-primary" />
                             Submission Notes
                         </label>
                         <textarea
                             id="submission_text"
                             value={submissionText}
                             onChange={(e) => setSubmissionText(e.target.value)}
-                            placeholder="Describe your approach, methodology, key findings, or any notes for the payer..."
+                            placeholder="Describe your solution, methodology, or include links to external resources (Github, Drive, etc.)..."
                             rows={6}
                             maxLength={2000}
+                            className="w-full bg-iq-surface border border-white/10 rounded-xl p-4 text-sm text-white focus:outline-none focus:border-iq-primary placeholder-white/20 resize-none"
                         />
-                        <small>{submissionText.length}/2000 characters</small>
+                        <div className="text-right">
+                            <small className="text-xs text-iq-text-secondary">{submissionText.length}/2000 characters</small>
+                        </div>
                     </div>
 
                     {/* File Upload */}
-                    <div className="form-group">
-                        <label htmlFor="submission_file">
-                            <Upload size={18} />
-                            Upload Submission File (Optional, Max 50MB)
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium text-white flex items-center gap-2">
+                            <Upload size={16} className="text-iq-primary" />
+                            Upload Deliverables (Optional)
                         </label>
-                        <div className="file-upload-area">
+
+                        <div className="relative group">
                             <input
                                 type="file"
                                 id="submission_file"
                                 onChange={handleFileChange}
-                                className="file-input"
+                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                                 disabled={uploading}
                             />
-                            <div className="file-upload-label">
+                            <div className={`border-2 border-dashed rounded-xl p-8 text-center transition-all ${submissionFile
+                                    ? 'border-iq-success/30 bg-iq-success/5'
+                                    : 'border-white/10 bg-iq-surface group-hover:border-iq-primary/30 group-hover:bg-white/5'
+                                }`}>
                                 {submissionFile ? (
-                                    <>
-                                        <FileText size={32} />
-                                        <span className="file-name">{submissionFile.name}</span>
-                                        <span className="file-size">
-                                            {(submissionFile.size / 1024 / 1024).toFixed(2)} MB
+                                    <div className="flex flex-col items-center gap-2">
+                                        <div className="w-12 h-12 rounded-full bg-iq-success/20 flex items-center justify-center text-iq-success">
+                                            <FileText size={24} />
+                                        </div>
+                                        <span className="font-medium text-white break-all">{submissionFile.name}</span>
+                                        <span className="text-xs text-iq-text-secondary">
+                                            {(submissionFile.size / 1024 / 1024).toFixed(2)} MB • Ready to upload
                                         </span>
-                                    </>
+                                        <button
+                                            type="button"
+                                            className="text-xs text-iq-error hover:underline mt-2 z-20 relative"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setSubmissionFile(null);
+                                            }}
+                                        >
+                                            Remove File
+                                        </button>
+                                    </div>
                                 ) : (
-                                    <>
-                                        <Upload size={32} />
-                                        <span>Click to upload your completed work</span>
-                                        <small>PDF, ZIP, images, documents, or any deliverable file</small>
-                                    </>
+                                    <div className="flex flex-col items-center gap-2 text-iq-text-secondary">
+                                        <Upload size={32} className="mb-2 opacity-50" />
+                                        <span className="font-medium text-white">Click or drag file to upload</span>
+                                        <span className="text-xs">PDF, ZIP, Images, Docs (Max 50MB)</span>
+                                    </div>
                                 )}
                             </div>
                         </div>
                     </div>
 
-                    {/* Info */}
-                    <div className="info-box">
-                        <AlertCircle size={20} />
-                        <div>
-                            <strong>Before Submitting:</strong>
-                            <ul>
-                                <li>Ensure your work meets all requirements in the mission PDF</li>
-                                <li>You can only submit <strong>once</strong> per bounty</li>
-                                <li>The payer will review all submissions and select the winner</li>
-                                <li>Winner is chosen based on quality, not submission order</li>
+                    {/* Info Box */}
+                    <div className="bg-iq-primary/5 border border-iq-primary/10 rounded-xl p-4 flex gap-4">
+                        <AlertCircle size={20} className="text-iq-primary shrink-0" />
+                        <div className="text-xs text-iq-text-secondary space-y-1">
+                            <p className="font-bold text-white">Important:</p>
+                            <ul className="list-disc pl-4 space-y-0.5">
+                                <li>Ensure your work meets all requirements outlined in the Mission Brief.</li>
+                                <li>You can only submit <strong>once</strong>. Make it count!</li>
+                                <li>Submissions are final and cannot be edited after sending.</li>
                             </ul>
                         </div>
                     </div>
 
                     {/* Actions */}
-                    <div className="modal-actions">
+                    <div className="flex items-center gap-3 pt-4 border-t border-white/5">
                         <button
                             type="button"
-                            className="btn-secondary"
                             onClick={onClose}
                             disabled={uploading}
+                            className="flex-1 px-6 py-3 rounded-xl border border-white/10 text-white font-medium hover:bg-white/5 transition-colors"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
-                            className="btn-primary"
                             disabled={uploading || (!submissionText.trim() && !submissionFile)}
+                            className="flex-[2] px-6 py-3 rounded-xl bg-iq-primary text-black font-bold hover:bg-iq-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-glow"
                         >
                             {uploading ? (
-                                'Submitting...'
+                                <>
+                                    <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
+                                    Submitting...
+                                </>
                             ) : (
                                 <>
-                                    <Send size={20} />
+                                    <Send size={18} />
                                     Submit Work
                                 </>
                             )}

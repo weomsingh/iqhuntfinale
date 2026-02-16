@@ -14,6 +14,7 @@ import HunterDashboard from './pages/hunter/Dashboard';
 import HunterVault from './pages/hunter/Vault';
 import HunterWarRoom from './pages/hunter/WarRoom';
 import BountyDetails from './pages/hunter/BountyDetails';
+import HunterSettings from './pages/hunter/Settings';
 
 // Payer pages
 import PayerLayout from './pages/payer/PayerLayout';
@@ -73,6 +74,7 @@ function App() {
                         <Route path="vault" element={<HunterVault />} />
                         <Route path="war-room" element={<HunterWarRoom />} />
                         <Route path="bounty/:id" element={<BountyDetails />} />
+                        <Route path="settings" element={<HunterSettings />} />
                     </Route>
 
                     {/* Payer routes - PROTECTED */}

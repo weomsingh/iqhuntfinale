@@ -49,7 +49,17 @@ CREATE POLICY "Hunters can send messages"
   );
 
 -- Enable Realtime for War Room
-ALTER PUBLICATION supabase_realtime ADD TABLE war_room_messages;
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_publication_tables 
+    WHERE pubname = 'supabase_realtime' 
+    AND schemaname = 'public' 
+    AND tablename = 'war_room_messages'
+  ) THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE war_room_messages;
+  END IF;
+END $$;
 
 -- Add max_hunters column to bounties table if it doesn't exist
 DO $$ 
