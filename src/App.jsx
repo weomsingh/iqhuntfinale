@@ -24,6 +24,8 @@ import PayerVault from './pages/payer/Vault';
 import PayerWarRoom from './pages/payer/WarRoom';
 import PostBounty from './pages/payer/PostBounty';
 import PayerBountyDetails from './pages/payer/BountyDetails';
+import PayerSettings from './pages/payer/Settings';
+import PayerWorkReview from './pages/payer/WorkReview';
 
 // Admin pages
 import AdminLayout from './pages/admin/AdminLayout';
@@ -90,6 +92,8 @@ function App() {
                         <Route path="history" element={<PayerHistory />} />
                         <Route path="vault" element={<PayerVault />} />
                         <Route path="war-room" element={<PayerWarRoom />} />
+                        <Route path="settings" element={<PayerSettings />} />
+                        <Route path="bounty/:bountyId/review/:submissionId" element={<PayerWorkReview />} />
                     </Route>
 
                     {/* Admin routes - PROTECTED */}

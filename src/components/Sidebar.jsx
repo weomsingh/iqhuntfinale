@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Home, Target, Wallet, LogOut, Zap, History as HistoryIcon, Shield, MessageSquare, Menu } from 'lucide-react';
+import { Home, Target, Wallet, LogOut, Zap, History as HistoryIcon, Shield, MessageSquare, Menu, Settings } from 'lucide-react';
 
 export default function Sidebar({ role }) {
     const location = useLocation();
@@ -15,10 +15,11 @@ export default function Sidebar({ role }) {
 
     const payerLinks = [
         { path: '/payer/dashboard', label: 'Dashboard', icon: Home },
-        { path: '/payer/live-bounties', label: 'Live Bounties', icon: Zap },
+        { path: '/payer/live-bounties', label: 'My Bounties', icon: Zap },
         { path: '/payer/war-room', label: 'War Room', icon: MessageSquare },
         { path: '/payer/history', label: 'History', icon: HistoryIcon },
         { path: '/payer/vault', label: 'Vault', icon: Wallet },
+        { path: '/payer/settings', label: 'Settings', icon: Settings },
     ];
 
     const adminLinks = [
@@ -38,8 +39,8 @@ export default function Sidebar({ role }) {
                             key={link.path}
                             to={link.path}
                             className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group ${isActive
-                                    ? 'bg-iq-primary/10 text-iq-primary font-medium'
-                                    : 'text-iq-text-secondary hover:bg-white/5 hover:text-white'
+                                ? 'bg-iq-primary/10 text-iq-primary font-medium'
+                                : 'text-iq-text-secondary hover:bg-white/5 hover:text-white'
                                 }`}
                         >
                             <Icon size={20} className={isActive ? 'text-iq-primary' : 'group-hover:text-white'} />

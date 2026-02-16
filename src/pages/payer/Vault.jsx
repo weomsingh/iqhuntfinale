@@ -2,389 +2,245 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../supabaseClient';
 import {
-    Wallet, ArrowDownCircle, ArrowUpCircle, Clock,
-    CheckCircle, XCircle, AlertCircle
+    Wallet, TrendingUp, TrendingDown, Clock, ArrowUpRight,
+    ArrowDownLeft, History, Filter, Download, MoreHorizontal, AlertCircle
 } from 'lucide-react';
 
 export default function PayerVault() {
     const { currentUser, refreshUser } = useAuth();
     const [transactions, setTransactions] = useState([]);
+    const [stats, setStats] = useState({
+        totalSpent: 0,
+        inEscrow: 0,
+        thisMonth: 0
+    });
     const [loading, setLoading] = useState(true);
-    const [showDepositModal, setShowDepositModal] = useState(false);
-    const [showWithdrawModal, setShowWithdrawModal] = useState(false);
+    const [filter, setFilter] = useState('all'); // all, deposit, withdraw, escrow
 
     useEffect(() => {
-        if (currentUser) {
-            loadTransactions();
-        }
+        loadVaultData();
     }, [currentUser]);
 
-    async function loadTransactions() {
+    async function loadVaultData() {
         try {
-            const { data, error } = await supabase
+            // Get Transactions
+            const { data: txs, error: txError } = await supabase
                 .from('transactions')
                 .select('*')
                 .eq('user_id', currentUser.id)
-                .order('created_at', { ascending: false })
-                .limit(20);
+                .order('created_at', { ascending: false });
 
-            if (error) throw error;
-            setTransactions(data || []);
+            if (txError) throw txError;
+            setTransactions(txs || []);
+
+            // Calculate Stats (Mock Logic for now, can be real later)
+            const escrow = txs
+                ?.filter(t => t.type === 'lock_vault' && t.status === 'completed')
+                .reduce((acc, t) => acc + t.amount, 0) || 0;
+
+            const spent = txs
+                ?.filter(t => t.type === 'payment' && t.status === 'completed')
+                .reduce((acc, t) => acc + t.amount, 0) || 0;
+
+            const monthStart = new Date();
+            monthStart.setDate(1);
+            const spentThisMonth = txs
+                ?.filter(t => t.type === 'payment' && new Date(t.created_at) >= monthStart)
+                .reduce((acc, t) => acc + t.amount, 0) || 0;
+
+            setStats({
+                totalSpent: spent,
+                inEscrow: escrow, // This might need adjustment based on released escrows
+                thisMonth: spentThisMonth
+            });
+
         } catch (error) {
-            console.error('Error loading transactions:', error);
+            console.error('Error loading vault:', error);
         } finally {
             setLoading(false);
         }
     }
 
-    async function handleDeposit(e) {
-        e.preventDefault();
-        const formData = new FormData(e.target);
-        const amount = parseFloat(formData.get('amount'));
-        const utrNumber = formData.get('utr_number');
-        const paymentMethod = formData.get('payment_method');
-
-        if (!amount || amount <= 0) {
-            alert('Please enter a valid amount');
-            return;
-        }
-
-        if (!utrNumber) {
-            alert('Please enter UTR number');
-            return;
-        }
-
-        try {
-            const { error } = await supabase
-                .from('transactions')
-                .insert({
-                    user_id: currentUser.id,
-                    type: 'deposit',
-                    amount: amount,
-                    currency: currentUser.currency || 'INR',
-                    status: 'pending',
-                    metadata: {
-                        utr_number: utrNumber,
-                        payment_method: paymentMethod
-                    }
-                });
-
-            if (error) throw error;
-
-            alert('✅ Deposit request submitted!\n\nYour funds will be added after admin verification (usually within 24 hours).');
-            setShowDepositModal(false);
-            await loadTransactions();
-        } catch (error) {
-            console.error('Deposit error:', error);
-            alert(`Failed to submit: ${error.message || error.details || 'Unknown error'}`);
-        }
-    }
-
-    async function handleWithdraw(e) {
-        e.preventDefault();
-        const formData = new FormData(e.target);
-        const amount = parseFloat(formData.get('amount'));
-        const upiId = formData.get('upi_id');
-        const accountHolderName = formData.get('account_holder_name');
-
-        if (!amount || amount <= 0) {
-            alert('Please enter a valid amount');
-            return;
-        }
-
-        if (amount > currentUser.wallet_balance) {
-            alert(`Insufficient balance! You have ${currency}${currentUser.wallet_balance.toLocaleString()}`);
-            return;
-        }
-
-        if (!upiId || !accountHolderName) {
-            alert('Please fill all withdrawal details');
-            return;
-        }
-
-        const confirmed = window.confirm(
-            `Withdraw ${currency}${amount.toLocaleString()}?\n\n` +
-            `Funds will be sent to: ${upiId}\n` +
-            `This will be processed by admin within 24-48 hours.`
-        );
-
-        if (!confirmed) return;
-
-        try {
-            // Deduct from wallet immediately
-            const { error: updateError } = await supabase
-                .from('profiles')
-                .update({ wallet_balance: currentUser.wallet_balance - amount })
-                .eq('id', currentUser.id);
-
-            if (updateError) throw updateError;
-
-            // Create withdrawal transaction
-            const { error: transactionError } = await supabase
-                .from('transactions')
-                .insert({
-                    user_id: currentUser.id,
-                    type: 'withdrawal',
-                    amount: amount,
-                    status: 'pending',
-                    metadata: {
-                        upi_id: upiId,
-                        account_holder_name: accountHolderName
-                    }
-                });
-
-            if (transactionError) throw transactionError;
-
-            alert('✅ Withdrawal request submitted!\n\nAdmin will process your request within 24-48 hours.');
-            setShowWithdrawModal(false);
-            await refreshUser();
-            await loadTransactions();
-        } catch (error) {
-            console.error('Withdrawal error:', error);
-            alert('Failed to submit withdrawal request');
-        }
-    }
-
     const currency = currentUser?.currency === 'INR' ? '₹' : '$';
 
-    const vaultLocked = transactions
-        .filter(t => t.type === 'vault_lock' && t.status === 'completed')
-        .reduce((sum, t) => sum + t.amount, 0);
+    const filteredTransactions = transactions.filter(t => {
+        if (filter === 'all') return true;
+        if (filter === 'deposit') return t.type === 'deposit';
+        if (filter === 'withdraw') return t.type === 'withdrawal';
+        if (filter === 'escrow') return t.type === 'lock_vault' || t.type === 'release_vault';
+        return true;
+    });
+
+    if (loading) return (
+        <div className="flex h-screen items-center justify-center">
+            <div className="w-10 h-10 border-4 border-iq-primary border-t-transparent rounded-full animate-spin"></div>
+        </div>
+    );
 
     return (
-        <div className="vault-page">
+        <div className="space-y-8 pb-20 animate-fade-in text-white">
             {/* Header */}
-            <div className="dashboard-hero">
-                <div>
-                    <h1>Vault 💰</h1>
-                    <p className="hero-subtitle">
-                        Manage your funds and transactions
-                    </p>
-                </div>
+            <div>
+                <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">My Vault</h1>
+                <p className="text-iq-text-secondary">Manage your funds, deposits, and transaction history.</p>
             </div>
 
-            {/* Balance Cards */}
-            <div className="vault-balance-grid">
-                <div className="balance-card main">
-                    <Wallet size={32} />
-                    <div>
-                        <span className="balance-label">Available Balance</span>
-                        <span className="balance-amount">
-                            {currency}{(currentUser?.wallet_balance || 0).toLocaleString()}
-                        </span>
-                    </div>
-                </div>
+            {/* Main Wallet Card */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Balance Card */}
+                <div className="lg:col-span-2 bg-gradient-to-br from-iq-card to-iq-surface border border-white/5 rounded-2xl p-6 md:p-8 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-iq-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
 
-                <div className="balance-card locked">
-                    <Clock size={32} />
-                    <div>
-                        <span className="balance-label">Locked in Bounties</span>
-                        <span className="balance-amount">
-                            {currency}{vaultLocked.toLocaleString()}
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-            {/* Actions */}
-            <div className="vault-actions">
-                <button
-                    className="btn-primary"
-                    onClick={() => setShowDepositModal(true)}
-                >
-                    <ArrowDownCircle size={20} />
-                    Deposit Funds
-                </button>
-                <button
-                    className="btn-secondary"
-                    onClick={() => setShowWithdrawModal(true)}
-                >
-                    <ArrowUpCircle size={20} />
-                    Withdraw Funds
-                </button>
-            </div>
-
-            {/* Transactions */}
-            <div className="transactions-section">
-                <h2>Recent Transactions</h2>
-
-                {loading ? (
-                    <div className="loading-state">
-                        <div className="spinner"></div>
-                        <p>Loading transactions...</p>
-                    </div>
-                ) : transactions.length === 0 ? (
-                    <div className="empty-state-small">
-                        <Wallet size={32} />
-                        <p>No transactions yet</p>
-                    </div>
-                ) : (
-                    <div className="transactions-list">
-                        {transactions.map(tx => (
-                            <div key={tx.id} className="transaction-item">
-                                <div className="tx-icon">
-                                    {tx.type === 'deposit' && <ArrowDownCircle size={20} color="#00ff9d" />}
-                                    {tx.type === 'withdrawal' && <ArrowUpCircle size={20} color="#ff5252" />}
-                                    {tx.type === 'vault_lock' && <Clock size={20} color="#ff9d00" />}
-                                    {tx.type === 'vault_unlock' && <CheckCircle size={20} color="#00ff9d" />}
-                                </div>
-
-                                <div className="tx-details">
-                                    <span className="tx-type">{tx.type.replace('_', ' ')}</span>
-                                    <span className="tx-date">
-                                        {new Date(tx.created_at).toLocaleDateString()}
-                                    </span>
-                                </div>
-
-                                <div className="tx-amount">
-                                    <span className={tx.type === 'deposit' || tx.type === 'vault_unlock' ? 'positive' : 'negative'}>
-                                        {tx.type === 'deposit' || tx.type === 'vault_unlock' ? '+' : '-'}
-                                        {currency}{tx.amount.toLocaleString()}
-                                    </span>
-                                    <span className={`tx-status ${tx.status}`}>
-                                        {tx.status === 'pending' && <Clock size={14} />}
-                                        {tx.status === 'completed' && <CheckCircle size={14} />}
-                                        {tx.status === 'failed' && <XCircle size={14} />}
-                                        {tx.status}
-                                    </span>
-                                </div>
+                    <div className="relative z-10">
+                        <div className="flex justify-between items-start mb-8">
+                            <div>
+                                <p className="text-iq-text-secondary mb-1 flex items-center gap-2">
+                                    <Wallet size={16} /> Available Balance
+                                </p>
+                                <h2 className="text-4xl md:text-5xl font-bold text-white tracking-tight">
+                                    {currency}{currentUser.wallet_balance.toLocaleString()}
+                                </h2>
                             </div>
-                        ))}
-                    </div>
-                )}
-            </div>
-
-            {/* Deposit Modal */}
-            {showDepositModal && (
-                <div className="modal-overlay" onClick={() => setShowDepositModal(false)}>
-                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                        <div className="modal-header">
-                            <h2>Deposit Funds</h2>
-                            <button className="modal-close" onClick={() => setShowDepositModal(false)}>×</button>
+                            <button className="p-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors">
+                                <MoreHorizontal className="text-iq-text-secondary" />
+                            </button>
                         </div>
 
-                        <form onSubmit={handleDeposit} className="modal-form">
-                            <div className="info-box">
-                                <AlertCircle size={20} />
-                                <div>
-                                    <strong>Payment Instructions:</strong>
-                                    <ol style={{ margin: '0.5rem 0 0', paddingLeft: '1.25rem' }}>
-                                        <li>Send money to our UPI ID: <strong>singhomedu69-1@oksbi</strong></li>
-                                        <li>Copy the UTR/Reference number from your transaction</li>
-                                        <li>Enter the details below</li>
-                                        <li>Admin will verify and credit within 24 hours</li>
-                                    </ol>
-                                </div>
-                            </div>
+                        <div className="flex gap-4">
+                            <button className="btn-primary flex-1 py-3 text-base flex items-center justify-center gap-2">
+                                <ArrowDownLeft size={20} /> Add Funds
+                            </button>
+                            <button className="btn-secondary flex-1 py-3 text-base flex items-center justify-center gap-2">
+                                <ArrowUpRight size={20} /> Withdraw
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
-                            <div className="form-group">
-                                <label>Amount ({currency})</label>
-                                <input
-                                    type="number"
-                                    name="amount"
-                                    placeholder="Enter amount"
-                                    required
-                                    min="1"
-                                    step="0.01"
-                                />
-                            </div>
+                {/* Quick Stats */}
+                <div className="space-y-4">
+                    <div className="bg-iq-card border border-white/5 rounded-xl p-5 flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-full bg-yellow-500/10 flex items-center justify-center text-yellow-500">
+                            <Clock size={24} />
+                        </div>
+                        <div>
+                            <p className="text-xs text-iq-text-secondary uppercase tracking-wider font-bold">Locked in Escrow</p>
+                            <p className="text-xl font-bold text-white">{currency}{stats.inEscrow.toLocaleString()}</p>
+                        </div>
+                    </div>
 
-                            <div className="form-group">
-                                <label>UTR / Reference Number *</label>
-                                <input
-                                    type="text"
-                                    name="utr_number"
-                                    placeholder="12-digit UTR number"
-                                    required
-                                />
-                            </div>
+                    <div className="bg-iq-card border border-white/5 rounded-xl p-5 flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500">
+                            <TrendingUp size={24} />
+                        </div>
+                        <div>
+                            <p className="text-xs text-iq-text-secondary uppercase tracking-wider font-bold">Total Spent</p>
+                            <p className="text-xl font-bold text-white">{currency}{stats.totalSpent.toLocaleString()}</p>
+                        </div>
+                    </div>
 
-                            <div className="form-group">
-                                <label>Payment Method</label>
-                                <select name="payment_method" defaultValue="upi">
-                                    <option value="upi">UPI</option>
-                                    <option value="bank_transfer">Bank Transfer</option>
-                                </select>
-                            </div>
+                    <div className="bg-iq-card border border-white/5 rounded-xl p-5 flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-full bg-purple-500/10 flex items-center justify-center text-purple-500">
+                            <TrendingDown size={24} />
+                        </div>
+                        <div>
+                            <p className="text-xs text-iq-text-secondary uppercase tracking-wider font-bold">Spent This Month</p>
+                            <p className="text-xl font-bold text-white">{currency}{stats.thisMonth.toLocaleString()}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                            <div className="modal-actions">
-                                <button type="button" className="btn-secondary" onClick={() => setShowDepositModal(false)}>
-                                    Cancel
-                                </button>
-                                <button type="submit" className="btn-primary">
-                                    Submit Request
-                                </button>
-                            </div>
-                        </form>
+            {/* In Escrow Detail (if any) */}
+            {stats.inEscrow > 0 && (
+                <div className="bg-yellow-500/5 border border-yellow-500/10 rounded-xl p-4 flex items-start gap-3">
+                    <AlertCircle className="text-yellow-500 shrink-0 mt-0.5" size={20} />
+                    <div>
+                        <h4 className="font-bold text-yellow-500 text-sm">Funds in Escrow</h4>
+                        <p className="text-sm text-iq-text-secondary mt-1">
+                            {currency}{stats.inEscrow.toLocaleString()} is currently held securely for your active bounties.
+                            These funds will be released to hunters upon approved submission or refunded if cancelled.
+                        </p>
                     </div>
                 </div>
             )}
 
-            {/* Withdraw Modal */}
-            {showWithdrawModal && (
-                <div className="modal-overlay" onClick={() => setShowWithdrawModal(false)}>
-                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                        <div className="modal-header">
-                            <h2>Withdraw Funds</h2>
-                            <button className="modal-close" onClick={() => setShowWithdrawModal(false)}>×</button>
+            {/* Transaction History */}
+            <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                    <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                        <History size={20} /> Transaction History
+                    </h3>
+
+                    <div className="flex items-center gap-2">
+                        <div className="bg-iq-card border border-white/10 rounded-lg p-1 flex">
+                            {['all', 'deposit', 'withdraw', 'escrow'].map(f => (
+                                <button
+                                    key={f}
+                                    onClick={() => setFilter(f)}
+                                    className={`px-3 py-1.5 rounded text-xs font-medium capitalize transition-colors ${filter === f
+                                            ? 'bg-white/10 text-white'
+                                            : 'text-iq-text-secondary hover:text-white'
+                                        }`}
+                                >
+                                    {f}
+                                </button>
+                            ))}
                         </div>
-
-                        <form onSubmit={handleWithdraw} className="modal-form">
-                            <div className="info-box">
-                                <AlertCircle size={20} />
-                                <div>
-                                    <strong>Available Balance:</strong> {currency}{currentUser.wallet_balance.toLocaleString()}
-                                    <p style={{ margin: '0.5rem 0 0' }}>
-                                        Withdrawals are processed within 24-48 hours
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div className="form-group">
-                                <label>Amount ({currency})</label>
-                                <input
-                                    type="number"
-                                    name="amount"
-                                    placeholder="Enter amount"
-                                    required
-                                    min="1"
-                                    max={currentUser.wallet_balance}
-                                    step="0.01"
-                                />
-                            </div>
-
-                            <div className="form-group">
-                                <label>UPI ID *</label>
-                                <input
-                                    type="text"
-                                    name="upi_id"
-                                    placeholder="yourname@upi"
-                                    required
-                                />
-                            </div>
-
-                            <div className="form-group">
-                                <label>Account Holder Name *</label>
-                                <input
-                                    type="text"
-                                    name="account_holder_name"
-                                    placeholder="Full name as per bank account"
-                                    required
-                                />
-                            </div>
-
-                            <div className="modal-actions">
-                                <button type="button" className="btn-secondary" onClick={() => setShowWithdrawModal(false)}>
-                                    Cancel
-                                </button>
-                                <button type="submit" className="btn-primary">
-                                    Request Withdrawal
-                                </button>
-                            </div>
-                        </form>
+                        <button className="p-2 bg-iq-card border border-white/10 rounded-lg text-iq-text-secondary hover:text-white">
+                            <Download size={16} />
+                        </button>
                     </div>
                 </div>
-            )}
+
+                <div className="bg-iq-card border border-white/5 rounded-xl overflow-hidden">
+                    {filteredTransactions.length === 0 ? (
+                        <div className="p-8 text-center">
+                            <p className="text-iq-text-secondary">No transactions found</p>
+                        </div>
+                    ) : (
+                        <div className="divide-y divide-white/5">
+                            {filteredTransactions.map(tx => (
+                                <div key={tx.id} className="p-4 flex items-center justify-between hover:bg-white/5 transition-colors">
+                                    <div className="flex items-center gap-4">
+                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${tx.type === 'deposit' || tx.type === 'release_vault'
+                                                ? 'bg-iq-success/10 text-iq-success'
+                                                : 'bg-white/5 text-white'
+                                            }`}>
+                                            {tx.type === 'deposit' && <ArrowDownLeft size={20} />}
+                                            {tx.type === 'withdrawal' && <ArrowUpRight size={20} />}
+                                            {tx.type === 'lock_vault' && <Clock size={20} />}
+                                            {tx.type === 'payment' && <TrendingUp size={20} />}
+                                            {tx.type === 'release_vault' && <TrendingDown size={20} />}
+                                        </div>
+                                        <div>
+                                            <p className="text-white font-medium capitalize">
+                                                {tx.type.replace('_', ' ')}
+                                            </p>
+                                            <p className="text-xs text-iq-text-secondary">
+                                                {new Date(tx.created_at).toLocaleDateString()} at {new Date(tx.created_at).toLocaleTimeString()}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="text-right">
+                                        <p className={`font-bold ${tx.type === 'deposit' || tx.type === 'release_vault'
+                                                ? 'text-iq-success'
+                                                : 'text-white'
+                                            }`}>
+                                            {tx.type === 'deposit' || tx.type === 'release_vault' ? '+' : '-'}
+                                            {currency}{tx.amount.toLocaleString()}
+                                        </p>
+                                        <p className={`text-xs capitalize ${tx.status === 'completed' ? 'text-iq-success' : 'text-yellow-500'
+                                            }`}>
+                                            {tx.status}
+                                        </p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </div>
         </div>
     );
 }
