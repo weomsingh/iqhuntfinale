@@ -79,7 +79,13 @@ function App() {
                         <Route path="vault" element={<HunterVault />} />
                         <Route path="war-room" element={<HunterWarRoom />} />
                         <Route path="bounty/:id" element={<BountyDetails />} />
+                        import ProfileView from './pages/shared/ProfileView';
+
+                        // ... (existing imports)
+
+                        // ... inside Routes ...
                         <Route path="settings" element={<HunterSettings />} />
+                        <Route path="profile" element={<ProfileView />} /> {/* NEW */}
                         <Route path="leaderboard" element={<HunterLeaderboard />} />
                     </Route>
 
@@ -101,6 +107,7 @@ function App() {
                         <Route path="vault" element={<PayerVault />} />
                         <Route path="war-room" element={<PayerWarRoom />} />
                         <Route path="settings" element={<PayerSettings />} />
+                        <Route path="profile" element={<ProfileView />} /> {/* NEW */}
                         <Route path="bounty/:bountyId/review/:submissionId" element={<PayerWorkReview />} />
                     </Route>
 

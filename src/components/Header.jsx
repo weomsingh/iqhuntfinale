@@ -137,8 +137,10 @@ export default function Header() {
 
                                 {/* Menu Items */}
                                 <div className="p-2 space-y-1">
+
+
                                     <button
-                                        onClick={() => goTo(`/${role}/settings`)}
+                                        onClick={() => goTo(`/${role}/profile`)}
                                         className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors text-left"
                                     >
                                         <User size={16} className="text-blue-400" />
