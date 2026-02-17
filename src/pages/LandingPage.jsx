@@ -93,7 +93,7 @@ export default function LandingPage() {
             </header>
 
             {/* Hero Section */}
-            <section className="relative min-h-screen flex items-center pt-20 pb-20 overflow-hidden">
+            <section className="hero-section relative min-h-screen flex items-center pt-20 pb-20 overflow-hidden">
                 {/* Background Elements */}
                 <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-iq-primary/10 rounded-full blur-[120px] pointer-events-none" />
                 <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-iq-accent/10 rounded-full blur-[120px] pointer-events-none" />
@@ -119,13 +119,13 @@ export default function LandingPage() {
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
                             <button
                                 onClick={handleEnterAsHunter}
-                                className="w-full sm:w-auto px-8 py-4 bg-iq-primary text-black font-bold text-lg rounded-xl hover:scale-105 active:scale-95 transition-all shadow-[0_0_30px_rgba(0,255,157,0.3)] flex items-center justify-center gap-2"
+                                className="btn-primary"
                             >
                                 ENTER AS HUNTER <ArrowRight size={20} />
                             </button>
                             <button
                                 onClick={handlePostBounty}
-                                className="w-full sm:w-auto px-8 py-4 bg-transparent border border-white/10 text-white font-bold text-lg rounded-xl hover:bg-white/5 active:scale-95 transition-all flex items-center justify-center gap-2"
+                                className="btn-secondary"
                             >
                                 POST A BOUNTY
                             </button>
@@ -133,15 +133,15 @@ export default function LandingPage() {
 
                         {/* Stats */}
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-8 p-6 md:p-8 rounded-2xl bg-iq-surface/30 backdrop-blur-md border border-white/5 max-w-3xl mx-auto">
-                            <div className="text-center">
+                            <div className="text-center stat-wins rounded-xl p-4">
                                 <div className="text-3xl md:text-4xl font-bold text-white mb-1">98%</div>
                                 <div className="text-xs md:text-sm text-iq-text-secondary uppercase tracking-wider">(Success Rate)</div>
                             </div>
-                            <div className="text-center border-l border-white/5">
+                            <div className="text-center stat-rate rounded-xl p-4 border-l border-white/5 md:border-none">
                                 <div className="text-3xl md:text-4xl font-bold text-white mb-1">100+</div>
                                 <div className="text-xs md:text-sm text-iq-text-secondary uppercase tracking-wider">Hunters</div>
                             </div>
-                            <div className="col-span-2 md:col-span-1 text-center border-l-0 md:border-l border-white/5 pt-4 md:pt-0 border-t md:border-t-0 border-white/5">
+                            <div className="col-span-2 md:col-span-1 stat-active rounded-xl p-4 text-center border-l-0 md:border-l border-white/5 pt-4 md:pt-0 border-t md:border-t-0 border-white/5 md:border-none">
                                 <div className="text-3xl md:text-4xl font-bold text-iq-primary mb-1">90+</div>
                                 <div className="text-xs md:text-sm text-iq-text-secondary uppercase tracking-wider">Satisfied Payers</div>
                             </div>
@@ -169,9 +169,9 @@ export default function LandingPage() {
                             { icon: Users, title: '2. Skilled Hunters Apply', desc: 'Verified experts compete for your bounty. Review portfolios and select the best.' },
                             { icon: CheckCircle, title: '3. Get Results, Pay', desc: 'Approve the work and payment is released from escrow. Fast, safe, guaranteed.' }
                         ].map((step, idx) => (
-                            <div key={idx} className="bg-iq-card p-8 rounded-2xl border border-white/5 hover:border-iq-primary/30 transition-colors group">
+                            <div key={idx} className="card p-8 group">
                                 <div className="w-16 h-16 rounded-full bg-iq-surface border border-white/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                                    <step.icon size={32} className="text-iq-primary" />
+                                    <step.icon size={32} className="text-neon-cyan" />
                                 </div>
                                 <h3 className="text-xl font-bold mb-3">{step.title}</h3>
                                 <p className="text-iq-text-secondary leading-relaxed">{step.desc}</p>
@@ -197,7 +197,7 @@ export default function LandingPage() {
                     {bountiesLoading ? (
                         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {[1, 2, 3].map(i => (
-                                <div key={i} className="bg-iq-card rounded-xl border border-white/5 h-64 animate-pulse"></div>
+                                <div key={i} className="card h-64 skeleton"></div>
                             ))}
                         </div>
                     ) : hotBounties.length > 0 ? (
@@ -261,7 +261,7 @@ export default function LandingPage() {
                 <div className="container mx-auto px-4 md:px-6">
                     <h2 className="text-3xl md:text-5xl font-bold text-center mb-16">Visitor Stories</h2>
                     <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-                        <div className="bg-iq-card p-8 rounded-2xl border border-white/5 relative">
+                        <div className="card p-8 relative">
                             <div className="text-iq-primary text-4xl font-serif absolute top-6 left-6">"</div>
                             <p className="text-lg text-white mb-6 pt-6 relative z-10 leading-relaxed">
                                 Got my logo designed in 24 hours. The quality was lightyears ahead of generic freelance sites. IQHUNT is a game changer for startups.
@@ -278,7 +278,7 @@ export default function LandingPage() {
                             </div>
                         </div>
 
-                        <div className="bg-iq-card p-8 rounded-2xl border border-white/5 relative">
+                        <div className="card p-8 relative">
                             <div className="text-iq-primary text-4xl font-serif absolute top-6 left-6">"</div>
                             <p className="text-lg text-white mb-6 pt-6 relative z-10 leading-relaxed">
                                 Excellent service by IQHunt. They delivered our product design in the exact formats we needed at a very cost-effective price. Highly satisfied with the quality and support.

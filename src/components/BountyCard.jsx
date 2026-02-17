@@ -25,7 +25,7 @@ export default function BountyCard({ bounty, userRole = 'hunter' }) {
     const isSecured = vault_locked >= reward;
 
     return (
-        <div className="group relative bg-iq-card border border-white/5 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:border-iq-primary/50 hover:shadow-glow cursor-pointer overflow-hidden flex flex-col h-full">
+        <div className="card group relative p-6 cursor-pointer overflow-hidden flex flex-col h-full">
 
             {/* Hover Gradient Effect */}
             <div className="absolute inset-0 bg-gradient-to-br from-iq-primary/0 via-white/5 to-iq-accent/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
@@ -35,19 +35,19 @@ export default function BountyCard({ bounty, userRole = 'hunter' }) {
                 <div className="flex flex-col gap-2">
                     <div className="flex flex-wrap gap-2">
                         {/* Category/Type Badge */}
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-iq-surface border border-white/10 text-iq-text-secondary">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider badge-mission">
                             <Target size={10} />
                             {bounty.category || 'Mission'}
                         </span>
 
                         {is_featured && (
-                            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-yellow-500/10 text-yellow-500 border border-yellow-500/20">
+                            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider badge-featured">
                                 ⭐ Featured
                             </span>
                         )}
 
                         {(is_urgent || isExpiringSoon) && !isExpired && (
-                            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-iq-error/10 text-iq-error border border-iq-error/20">
+                            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider badge-urgent">
                                 🔥 Urgent
                             </span>
                         )}
@@ -98,8 +98,8 @@ export default function BountyCard({ bounty, userRole = 'hunter' }) {
 
                     <div className="flex items-center gap-2">
                         <TrendingUp size={14} />
-                        <span className={`font-bold uppercase tracking-wider ${difficulty === 'Easy' ? 'text-iq-success' :
-                                difficulty === 'Medium' ? 'text-iq-warning' : 'text-iq-error'
+                        <span className={`font-bold uppercase tracking-wider ${difficulty === 'Easy' ? 'difficulty-easy' :
+                            difficulty === 'Medium' ? 'difficulty-medium' : 'difficulty-hard'
                             }`}>
                             {difficulty}
                         </span>

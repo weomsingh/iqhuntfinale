@@ -65,7 +65,7 @@ export default function Header() {
 
     return (
         <>
-            <header className="sticky top-0 z-50 w-full h-16 bg-[#0A0E14]/95 backdrop-blur-lg border-b border-gray-800 flex items-center justify-between px-4 md:px-6 shadow-lg">
+            <header className="sticky top-0 z-50 w-full h-16 bg-iq-background/95 backdrop-blur-lg border-b border-white/5 flex items-center justify-between px-4 md:px-6 shadow-lg">
                 {/* Left Side: Hamburger + Logo */}
                 <div className="flex items-center gap-4">
                     {/* Hamburger Menu - Mobile Navigation */}
@@ -91,7 +91,7 @@ export default function Header() {
                                 }}
                             />
                         </div>
-                        <span className="text-xl font-bold text-green-400 tracking-tight group-hover:text-green-300 transition-colors">IQHUNT</span>
+                        <span className="text-xl font-bold text-iq-primary tracking-tight group-hover:text-neon-cyan transition-colors">IQHUNT</span>
                     </Link>
                 </div>
 
@@ -100,10 +100,10 @@ export default function Header() {
                     {/* Wallet Balance - Clickable */}
                     <button
                         onClick={() => goTo(`/${role}/vault`)}
-                        className="flex items-center gap-2 bg-green-900/20 border border-green-500/30 rounded-lg px-3 py-1.5 hover:bg-green-900/40 transition-all cursor-pointer group"
+                        className="flex items-center gap-2 bg-iq-primary/10 border border-iq-primary/30 rounded-lg px-3 py-1.5 hover:bg-iq-primary/20 transition-all cursor-pointer group"
                     >
-                        <Wallet size={16} className="text-green-400 group-hover:text-green-300" />
-                        <span className="text-green-400 font-semibold font-mono text-sm group-hover:text-green-300">
+                        <Wallet size={16} className="text-iq-primary group-hover:text-neon-cyan" />
+                        <span className="text-iq-primary font-semibold font-mono text-sm group-hover:text-neon-cyan">
                             {currency}{walletBalance}
                         </span>
                     </button>
@@ -114,12 +114,12 @@ export default function Header() {
                             onClick={() => setShowProfileDropdown(!showProfileDropdown)}
                             className="flex items-center gap-2 focus:outline-none group"
                         >
-                            <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-green-500 to-emerald-600 p-[2px] cursor-pointer group-hover:shadow-glow transition-all">
-                                <div className="w-full h-full rounded-full bg-[#0A0E14] flex items-center justify-center overflow-hidden">
+                            <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-iq-primary to-iq-accent p-[2px] cursor-pointer group-hover:shadow-glow transition-all">
+                                <div className="w-full h-full rounded-full bg-iq-background flex items-center justify-center overflow-hidden">
                                     {currentUser.avatar_url ? (
                                         <img src={currentUser.avatar_url} alt={currentUser.username} className="w-full h-full object-cover" />
                                     ) : (
-                                        <User size={16} className="text-green-400" />
+                                        <User size={16} className="text-iq-primary" />
                                     )}
                                 </div>
                             </div>
@@ -128,11 +128,11 @@ export default function Header() {
 
                         {/* Profile Dropdown */}
                         {showProfileDropdown && (
-                            <div className="absolute right-0 top-12 w-64 bg-[#1A1F2E] border border-gray-800 rounded-xl shadow-2xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                            <div className="absolute right-0 top-12 w-64 bg-iq-surface border border-white/10 rounded-xl shadow-2xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
                                 {/* User Info Header */}
-                                <div className="px-4 py-3 bg-green-900/10 border-b border-gray-800">
+                                <div className="px-4 py-3 bg-iq-primary/10 border-b border-white/5">
                                     <p className="font-bold text-white truncate text-sm">{currentUser.username}</p>
-                                    <p className="text-xs text-gray-400 truncate">{currentUser.email}</p>
+                                    <p className="text-xs text-iq-text-secondary truncate">{currentUser.email}</p>
                                 </div>
 
                                 {/* Menu Items */}

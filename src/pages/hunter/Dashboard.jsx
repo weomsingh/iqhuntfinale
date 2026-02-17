@@ -40,9 +40,9 @@ function Countdown({ targetDate }) {
 
 // Progress Bar Component
 function ProgressBar({ percentage, color = 'yellow' }) {
-    const colorClass = color === 'red' ? 'bg-red-500' : 'bg-yellow-400';
+    const colorClass = color === 'red' ? 'bg-iq-error shadow-[0_0_10px_var(--color-neon-pink)]' : 'bg-iq-warning shadow-[0_0_10px_var(--color-neon-yellow)]';
     return (
-        <div className="w-full h-1.5 bg-gray-700 rounded-full overflow-hidden">
+        <div className="w-full h-1.5 bg-gray-700/50 rounded-full overflow-hidden">
             <div
                 className={`h-full ${colorClass} transition-all duration-1000 ease-out`}
                 style={{ width: `${Math.min(100, Math.max(0, percentage))}%` }}
@@ -138,8 +138,8 @@ export default function HunterDashboard() {
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <div className="px-4 py-2 rounded-xl bg-iq-card border border-white/5 flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-yellow-500/10 flex items-center justify-center text-yellow-500">
+                    <div className="px-4 py-2 rounded-xl card flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-iq-warning/10 flex items-center justify-center text-iq-warning">
                             <Trophy size={16} />
                         </div>
                         <div>
@@ -147,7 +147,7 @@ export default function HunterDashboard() {
                             <p className="text-sm font-bold text-white">{currentUser?.hunts_won || 0}</p>
                         </div>
                     </div>
-                    <div className="px-4 py-2 rounded-xl bg-iq-card border border-white/5 flex items-center gap-3">
+                    <div className="px-4 py-2 rounded-xl card flex items-center gap-3">
                         <div className="w-8 h-8 rounded-full bg-iq-primary/10 flex items-center justify-center text-iq-primary">
                             <Zap size={16} />
                         </div>
@@ -161,7 +161,7 @@ export default function HunterDashboard() {
 
             {/* Stats Grid */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="p-5 rounded-2xl bg-iq-card border border-white/5 relative overflow-hidden group hover:border-iq-primary/20 transition-all">
+                <div className="p-5 card relative overflow-hidden group">
                     <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform text-white">
                         <Wallet size={48} />
                     </div>
@@ -169,7 +169,7 @@ export default function HunterDashboard() {
                     <p className="text-2xl font-bold text-white">{currency}{(currentUser?.total_earnings || 0).toLocaleString()}</p>
                 </div>
 
-                <div className="p-5 rounded-2xl bg-iq-card border border-white/5 relative overflow-hidden group hover:border-iq-primary/20 transition-all">
+                <div className="p-5 card relative overflow-hidden group">
                     <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform text-iq-primary">
                         <Target size={48} />
                     </div>
@@ -177,7 +177,7 @@ export default function HunterDashboard() {
                     <p className="text-2xl font-bold text-iq-primary">{activeStake ? 1 : 0}</p>
                 </div>
 
-                <div className="p-5 rounded-2xl bg-iq-card border border-white/5 relative overflow-hidden group hover:border-iq-primary/20 transition-all">
+                <div className="p-5 card relative overflow-hidden group">
                     <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform text-iq-accent">
                         <CheckCircle size={48} />
                     </div>
@@ -185,8 +185,8 @@ export default function HunterDashboard() {
                     <p className="text-2xl font-bold text-iq-accent">{currentUser?.hunts_completed || 0}</p>
                 </div>
 
-                <div className="p-5 rounded-2xl bg-iq-card border border-white/5 relative overflow-hidden group hover:border-iq-primary/20 transition-all">
-                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform text-yellow-500">
+                <div className="p-5 card relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform text-iq-warning">
                         <Trophy size={48} />
                     </div>
                     <p className="text-sm text-iq-text-secondary mb-1">Rank</p>
@@ -196,16 +196,16 @@ export default function HunterDashboard() {
 
             {/* Active Mission Card with Timer */}
             {activeStake ? (
-                <div className="rounded-2xl bg-gradient-to-r from-iq-primary/10 to-iq-accent/10 p-[1px] transform transition-all hover:scale-[1.01]">
-                    <div className="rounded-2xl bg-iq-card p-6 md:p-8 backdrop-blur-xl relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-iq-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+                <div className="rounded-2xl bg-gradient-to-r from-iq-primary/20 to-iq-accent/20 p-[1px] transform transition-all hover:scale-[1.01] shadow-glow">
+                    <div className="rounded-2xl card p-6 md:p-8 backdrop-blur-xl relative overflow-hidden h-full">
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-iq-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
 
                         <div className="relative z-10">
                             {/* Live Badge */}
-                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-green-500/20 text-green-400 border border-green-500/20 mb-4 animate-pulse">
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold badge-live mb-4">
                                 <span className="relative flex h-2 w-2">
-                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-iq-error opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-iq-error"></span>
                                 </span>
                                 LIVE MISSION IN PROGRESS
                             </div>
@@ -217,13 +217,13 @@ export default function HunterDashboard() {
                                     </h3>
 
                                     {/* Timer Section */}
-                                    <div className="bg-yellow-900/10 border border-yellow-500/30 rounded-xl p-4 mb-6 max-w-xl">
+                                    <div className="bg-iq-background/50 border border-white/10 rounded-xl p-4 mb-6 max-w-xl">
                                         <div className="flex items-center justify-between mb-3">
                                             <div className="flex items-center gap-2">
-                                                <Clock className="w-5 h-5 text-yellow-500" />
+                                                <Clock className="w-5 h-5 text-iq-warning" />
                                                 <span className="text-sm text-gray-400 font-medium">Mission Deadline</span>
                                             </div>
-                                            <div className="text-xl font-bold text-yellow-400">
+                                            <div className="text-xl font-bold text-iq-warning">
                                                 <Countdown targetDate={activeStake.bounty.submission_deadline} />
                                             </div>
                                         </div>
@@ -236,7 +236,7 @@ export default function HunterDashboard() {
                                     <div className="flex items-center gap-6">
                                         <div>
                                             <p className="text-sm text-gray-500 mb-1">Reward Pool</p>
-                                            <p className="text-2xl font-bold text-green-400">{currency}{activeStake.bounty.reward.toLocaleString()}</p>
+                                            <p className="text-2xl font-bold text-iq-primary">{currency}{activeStake.bounty.reward.toLocaleString()}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -244,7 +244,7 @@ export default function HunterDashboard() {
                                 <div className="flex flex-col justify-end">
                                     <button
                                         onClick={() => navigate('/hunter/war-room')}
-                                        className="w-full md:w-auto px-8 py-4 bg-green-500 hover:bg-green-600 text-white font-bold rounded-xl shadow-lg shadow-green-500/20 flex items-center justify-center gap-2 transition-all"
+                                        className="btn-primary flex items-center justify-center gap-2"
                                     >
                                         Continue Mission <ArrowRight size={20} />
                                     </button>
@@ -303,27 +303,27 @@ export default function HunterDashboard() {
 
             {/* Quick Actions Grid - Fixed Settings Card */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <Link to="/hunter/arena" className="p-6 rounded-xl bg-iq-card border border-white/5 hover:border-cyan-400/50 hover:bg-iq-surface transition-all group">
-                    <Target size={28} className="text-cyan-400 mb-4 group-hover:scale-110 transition-transform" />
+                <Link to="/hunter/arena" className="p-6 rounded-xl card hover:border-neon-cyan/50 group">
+                    <Target size={28} className="text-neon-cyan mb-4 group-hover:scale-110 transition-transform" />
                     <h3 className="font-bold text-white mb-1">Browse Arena</h3>
                     <p className="text-xs text-iq-text-secondary">Find new missions</p>
                 </Link>
 
-                <Link to="/hunter/vault" className="p-6 rounded-xl bg-iq-card border border-white/5 hover:border-green-400/50 hover:bg-iq-surface transition-all group">
-                    <TrendingUp size={28} className="text-green-400 mb-4 group-hover:scale-110 transition-transform" />
+                <Link to="/hunter/vault" className="p-6 rounded-xl card hover:border-neon-green/50 group">
+                    <TrendingUp size={28} className="text-neon-green mb-4 group-hover:scale-110 transition-transform" />
                     <h3 className="font-bold text-white mb-1">My Vault</h3>
                     <p className="text-xs text-iq-text-secondary">Check earnings</p>
                 </Link>
 
-                <Link to="/hunter/war-room" className="p-6 rounded-xl bg-iq-card border border-white/5 hover:border-orange-400/50 hover:bg-iq-surface transition-all group">
-                    <MessageSquare size={28} className="text-orange-400 mb-4 group-hover:scale-110 transition-transform" />
+                <Link to="/hunter/war-room" className="p-6 rounded-xl card hover:border-neon-orange/50 group">
+                    <MessageSquare size={28} className="text-neon-orange mb-4 group-hover:scale-110 transition-transform" />
                     <h3 className="font-bold text-white mb-1">War Room</h3>
                     <p className="text-xs text-iq-text-secondary">Mission Comms</p>
                 </Link>
 
                 {/* Fixed: Leaderboard -> Settings */}
-                <Link to="/hunter/settings" className="p-6 rounded-xl bg-iq-card border border-white/5 hover:border-purple-400/50 hover:bg-iq-surface transition-all group">
-                    <Settings size={28} className="text-purple-400 mb-4 group-hover:scale-110 transition-transform" />
+                <Link to="/hunter/settings" className="p-6 rounded-xl card hover:border-neon-purple/50 group">
+                    <Settings size={28} className="text-neon-purple mb-4 group-hover:scale-110 transition-transform" />
                     <h3 className="font-bold text-white mb-1">Settings</h3>
                     <p className="text-xs text-iq-text-secondary">Update profile info</p>
                 </Link>
