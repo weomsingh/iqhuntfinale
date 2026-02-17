@@ -70,13 +70,13 @@ export function AuthProvider({ children }) {
         // Run explicit check as backup
         initializeAuth();
 
-        // Safety timeout: If nothing happens in 1 seconds, turn off loading
+        // Safety timeout: If nothing happens in 3 seconds, turn off loading
         const timeoutId = setTimeout(() => {
             if (loading && isMounted) {
                 console.warn("⚠️ Auth timeout reached - forcing loading false");
                 setLoading(false);
             }
-        }, 1000);
+        }, 3000);
 
         return () => {
             isMounted = false;

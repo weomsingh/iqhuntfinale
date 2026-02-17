@@ -45,7 +45,9 @@ import RefundPolicy from './pages/static/RefundPolicy';
 import './styles/App.css';
 import './styles/WarRoom.css';
 import './styles/VisualPolish.css';
+import './styles/VisualPolish.css';
 import './styles/PricingGuide.css';
+import ProfileView from './pages/shared/ProfileView';
 
 function App() {
     return (
@@ -79,11 +81,6 @@ function App() {
                         <Route path="vault" element={<HunterVault />} />
                         <Route path="war-room" element={<HunterWarRoom />} />
                         <Route path="bounty/:id" element={<BountyDetails />} />
-                        import ProfileView from './pages/shared/ProfileView';
-
-                        // ... (existing imports)
-
-                        // ... inside Routes ...
                         <Route path="settings" element={<HunterSettings />} />
                         <Route path="profile" element={<ProfileView />} /> {/* NEW */}
                         <Route path="leaderboard" element={<HunterLeaderboard />} />
