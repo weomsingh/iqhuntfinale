@@ -8,6 +8,11 @@ import {
 
 export default function PayerVault() {
     const { currentUser, refreshUser } = useAuth();
+    const currency = '$'; // Currency Symbol
+
+    // Ensure wallet_balance is safe to use
+    const walletBalance = currentUser?.wallet_balance || 0;
+
     const [transactions, setTransactions] = useState([]);
     const [stats, setStats] = useState({
         totalSpent: 0,
@@ -99,7 +104,7 @@ export default function PayerVault() {
         }
 
         const value = parseFloat(amount);
-        if (type === 'withdraw' && value > currentUser.wallet_balance) {
+        if (type === 'withdraw' && value > walletBalance) {
             alert('Insufficient funds');
             return;
         }
@@ -121,8 +126,8 @@ export default function PayerVault() {
 
             // 2. Update Wallet Balance
             const newBalance = type === 'deposit'
-                ? currentUser.wallet_balance + value
-                : currentUser.wallet_balance - value;
+                ? walletBalance + value
+                : walletBalance - value;
 
             const { error: profileError } = await supabase
                 .from('profiles')
@@ -175,7 +180,7 @@ export default function PayerVault() {
                                     <Wallet size={16} /> Available Balance
                                 </p>
                                 <h2 className="text-4xl md:text-5xl font-bold text-white tracking-tight">
-                                    {currency}{currentUser.wallet_balance.toLocaleString()}
+                                    {currency}{walletBalance.toLocaleString()}
                                 </h2>
                             </div>
                             <button className="p-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors">
@@ -378,9 +383,9 @@ export default function PayerVault() {
                                 onChange={(e) => setAmount(e.target.value)}
                                 className="w-full bg-[#141922] border border-white/10 rounded-xl p-4 text-2xl text-white font-mono focus:border-iq-primary focus:outline-none"
                                 placeholder="0.00"
-                                max={currentUser.wallet_balance}
+                                max={walletBalance}
                             />
-                            <p className="text-xs text-gray-400 mt-2">Available: {currency}{currentUser.wallet_balance.toLocaleString()}</p>
+                            <p className="text-xs text-gray-400 mt-2">Available: {currency}{walletBalance.toLocaleString()}</p>
                         </div>
 
                         <div className="flex gap-4">
