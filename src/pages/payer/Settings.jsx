@@ -32,9 +32,19 @@ export default function PayerSettings() {
         e.preventDefault();
         setLoading(true);
         try {
+            // Create update object strictly with known columns
+            const updates = {
+                username: profileData.username,
+                bio: profileData.bio,
+                website: profileData.website,
+                company: profileData.company,
+                // full_name: profileData.full_name, // Temporarily disabled if causing schema errors
+                updated_at: new Date()
+            };
+
             const { error } = await supabase
                 .from('profiles')
-                .update({ ...profileData }) // Removed explicit role update to avoid RLS/Trigger issues
+                .update(updates)
                 .eq('id', currentUser.id);
 
             if (error) throw error;

@@ -21,7 +21,8 @@ export default function PayerVault() {
     const [processing, setProcessing] = useState(false);
     const [filter, setFilter] = useState('all');
 
-    const filteredTransactions = transactions.filter(t => {
+    const filteredTransactions = (transactions || []).filter(t => {
+        if (!t) return false;
         if (filter === 'all') return true;
         if (filter === 'deposit') return t.type === 'deposit';
         if (filter === 'withdraw') return t.type === 'withdrawal';
