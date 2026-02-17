@@ -34,7 +34,7 @@ export default function PayerSettings() {
         try {
             const { error } = await supabase
                 .from('profiles')
-                .update({ ...profileData, role: 'payer' })
+                .update({ ...profileData }) // Removed explicit role update to avoid RLS/Trigger issues
                 .eq('id', currentUser.id);
 
             if (error) throw error;
@@ -42,7 +42,7 @@ export default function PayerSettings() {
             alert('Profile updated successfully!');
         } catch (error) {
             console.error('Error updating profile:', error);
-            alert('Failed to update profile.');
+            alert(`Failed to update profile: ${error.message || 'Unknown error'}`);
         } finally {
             setLoading(false);
         }

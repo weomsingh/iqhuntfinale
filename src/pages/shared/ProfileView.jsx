@@ -75,7 +75,7 @@ export default function ProfileView() {
                         <div className="bg-iq-card border border-white/5 rounded-xl p-6">
                             <h2 className="text-xl font-bold text-white mb-4">Expertise</h2>
                             <div className="flex flex-wrap gap-2">
-                                {(currentUser.expertise_tags || ['None']).map(tag => (
+                                {(currentUser.expertise || currentUser.expertise_tags || ['None']).map(tag => (
                                     <span key={tag} className="px-3 py-1 bg-iq-surface text-iq-text-secondary rounded-lg text-sm border border-white/5">
                                         {tag}
                                     </span>

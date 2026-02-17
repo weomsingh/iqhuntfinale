@@ -19,12 +19,25 @@ export default function PayerVault() {
     const [showWithdrawModal, setShowWithdrawModal] = useState(false);
     const [amount, setAmount] = useState('');
     const [processing, setProcessing] = useState(false);
+    const [filter, setFilter] = useState('all');
+
+    const filteredTransactions = transactions.filter(t => {
+        if (filter === 'all') return true;
+        if (filter === 'deposit') return t.type === 'deposit';
+        if (filter === 'withdraw') return t.type === 'withdrawal';
+        if (filter === 'escrow') return t.type === 'lock_vault' || t.type === 'release_vault' || t.type === 'refund_vault';
+        return true;
+    });
 
     useEffect(() => {
-        loadVaultData();
-    }, [currentUser.id]);
+        if (currentUser?.id) {
+            loadVaultData();
+        }
+    }, [currentUser?.id]);
 
     async function loadVaultData() {
+        if (!currentUser?.id) return;
+
         try {
             setLoading(true);
             const { data, error } = await supabase

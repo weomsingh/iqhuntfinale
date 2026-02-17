@@ -155,21 +155,7 @@ function BountyTimerCard({ bounty, index, navigate }) {
                     )}
                 </div>
 
-                {/* Actions */}
-                <div className="flex flex-col gap-3 w-full lg:w-auto">
-                    <button
-                        onClick={() => navigate(`/payer/bounty/${bounty.id}`)}
-                        className="px-6 py-3 rounded-xl border border-white/10 hover:bg-white/5 text-white font-medium transition-colors flex items-center justify-center gap-2 min-w-[160px]"
-                    >
-                        View Details
-                    </button>
-                    <button
-                        onClick={() => navigate(`/payer/messages/${bounty.id}`)} // Assuming message route or modal
-                        className="px-6 py-3 rounded-xl bg-iq-primary text-black font-bold hover:scale-105 transition-transform flex items-center justify-center gap-2"
-                    >
-                        <MessageSquare size={18} /> Message Hunter
-                    </button>
-                </div>
+
 
             </div>
         </div>
